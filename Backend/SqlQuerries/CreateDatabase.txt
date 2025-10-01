@@ -1,0 +1,356 @@
+USE [master]
+GO
+/****** Object:  Database [NurseRecordingSystem]    Script Date: 9/10/2025 7:02:20 PM ******/
+CREATE DATABASE [NurseRecordingSystem]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'NurseRecordingSystem', FILENAME = N'C:\Users\Felaeia\NurseRecordingSystem.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'NurseRecordingSystem_log', FILENAME = N'C:\Users\Felaeia\NurseRecordingSystem_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT
+GO
+ALTER DATABASE [NurseRecordingSystem] SET COMPATIBILITY_LEVEL = 150
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [NurseRecordingSystem].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [NurseRecordingSystem] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET  MULTI_USER 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [NurseRecordingSystem] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [NurseRecordingSystem] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+ALTER DATABASE [NurseRecordingSystem] SET QUERY_STORE = OFF
+GO
+USE [NurseRecordingSystem]
+GO
+/****** Object:  Table [dbo].[AppointmentSchedule]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AppointmentSchedule](
+	[appointmentId] [int] IDENTITY(1,1) NOT NULL,
+	[appointmentTime] [datetime] NOT NULL,
+	[appointmentDescription] [nvarchar](max) NULL,
+	[nurseId] [int] NOT NULL,
+	[createdOn] [datetime2](0) NOT NULL,
+	[createdBy] [nvarchar](50) NOT NULL,
+	[updatedOn] [datetime2](0) NOT NULL,
+	[updatedBy] [nvarchar](50) NOT NULL,
+	[deletedOn] [datetime2](0) NULL,
+	[DeletedBy] [nvarchar](50) NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_Table_1] PRIMARY KEY CLUSTERED 
+(
+	[appointmentId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Auth]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Auth](
+	[authId] [int] IDENTITY(1,1) NOT NULL,
+	[userName] [nvarchar](50) NOT NULL,
+	[passwordHash] [varbinary](512) NOT NULL,
+	[passwordSalt] [varbinary](128) NOT NULL,
+	[email] [nvarchar](max) NOT NULL,
+	[role] [nvarchar](50) NOT NULL,
+	[createdOn] [datetime2](7) NOT NULL,
+	[createdBy] [nvarchar](50) NOT NULL,
+	[updatedOn] [datetime2](0) NOT NULL,
+	[updatedBy] [nvarchar](50) NOT NULL,
+	[deletedOn] [datetime2](0) NULL,
+	[DeletedBy] [nvarchar](50) NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_users] PRIMARY KEY CLUSTERED 
+(
+	[authId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ClinicStatus]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ClinicStatus](
+	[logId] [int] IDENTITY(1,1) NOT NULL,
+	[status] [bit] NOT NULL,
+	[nurseId] [int] NOT NULL,
+	[createdOn] [datetime2](0) NOT NULL,
+	[createdBy] [nvarchar](50) NOT NULL,
+	[updatedOn] [datetime2](0) NOT NULL,
+	[updatedBy] [nvarchar](50) NOT NULL,
+	[deletedOn] [datetime2](0) NULL,
+	[DeletedBy] [nvarchar](50) NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_ClinicStatus] PRIMARY KEY CLUSTERED 
+(
+	[logId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[MedecineStocks]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[MedecineStocks](
+	[medicineId] [int] IDENTITY(1,1) NOT NULL,
+	[medecineName] [nvarchar](max) NOT NULL,
+	[medecineDescription] [nvarchar](max) NOT NULL,
+	[numberOfStock] [int] NOT NULL,
+	[nurseId] [int] NOT NULL,
+	[createdOn] [datetime2](0) NOT NULL,
+	[createdBy] [nvarchar](50) NOT NULL,
+	[updatedOn] [datetime2](0) NULL,
+	[updatedBy] [nvarchar](50) NULL,
+	[deletedOn] [datetime2](0) NOT NULL,
+	[DeletedBy] [nvarchar](50) NOT NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_MedecineStocks] PRIMARY KEY CLUSTERED 
+(
+	[medicineId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Nurses]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Nurses](
+	[nurseId] [int] NOT NULL,
+	[authId] [int] NOT NULL,
+	[firstName] [nvarchar](max) NOT NULL,
+	[middleName] [nvarchar](5) NULL,
+	[lastName] [nvarchar](max) NOT NULL,
+	[contactNumber] [nvarchar](11) NULL,
+	[createdOn] [datetime2](0) NOT NULL,
+	[createdBy] [nvarchar](50) NOT NULL,
+	[updatedOn] [datetime2](0) NULL,
+	[updatedBy] [nvarchar](50) NULL,
+	[deletedOn] [datetime2](0) NOT NULL,
+	[DeletedBy] [nvarchar](50) NOT NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_Nurses] PRIMARY KEY CLUSTERED 
+(
+	[nurseId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PatientForms]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PatientForms](
+	[formId] [int] IDENTITY(1,1) NOT NULL,
+	[issueType] [nvarchar](max) NOT NULL,
+	[issueDescryption] [nvarchar](max) NULL,
+	[status] [nvarchar](10) NOT NULL,
+	[userId] [int] NOT NULL,
+	[patientName] [nvarchar](max) NOT NULL,
+	[createdOn] [datetime2](0) NULL,
+	[createdBy] [nvarchar](50) NULL,
+	[updatedOn] [datetime2](0) NULL,
+	[updatedBy] [nvarchar](50) NULL,
+	[deletedOn] [datetime2](0) NULL,
+	[DeletedBy] [nvarchar](50) NOT NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_PatientForms] PRIMARY KEY CLUSTERED 
+(
+	[formId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PatientRecords]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PatientRecords](
+	[patientRecordId] [int] IDENTITY(1,1) NOT NULL,
+	[nursingDiagnosis] [nvarchar](50) NOT NULL,
+	[nursingIntervention] [nvarchar](max) NOT NULL,
+	[nurseId] [int] NOT NULL,
+	[createdOn] [datetime2](0) NOT NULL,
+	[createdBy] [nvarchar](50) NOT NULL,
+	[updatedOn] [datetime2](0) NULL,
+	[updatedBy] [nvarchar](50) NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_PatientRecord] PRIMARY KEY CLUSTERED 
+(
+	[patientRecordId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[SessionTokens]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[SessionTokens](
+	[sessionId] [int] IDENTITY(1,1) NOT NULL,
+	[token] [varbinary](64) NOT NULL,
+	[userId] [int] NOT NULL,
+	[createdAt] [datetime2](3) NOT NULL,
+	[expiresAt] [datetime2](3) NOT NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_SessionTokens] PRIMARY KEY CLUSTERED 
+(
+	[sessionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 9/10/2025 7:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[userId] [int] IDENTITY(1,1) NOT NULL,
+	[authId] [int] NOT NULL,
+	[firstName] [nvarchar](50) NOT NULL,
+	[middleName] [nvarchar](50) NULL,
+	[lastName] [nvarchar](50) NOT NULL,
+	[contactNumber] [nvarchar](15) NOT NULL,
+	[address] [nvarchar](50) NULL,
+	[createdOn] [datetime2](7) NOT NULL,
+	[createdBy] [nvarchar](50) NOT NULL,
+	[updatedOn] [datetime2](0) NOT NULL,
+	[updatedBy] [nvarchar](50) NOT NULL,
+	[deletedOn] [datetime2](0) NULL,
+	[DeletedBy] [nvarchar](50) NULL,
+	[isActive] [bit] NOT NULL,
+ CONSTRAINT [PK_Users_1] PRIMARY KEY CLUSTERED 
+(
+	[userId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_role]    Script Date: 9/10/2025 7:02:20 PM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [IX_role] ON [dbo].[Auth]
+(
+	[role] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_TokenUnique]    Script Date: 9/10/2025 7:02:20 PM ******/
+CREATE NONCLUSTERED INDEX [IX_TokenUnique] ON [dbo].[SessionTokens]
+(
+	[token] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_UserIdUnique]    Script Date: 9/10/2025 7:02:20 PM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [IX_UserIdUnique] ON [dbo].[SessionTokens]
+(
+	[userId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Auth] ADD  CONSTRAINT [DF_Auth_createdOn]  DEFAULT (sysdatetime()) FOR [createdOn]
+GO
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_createdOn]  DEFAULT (sysdatetime()) FOR [createdOn]
+GO
+ALTER TABLE [dbo].[AppointmentSchedule]  WITH CHECK ADD  CONSTRAINT [FK_Table_1_Nurses] FOREIGN KEY([nurseId])
+REFERENCES [dbo].[Nurses] ([nurseId])
+GO
+ALTER TABLE [dbo].[AppointmentSchedule] CHECK CONSTRAINT [FK_Table_1_Nurses]
+GO
+ALTER TABLE [dbo].[ClinicStatus]  WITH CHECK ADD  CONSTRAINT [FK_ClinicStatus_Nurses] FOREIGN KEY([nurseId])
+REFERENCES [dbo].[Nurses] ([nurseId])
+GO
+ALTER TABLE [dbo].[ClinicStatus] CHECK CONSTRAINT [FK_ClinicStatus_Nurses]
+GO
+ALTER TABLE [dbo].[MedecineStocks]  WITH CHECK ADD  CONSTRAINT [FK_MedecineStocks_MedecineStocks] FOREIGN KEY([nurseId])
+REFERENCES [dbo].[Nurses] ([nurseId])
+GO
+ALTER TABLE [dbo].[MedecineStocks] CHECK CONSTRAINT [FK_MedecineStocks_MedecineStocks]
+GO
+ALTER TABLE [dbo].[Nurses]  WITH CHECK ADD  CONSTRAINT [FK_Nurses_Auth] FOREIGN KEY([authId])
+REFERENCES [dbo].[Auth] ([authId])
+GO
+ALTER TABLE [dbo].[Nurses] CHECK CONSTRAINT [FK_Nurses_Auth]
+GO
+ALTER TABLE [dbo].[PatientForms]  WITH CHECK ADD  CONSTRAINT [FK_PatientForms_Users] FOREIGN KEY([userId])
+REFERENCES [dbo].[Users] ([userId])
+GO
+ALTER TABLE [dbo].[PatientForms] CHECK CONSTRAINT [FK_PatientForms_Users]
+GO
+ALTER TABLE [dbo].[PatientRecords]  WITH CHECK ADD  CONSTRAINT [FK_PatientRecord_Nurses] FOREIGN KEY([nurseId])
+REFERENCES [dbo].[Nurses] ([nurseId])
+GO
+ALTER TABLE [dbo].[PatientRecords] CHECK CONSTRAINT [FK_PatientRecord_Nurses]
+GO
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users_Auth] FOREIGN KEY([authId])
+REFERENCES [dbo].[Auth] ([authId])
+GO
+ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK_Users_Auth]
+GO
+USE [master]
+GO
+ALTER DATABASE [NurseRecordingSystem] SET  READ_WRITE 
+GO
