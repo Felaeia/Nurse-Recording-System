@@ -6,6 +6,6 @@ namespace NurseRecordingSystem.Contracts.ServiceContracts.User
     public interface ICreateUsersService
     {
         Task<int> CreateUserAuthenticateAsync(CreateAuthenticationRequestDTO authRequest, CreateUserRequestDTO user);
-        Task CreateUser(CreateUserRequestDTO user);
+        Task CreateUserAsync(CreateUserRequestDTO user);
     }
 }

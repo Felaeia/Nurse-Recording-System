@@ -99,7 +99,8 @@ namespace NurseRecordingSystem.Class.Services.UserServices
 
         //User Login 
         //CHORE: Updated Insert SqlCommand to accept updatedOn, updatedBy, isActive(bit) :,(
-        public async Task CreateUser(CreateUserRequestDTO user)
+        //UNUSED Function for now
+        public async Task CreateUserAsync(CreateUserRequestDTO user)
         {
             if (user == null)
             {

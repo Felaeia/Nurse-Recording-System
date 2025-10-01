@@ -52,7 +52,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             var random = new Random();
             var expectedAuthId = random.Next(100);
             _mockCreateUserService.Setup(s => s.CreateUserAuthenticateAsync(request, user)).ReturnsAsync(expectedAuthId);
-            _mockCreateUserService.Setup(s => s.CreateUser(user)).Returns(Task.CompletedTask);
+            _mockCreateUserService.Setup(s => s.CreateUserAsync(user)).Returns(Task.CompletedTask);
 
             // Act
             var result = await _userController.CreateAuthentication(userAuth) as OkObjectResult;
