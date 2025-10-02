@@ -31,8 +31,9 @@ namespace NurseRecordingSystem.Class.Services.Authentication
             }
 
             using (var connection = new SqlConnection(_connectionString))
-            using (var cmdLoginUser = new SqlCommand("SELECT authId, userName, passwordHash,passwordSalt, email, role FROM [Auth] WHERE email = @email", connection))
+            using (var cmdLoginUser = new SqlCommand("dbo.LoginUserAuth", connection))
             {
+                cmdLoginUser.CommandType = System.Data.CommandType.StoredProcedure;
                 cmdLoginUser.Parameters.AddWithValue("@email", request.Email);
                 try
                 {
