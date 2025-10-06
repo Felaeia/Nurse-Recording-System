@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_colors.dart';
+import '../screens/home.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -110,9 +111,9 @@ class _SignInState extends State<SignIn> {
                   CustomButton(
                     text: 'SIGN IN',
                     onPressed: () {
-                      // Navigator.of(context).pushReplacement(
-                      //   MaterialPageRoute(builder: (_) => const Home()),
-                      // );
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const Home()),
+                      );
                     },
                   ),
 
