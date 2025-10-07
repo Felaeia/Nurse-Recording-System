@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.ServiceContracts.User;
 using NurseRecordingSystem.Model.DTO.AuthDTOs;
 using NurseRecordingSystem.Model.DTO.UserDTOs;
@@ -12,7 +11,7 @@ namespace NurseRecordingSystemTest.ControllerTest
     public class UserControllerTest
     {
         private readonly Mock<ICreateUsersService> _mockCreateUserService;
-        private readonly IUserController _userController; 
+        private readonly UserController _userController;
 
         public UserControllerTest()
         {
@@ -20,10 +19,12 @@ namespace NurseRecordingSystemTest.ControllerTest
             _userController = new UserController(_mockCreateUserService.Object);
         }
         [Fact]
-        public async Task CreateUser_ValidRequest_ReturnsOkResult()
+        public async Task CreateAuthentication_ValidRequest_ReturnsOkResult()
         {
-            // Mock Data (Create A Mock Data Folder and Transfer This, and Just Call It)
-            var userAuth = new CreateUserWithAuthenticationDTO
+            // ARRANGE
+
+            // 1. Define the inputs for the test
+            var combinedRequest = new CreateUserWithAuthenticationDTO // Use the DTO accepted by the Controller's public method
             {
                 UserName = "testuser",
                 Password = "Test@123",
@@ -34,32 +35,37 @@ namespace NurseRecordingSystemTest.ControllerTest
                 ContactNumber = "1234567890",
                 Address = "123 Test St"
             };
-            var request = new CreateAuthenticationRequestDTO
-            {
-                UserName = userAuth.Email,
-                Password = userAuth.Password,
-                Email = userAuth.Email
-            };
-            var user = new CreateUserRequestDTO
-            {
-                FirstName = userAuth.FirstName,
-                MiddleName = userAuth.MiddleName,
-                LastName = userAuth.LastName,
-                ContactNumber = userAuth.ContactNumber,
-                Address = userAuth.Address
-            };
 
-            var random = new Random();
-            var expectedAuthId = random.Next(100);
-            _mockCreateUserService.Setup(s => s.CreateUserAuthenticateAsync(request, user)).ReturnsAsync(expectedAuthId);
-            _mockCreateUserService.Setup(s => s.CreateUser(user)).Returns(Task.CompletedTask);
+            // 2. Define the expected return value from the service
+            const int expectedAuthId = 42;
 
-            // Act
-            var result = await _userController.CreateAuthentication(userAuth) as OkObjectResult;
+            // 3. Setup the mock service to return the expected value
+            // NOTE: The controller logic breaks down the combined DTO into two separate DTOs 
+            // before calling the service, so we use It.IsAny to match the call.
+            _mockCreateUserService
+                .Setup(s => s.CreateUserAuthenticateAsync(
+                    It.IsAny<CreateAuthenticationRequestDTO>(),
+                    It.IsAny<CreateUserRequestDTO>()
+                ))
+                // Set the return value here!
+                .ReturnsAsync(expectedAuthId);
 
-            // Assert
+            // ACT
+            // Call the public controller method with the ONE COMBINED DTO.
+            var result = await _userController.CreateAuthentication(combinedRequest) as OkObjectResult;
+
+            // ASSERT
+            // 1. Check if the result is not null and is an OkObjectResult
             Assert.NotNull(result);
             Assert.Equal(200, result.StatusCode);
+
+            // 2. Check the content of the OkResult
+            // Since your controller returns: new { AuthId = authId, Message = "..." }
+            // we need to cast the result.Value to a dynamic type to access properties.
+            dynamic resultValue = result.Value;
+            Assert.NotNull(resultValue);
+            Assert.Equal(expectedAuthId, resultValue.AuthId); // Verify the ID was returned
+            Assert.Equal("Authentication created successfully.", resultValue.Message);
         }
     }
 }

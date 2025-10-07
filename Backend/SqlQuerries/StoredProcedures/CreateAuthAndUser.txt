@@ -1,0 +1,107 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE dbo.CreateUserAndAuth
+	-- Add the parameters for the stored procedure here
+	-- Parameters for the [Auth] table --
+	@userName NVARCHAR(50),
+	@passwordHash VARBINARY(MAX),
+	@passwordSalt VARBINARY(MAX),
+	@email NVARCHAR(100),
+	@role INT,
+	@createdBy NVARCHAR(50),
+	@updatedOn DATETIME2,
+	@updatedBy NVARCHAR(50),
+	@isActive BIT,
+
+	-- Parameters for the [Users] table --
+	@firstName NVARCHAR(50),
+	@middleName NVARCHAR(50),
+	@lastName NVARCHAR(50),
+	@contactNumber NVARCHAR(50),
+	@address NVARCHAR(50)
+
+AS
+BEGIN
+	BEGIN TRANSACTION;
+	SET NOCOUNT ON;
+
+	DECLARE @newAuthId INT
+    -- Insert statements for procedure here --
+	INSERT INTO [Auth] (
+	userName,
+	passwordHash,
+	passwordSalt,
+	email,
+	role,
+	createdBy,
+	updatedOn,
+	updatedBy,
+	isActive
+	)
+	VALUES (
+	@userName,
+	@passwordHash,
+	@passwordSalt,
+	@email,
+	@role,
+	@createdBy,
+	@updatedOn,
+	@isActive
+	);
+
+	-- Get the ID of the newly inserted Auth Record
+	SET @newAuthId = SCOPE_IDENTITY();
+
+	-- Check if the Auth insert failed
+	IF @newAuthId IS NULL OR @newAuthId = 0
+	BEGIN
+		ROLLBACK TRANSACTION;
+		-- RAISEERROR to signal an error back to the aplication
+		RAISERROR('Failed to insert into Auth Table.',16, 1);
+		RETURN -1; -- Return a status code indicating failure
+
+	END
+
+	INSERT INTO [Users] (
+	authId,
+	firstName,
+	middleName,
+	lastName,
+	contactNumber,
+	address,
+	createdBy,
+	updatedOn,
+	updatedBy,
+	isActive
+	)
+	VALUES (
+	@newAuthId,
+	@firstName,
+	@middleName,
+	@lastName,
+	@contactNumber,
+	@address,
+	@createdBy,
+	@updatedOn,
+	@updatedBy,
+	@isActive
+	);
+
+	-- Check for errors after the Users insert
+	IF @@ERROR <> 0
+	BEGIN
+		ROLLBACK TRANSACTION;
+		RETURN -1; -- Return a status code indicating failure
+	END
+
+	-- If both inserts succeeded, commit the transaction
+	COMMIT TRANSACTION;
+
+	-- Return the new AuthId to the application
+	SELECT @newAuthId
+
+END
+GO

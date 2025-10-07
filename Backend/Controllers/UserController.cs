@@ -44,7 +44,7 @@ namespace PresentationProject.Controllers
                     ContactNumber = request.ContactNumber
                 };
                 var authId = await _createUsersService.CreateUserAuthenticateAsync(authRequest, userRequest);
-                //await _createUsersService.CreateUser(userRequest);
+                //await _createUsersService.CreateUserAsync(userRequest);
                 return Ok(new { AuthId = authId, Message = "Authentication created successfully." });
             }
             catch (Exception ex)

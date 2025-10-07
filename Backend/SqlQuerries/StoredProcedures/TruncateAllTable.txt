@@ -1,0 +1,65 @@
+﻿USE [NurseRecordingSystem]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_TruncateAllTables]    Script Date: 10/2/2025 12:46:10 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[sp_TruncateAllTables]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @table NVARCHAR(256);
+    DECLARE @sql NVARCHAR(MAX);
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        PRINT 'Disabling all foreign key constraints...';
+        EXEC sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL";
+
+        DECLARE table_cursor CURSOR FOR
+        SELECT QUOTENAME(s.name) + '.' + QUOTENAME(t.name)
+        FROM sys.tables t
+        INNER JOIN sys.schemas s ON t.schema_id = s.schema_id;
+
+        OPEN table_cursor;
+        FETCH NEXT FROM table_cursor INTO @table;
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            -- Check if this table is referenced by another FK
+            IF EXISTS (
+                SELECT 1
+                FROM sys.foreign_keys fk
+                WHERE fk.referenced_object_id = OBJECT_ID(@table)
+            )
+                SET @sql = 'DELETE FROM ' + @table;   -- must use DELETE
+            ELSE
+                SET @sql = 'TRUNCATE TABLE ' + @table; -- safe to TRUNCATE
+
+            PRINT @sql;
+            EXEC (@sql);
+
+            FETCH NEXT FROM table_cursor INTO @table;
+        END
+
+        CLOSE table_cursor;
+        DEALLOCATE table_cursor;
+
+        PRINT 'Re-enabling all foreign key constraints...';
+        EXEC sp_MSforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL";
+
+        COMMIT TRANSACTION;
+
+        PRINT '✅ All tables truncated/deleted successfully.';
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+
+        PRINT '❌ Error occurred while truncating tables.';
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END

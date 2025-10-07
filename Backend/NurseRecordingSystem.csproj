@@ -25,6 +25,7 @@
   <ItemGroup>
     <Folder Include="Contracts\ServiceContracts\Nurse\" />
     <Folder Include="Model\DTO\NurseDTOs\" />
+    <Folder Include="SqlQuerries\StoredProcedures\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
