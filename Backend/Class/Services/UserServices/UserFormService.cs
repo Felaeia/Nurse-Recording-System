@@ -22,11 +22,22 @@ namespace NurseRecordingSystem.Class.Services.UserServices
                 throw new ArgumentNullException(nameof(userFormRequest), "UserFormRequest Cannot be Null");
             }
 
+
             await using (var connecttion =  new SqlConnection(_connectionString))
-            await using (var cmd = new SqlCommand("INSERT INTO [PatientForms](issueType, issueDescryption, status, userId, patientName, createdBy, updatedBy, deletedBy, isActive) " +
-                "VALUES (@IssueType, @IssueDescryption, @Status, @UserId, @PatientName, @CreatedBy, @UpdatedBy, @DeletedBy, @IsActive) ", connecttion))
+            await using (var cmd = new SqlCommand("dbo.CreateUserForm ", connecttion))
             {
-                
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@issueType", userFormRequest.issueType);
+                cmd.Parameters.AddWithValue("@issueDescryption", userFormRequest.issueDescryption);
+                cmd.Parameters.AddWithValue("@Status", userFormRequest.status);
+                cmd.Parameters.AddWithValue("@UserId", userFormRequest.userId);
+                cmd.Parameters.AddWithValue("@PatientName", userFormRequest.patientName);
+                cmd.Parameters.AddWithValue("@CreatedBy", userFormRequest.createdBy);
+                cmd.Parameters.AddWithValue("@UpdatedBy", userFormRequest.updatedBy);
+                cmd.Parameters.AddWithValue("@DeletedBy", userFormRequest.DeletedBy);
+                cmd.Parameters.AddWithValue("@IsActive", 1);
+
                 try
                 {
                     await connecttion.OpenAsync();
