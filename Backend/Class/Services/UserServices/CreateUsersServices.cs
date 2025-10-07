@@ -31,6 +31,7 @@ namespace NurseRecordingSystem.Class.Services.UserServices
             var role = 1;
             byte[] passwordSalt, PasswordHash;
             PasswordHelper.CreatePasswordHash(authRequest.Password, out PasswordHash, out passwordSalt);
+            int newAuthId;
 
             await using (var connection = new SqlConnection(_connectionString))
             await using (var cmd = new SqlCommand("dbo.CreateUserAndAuth", connection))
