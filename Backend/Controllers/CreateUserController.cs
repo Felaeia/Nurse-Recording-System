@@ -9,11 +9,11 @@ namespace PresentationProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase , IUserController
+    public class CreateUserController : ControllerBase , IUserController
     {
         private readonly ICreateUsersService _createUsersService;
 
-        public UserController(ICreateUsersService createUsersService)
+        public CreateUserController(ICreateUsersService createUsersService)
         {
             _createUsersService = createUsersService
                 ?? throw new ArgumentNullException(nameof(createUsersService), "UserAuthentication cannot be null");

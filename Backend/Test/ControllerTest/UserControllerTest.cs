@@ -11,12 +11,12 @@ namespace NurseRecordingSystemTest.ControllerTest
     public class UserControllerTest
     {
         private readonly Mock<ICreateUsersService> _mockCreateUserService;
-        private readonly UserController _userController;
+        private readonly CreateUserController _userController;
 
         public UserControllerTest()
         {
             _mockCreateUserService = new Mock<ICreateUsersService>();
-            _userController = new UserController(_mockCreateUserService.Object);
+            _userController = new CreateUserController(_mockCreateUserService.Object);
         }
         [Fact]
         public async Task CreateAuthentication_ValidRequest_ReturnsOkResult()
