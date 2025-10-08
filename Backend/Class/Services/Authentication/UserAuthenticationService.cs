@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+﻿﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Class.Services.HelperServices;
 using NurseRecordingSystem.Contracts.RepositoryContracts.User;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
@@ -23,7 +23,7 @@ namespace NurseRecordingSystem.Class.Services.Authentication
 
         //User Method: Login
         #region Login
-        public async Task<LoginResponseDTO> AuthenticateAsync(LoginRequestDTO request)
+        public async Task<LoginResponseDTO?> AuthenticateAsync(LoginRequestDTO request)
         {
             if (request == null)
             {
@@ -63,7 +63,7 @@ namespace NurseRecordingSystem.Class.Services.Authentication
                     throw new Exception("Database ERROR occured during login", ex);
                 }
 
-                throw new UnauthorizedAccessException("Invalid Email or Password.");
+                return null; // Invalid credentials
             }
         }
         #endregion
