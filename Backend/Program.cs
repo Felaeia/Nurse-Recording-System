@@ -1,10 +1,10 @@
 using NurseRecordingSystem.Class.Repository;
 using NurseRecordingSystem.Class.Services.Authentication;
-using NurseRecordingSystem.Class.Services.UserServices;
+using NurseRecordingSystem.Class.Services.UserServices.Users;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.RepositoryContracts.User;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
-using NurseRecordingSystem.Contracts.ServiceContracts.User;
+using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
 using NurseRecordingSystem.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<UserAuthenticationService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ICreateUsersService, CreateUsersServices>();
+builder.Services.AddScoped<ICreateUsers, CreateUser>();
 builder.Services.AddScoped<IAuthController, AuthController>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 

@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
-using NurseRecordingSystem.Model.DTO.HelperDTOs;
+using NurseRecordingSystem.Model.DTO.AuthDTOs;
 
 namespace NurseRecordingSystem.Controllers
 {
-    public class AuthController : Controller , IAuthController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase , IAuthController
     {
         private readonly IUserAuthenticationService _userAuthenticationService;
 

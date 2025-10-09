@@ -58,7 +58,7 @@ namespace NurseRecordingSystem.Tests.ServiceTests.UserServicesTests
 
             
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                service.CreateUser(null!)
+                service.CreateUserAsync(null!)
             );
         }
 

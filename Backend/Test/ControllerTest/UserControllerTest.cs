@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NurseRecordingSystem.Contracts.ServiceContracts.User;
+using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
 using NurseRecordingSystem.Model.DTO.AuthDTOs;
-using NurseRecordingSystem.Model.DTO.UserDTOs;
+using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 using PresentationProject.Controllers;
 using Xunit;
 
@@ -10,13 +10,13 @@ namespace NurseRecordingSystemTest.ControllerTest
 {
     public class UserControllerTest
     {
-        private readonly Mock<ICreateUsersService> _mockCreateUserService;
-        private readonly UserController _userController;
+        private readonly Mock<ICreateUsers> _mockCreateUserService;
+        private readonly CreateUserController _userController;
 
         public UserControllerTest()
         {
-            _mockCreateUserService = new Mock<ICreateUsersService>();
-            _userController = new UserController(_mockCreateUserService.Object);
+            _mockCreateUserService = new Mock<ICreateUsers>();
+            _userController = new CreateUserController(_mockCreateUserService.Object);
         }
         [Fact]
         public async Task CreateAuthentication_ValidRequest_ReturnsOkResult()
