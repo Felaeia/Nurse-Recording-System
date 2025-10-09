@@ -12,7 +12,7 @@ namespace NurseRecordingSystemTest.ControllerTest
     public class UserControllerTest
     {
         private readonly Mock<ICreateUsersService> _mockCreateUserService;
-        private readonly IUserController _userController; 
+        private readonly IUserController _userController;
 
         public UserControllerTest()
         {
@@ -22,17 +22,17 @@ namespace NurseRecordingSystemTest.ControllerTest
         [Fact]
         public async Task CreateUser_ValidRequest_ReturnsOkResult()
         {
-            // Mock Data (Create A Mock Data Folder and Transfer This, and Just Call It)
+            // Mock Data 
             var userAuth = new CreateUserWithAuthenticationDTO
             {
-                UserName = "testuser",
-                Password = "Test@123",
+                UserName = "Mags",
+                Password = "123123",
                 Email = "testuser@gmail.com",
                 FirstName = "Test",
                 MiddleName = "T",
                 LastName = "User",
                 ContactNumber = "1234567890",
-                Address = "123 Test St"
+                Address = "LLC"
             };
             var request = new CreateAuthenticationRequestDTO
             {
@@ -54,10 +54,9 @@ namespace NurseRecordingSystemTest.ControllerTest
             _mockCreateUserService.Setup(s => s.CreateUserAuthenticateAsync(request, user)).ReturnsAsync(expectedAuthId);
             _mockCreateUserService.Setup(s => s.CreateUser(user)).Returns(Task.CompletedTask);
 
-            // Act
             var result = await _userController.CreateAuthentication(userAuth) as OkObjectResult;
 
-            // Assert
+
             Assert.NotNull(result);
             Assert.Equal(200, result.StatusCode);
         }
