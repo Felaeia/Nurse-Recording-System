@@ -6,16 +6,16 @@ using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs;
 
 namespace NurseRecordingSystem.Class.Services.UserServices.UserForms
 {
-    public class CreateUserFormService : ICreateUserForm
+    public class CreateUserForm : ICreateUserForm
     {
         private readonly string? _connectionString;
 
-        public CreateUserFormService(IConfiguration configuration)
+        public CreateUserForm(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         }
-        public async Task<UserFormResponseDTO> CreateUserForm(UserFormRequestDTO userFormRequest, string userId, string creator)
+        public async Task<UserFormResponseDTO> CreateUserFormAsync(UserFormRequestDTO userFormRequest, string userId, string creator)
         {
             if (userFormRequest == null)
             {

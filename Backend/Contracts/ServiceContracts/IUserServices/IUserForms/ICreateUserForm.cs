@@ -4,6 +4,6 @@ namespace NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForm
 {
     public interface ICreateUserForm
     {
-        Task<UserFormResponseDTO> CreateUserForm(UserFormRequestDTO userForm, string userId, string creator);
+        Task<UserFormResponseDTO> CreateUserFormAsync(UserFormRequestDTO userForm, string userId, string creator);
     }
 }

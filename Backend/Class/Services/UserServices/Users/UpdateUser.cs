@@ -4,7 +4,7 @@ using NurseRecordingSystem.Model.DTO.UserDTOs; // Assuming an UpdateUserRequestD
 
 namespace NurseRecordingSystem.Class.Services.UserServices.Users
 {
-    public class UpdateUser : IUpdateUserService
+    public class UpdateUser : IUpdateUser
     {
         private readonly string? _connectionString;
 
@@ -25,10 +25,10 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@email", userRequest.Email);
                 cmd.Parameters.AddWithValue("@firstName", userRequest.FirstName);
-                cmd.Parameters.AddWithValue("@middleName", (object)userRequest.MiddleName ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@middleName", userRequest.MiddleName);
                 cmd.Parameters.AddWithValue("@lastName", userRequest.LastName);
                 cmd.Parameters.AddWithValue("@contactNumber", userRequest.ContactNumber);
-                cmd.Parameters.AddWithValue("@address", (object)userRequest.Address ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@address", userRequest.Address);
                 cmd.Parameters.AddWithValue("@updatedBy", updatedBy);
 
                 // Output/Return Parameter from SP
