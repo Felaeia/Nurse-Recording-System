@@ -4,7 +4,7 @@ using NurseRecordingSystem.Contracts.ServiceContracts.User;
 using NurseRecordingSystem.Model.DTO.AuthDTOs;
 using NurseRecordingSystem.Model.DTO.UserDTOs;
 
-namespace NurseRecordingSystem.Class.Services.UserServices
+namespace NurseRecordingSystem.Class.Services.UserServices.Users
 {
     public class CreateUsersServices : ICreateUsersService
     {

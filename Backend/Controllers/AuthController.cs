@@ -5,7 +5,9 @@ using NurseRecordingSystem.Model.DTO.HelperDTOs;
 
 namespace NurseRecordingSystem.Controllers
 {
-    public class AuthController : Controller , IAuthController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase , IAuthController
     {
         private readonly IUserAuthenticationService _userAuthenticationService;
 

@@ -4,13 +4,13 @@ using Microsoft.Identity.Client;
 using NurseRecordingSystem.Contracts.ServiceContracts.User;
 using NurseRecordingSystem.Model.DTO.UserDTOs;
 
-namespace NurseRecordingSystem.Class.Services.UserServices
+namespace NurseRecordingSystem.Class.Services.UserServices.UserForms
 {
-    public class UserFormService : IUserFormService
+    public class CreateUserFormService : IUserFormService
     {
         private readonly string? _connectionString;
 
-        public UserFormService(IConfiguration configuration)
+        public CreateUserFormService(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

@@ -1,6 +1,6 @@
 using NurseRecordingSystem.Class.Repository;
 using NurseRecordingSystem.Class.Services.Authentication;
-using NurseRecordingSystem.Class.Services.UserServices;
+using NurseRecordingSystem.Class.Services.UserServices.Users;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.RepositoryContracts.User;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
