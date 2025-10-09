@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ControllerContracts;
-using NurseRecordingSystem.Contracts.ServiceContracts.User;
+using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
 using NurseRecordingSystem.Model.DTO.AuthDTOs;
 using NurseRecordingSystem.Model.DTO.UserDTOs;
 
@@ -10,9 +10,9 @@ namespace PresentationProject.Controllers
     [ApiController]
     public class CreateUserController : ControllerBase , IUserController
     {
-        private readonly ICreateUsersService _createUsersService;
+        private readonly ICreateUsers _createUsersService;
 
-        public CreateUserController(ICreateUsersService createUsersService)
+        public CreateUserController(ICreateUsers createUsersService)
         {
             _createUsersService = createUsersService
                 ?? throw new ArgumentNullException(nameof(createUsersService), "UserAuthentication cannot be null");

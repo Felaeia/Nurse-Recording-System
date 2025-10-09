@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NurseRecordingSystem.Contracts.ServiceContracts.User;
-using NurseRecordingSystem.Model.DTO.UserDTOs;
+using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
+using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs;
 
 namespace NurseRecordingSystem.Controllers
 {
@@ -8,9 +8,9 @@ namespace NurseRecordingSystem.Controllers
     [Route("api/[controller]")] // e.g., /api/UserForm
     public class UserFormController : ControllerBase
     {
-        private readonly IUserFormService _userFormService;
+        private readonly ICreateUserForm _userFormService;
 
-        public UserFormController(IUserFormService userFormService)
+        public UserFormController(ICreateUserForm userFormService)
         {
             _userFormService = userFormService;
         }
