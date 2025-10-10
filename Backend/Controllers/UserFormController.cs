@@ -70,9 +70,11 @@ namespace NurseRecordingSystem.Controllers
         /// Handles the request to update an existing PatientForm record.
         /// </summary>
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateUserForm([FromBody] UserFormRequestDTO userFormRequest)
+        public async Task<IActionResult> UpdateUserForm(
+            [FromBody] UpdateUserFormRequestDTO userUpdateFormRequest,
+            [FromHeader(Name = "X-UpdatedBy")] string UpdatedByName)
         {
-            if (userFormRequest == null)
+            if (userUpdateFormRequest == null)
             {
                 return BadRequest("UserFormRequest cannot be null.");
             }
@@ -83,7 +85,7 @@ namespace NurseRecordingSystem.Controllers
             try
             {
                 // 3. Call the injected service method
-                UserFormResponseDTO response = await _updateUserFormService.UpdateUserFormAsync(userFormRequest);
+                UserFormResponseDTO response = await _updateUserFormService.UpdateUserFormAsync(userUpdateFormRequest, UpdatedByName);
                 if (response.IsSuccess)
                 {
                     // HTTP 200 OK with the response DTO
@@ -120,12 +122,16 @@ namespace NurseRecordingSystem.Controllers
         /// </summary>
         /// <param name="formId">The ID of the form to be deleted.</param>
         [HttpDelete("delete/{formId}")] // Defines the HTTP method and route pattern (e.g., DELETE /api/userform/delete/123)
-        public async Task<IActionResult> DeleteUserForm(int formId)
+        
+        public async Task<IActionResult> DeleteUserForm(
+            int formId, 
+            [FromHeader(Name = "X-DeletedBy")] string deletedByName)
         {
+            
             // --- Authentication/Authorization Logic (Placeholder) ---
             // Get the ID of the user performing the deletion from the request context.
             // This assumes the user's ID is stored in the JWT token/Claims.
-            string deletedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "Unknown";
+            string deletedBy = deletedByName ?? "Unknown";
 
             if (string.IsNullOrEmpty(deletedBy) || deletedBy == "Unknown")
             {

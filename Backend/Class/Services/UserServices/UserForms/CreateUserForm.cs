@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Data.SqlClient;
-using Microsoft.Identity.Client;
+﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
 using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs;
 
@@ -24,17 +22,17 @@ namespace NurseRecordingSystem.Class.Services.UserServices.UserForms
 
 
             await using (var connecttion =  new SqlConnection(_connectionString))
-            await using (var cmd = new SqlCommand("dbo.CreateUserForm ", connecttion))
+            await using (var cmd = new SqlCommand("dbo.usp_CreateUserForm ", connecttion))
             {
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@issueType", userFormRequest.issueType);
                 cmd.Parameters.AddWithValue("@issueDescryption", userFormRequest.issueDescryption);
                 cmd.Parameters.AddWithValue("@Status", userFormRequest.status);
-                cmd.Parameters.AddWithValue("@UserId", userFormRequest.userId);
+                cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@PatientName", userFormRequest.patientName);
-                cmd.Parameters.AddWithValue("@CreatedBy", userFormRequest.createdBy);
-                cmd.Parameters.AddWithValue("@UpdatedBy", userFormRequest.updatedBy);
+                cmd.Parameters.AddWithValue("@CreatorName", creator);
+                cmd.Parameters.AddWithValue("@UpdaterName", userFormRequest.updatedBy);
                 cmd.Parameters.AddWithValue("@DeletedBy", userFormRequest.DeletedBy);
                 cmd.Parameters.AddWithValue("@IsActive", 1);
 

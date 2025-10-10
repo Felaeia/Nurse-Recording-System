@@ -16,7 +16,7 @@ namespace NurseRecordingSystem.Class.Services.UserServices.UserForms
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         }
 
-        public async Task<UserFormResponseDTO> UpdateUserFormAsync(UserFormRequestDTO userFormRequest)
+        public async Task<UserFormResponseDTO> UpdateUserFormAsync(UpdateUserFormRequestDTO userFormRequest, string Updater)
         {
             if (userFormRequest == null)
             {
@@ -25,7 +25,7 @@ namespace NurseRecordingSystem.Class.Services.UserServices.UserForms
 
             // We only need the fields relevant to the update.
             // Note: The SP only takes FormId, data fields, and UpdatedBy.
-            string updatedBy = userFormRequest.updatedBy;
+            string updatedBy = Updater;
 
             await using (var connection = new SqlConnection(_connectionString))
             await using (var cmd = new SqlCommand("dbo.usp_UpdateUserForm", connection))

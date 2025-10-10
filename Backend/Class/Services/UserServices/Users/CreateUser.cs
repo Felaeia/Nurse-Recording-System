@@ -32,7 +32,7 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
             PasswordHelper.CreatePasswordHash(authRequest.Password, out PasswordHash, out passwordSalt);
 
             await using (var connection = new SqlConnection(_connectionString))
-            await using (var cmd = new SqlCommand("dbo.CreateUserAndAuth", connection))
+            await using (var cmd = new SqlCommand("dbo.usp_CreateUserAndAuth", connection))
             {
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -66,6 +66,10 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
                     }
 
                     return (int)result;
+                }
+                catch (SqlException ex) when (ex.Message.Contains("Email already existing"))
+                {
+                    throw new InvalidOperationException("The email address provided is already in use.", ex);
                 }
                 catch (SqlException ex)
                 {

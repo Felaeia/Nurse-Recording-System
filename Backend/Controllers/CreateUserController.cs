@@ -22,11 +22,26 @@ namespace PresentationProject.Controllers
         /// Create authentication (login credentials) for a new user.
         /// </summary>
         [HttpPost("create-user")]
-        public async Task<IActionResult> CreateAuthentication([FromBody] CreateAuthenticationRequestDTO aRequest, [FromBody] CreateUserRequestDTO uRequest)
+        public async Task<IActionResult> CreateAuthentication([FromBody] CreateAuthenticationRequestDTO request)
         {
             try
             {
-                var authId = await _createUsersService.CreateUserAuthenticateAsync(aRequest, uRequest);
+                var authRequest = new CreateAuthenticationRequestDTO
+                {
+                    UserName = request.UserName,
+                    Password = request.Password,
+                    Email = request.Email
+                };
+
+                var userRequest = new CreateUserRequestDTO
+                {
+                    FirstName = request.FirstName,
+                    MiddleName = request.MiddleName,
+                    LastName = request.LastName,
+                    Address = request.Address,
+                    ContactNumber = request.ContactNumber
+                };
+                var authId = await _createUsersService.CreateUserAuthenticateAsync(authRequest, userRequest);
                 //await _createUsersService.CreateUserAsync(userRequest);
                 return Ok(new { AuthId = authId, Message = "Authentication created successfully." });
             }

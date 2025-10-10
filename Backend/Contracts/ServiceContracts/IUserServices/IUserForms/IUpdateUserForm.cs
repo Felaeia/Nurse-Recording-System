@@ -9,6 +9,6 @@ namespace NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserFor
         /// </summary>
         /// <param name="userFormRequest">The DTO containing the updated form data.</param>
         /// <returns>A Task that represents the asynchronous operation, returning the UserFormResponseDTO.</returns>
-        Task<UserFormResponseDTO> UpdateUserFormAsync(UserFormRequestDTO userFormRequest);
+        Task<UserFormResponseDTO> UpdateUserFormAsync(UpdateUserFormRequestDTO userFormRequest, string Updater);
     }
 }

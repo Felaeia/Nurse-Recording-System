@@ -6,6 +6,6 @@ namespace NurseRecordingSystem.Contracts.ControllerContracts
     public interface IUserController
     {
         [HttpPost("create-user")]
-        Task<IActionResult> CreateAuthentication([FromBody] CreateAuthenticationRequestDTO aRequest, [FromBody] CreateUserRequestDTO uRequest);
+        Task<IActionResult> CreateAuthentication([FromBody] CreateAuthenticationRequestDTO request);
     }
 }
