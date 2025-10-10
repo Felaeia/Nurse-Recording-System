@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
-using NurseRecordingSystem.Model.DTO.UserDTOs;
+using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace PresentationProject.Controllers
 {
@@ -23,26 +22,11 @@ namespace PresentationProject.Controllers
         /// Create authentication (login credentials) for a new user.
         /// </summary>
         [HttpPost("create-user")]
-        public async Task<IActionResult> CreateAuthentication([FromBody] CreateUserWithAuthenticationDTO request)
+        public async Task<IActionResult> CreateAuthentication([FromBody] CreateAuthenticationRequestDTO aRequest, [FromBody] CreateUserRequestDTO uRequest)
         {
             try
             {
-                var authRequest = new CreateAuthenticationRequestDTO
-                {
-                    UserName = request.UserName,
-                    Password = request.Password,
-                    Email = request.Email
-                };
-
-                var userRequest = new CreateUserRequestDTO
-                {
-                    FirstName = request.FirstName,
-                    MiddleName = request.MiddleName,
-                    LastName = request.LastName,
-                    Address = request.Address,
-                    ContactNumber = request.ContactNumber
-                };
-                var authId = await _createUsersService.CreateUserAuthenticateAsync(authRequest, userRequest);
+                var authId = await _createUsersService.CreateUserAuthenticateAsync(aRequest, uRequest);
                 //await _createUsersService.CreateUserAsync(userRequest);
                 return Ok(new { AuthId = authId, Message = "Authentication created successfully." });
             }

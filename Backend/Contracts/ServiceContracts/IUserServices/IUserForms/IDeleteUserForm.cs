@@ -1,8 +1,4 @@
-﻿// File: NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms/IDeleteUserForm.cs
-
-using System.Threading.Tasks;
-
-namespace NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms
+﻿namespace NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms
 {
     public interface IDeleteUserForm
     {
