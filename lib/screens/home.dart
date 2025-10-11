@@ -42,22 +42,7 @@ class Home extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildNotification("Stay Hydrated!"),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryGradient.colors.first,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 10),
-                  ),
-                  child: const Text(
-                    "Close",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-              ],
+                _buildNotification("Stay Hydrated!"),],
             ),
           ),
         );
