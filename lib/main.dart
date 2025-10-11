@@ -31,7 +31,7 @@ class ClinicApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Poppins'),
       builder: DevicePreview.appBuilder,
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.welcome,
       routes: AppRoutes.getRoutes(), 
     );
   }
