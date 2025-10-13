@@ -1,9 +1,7 @@
-using Microsoft.Extensions.Configuration;
-using NurseRecordingSystem.Class.Services.HelperServices;
-using System;
+using NurseRecordingSystem.Class.Services.HelperServices.HelperAuthentication;
 using Xunit;
 
-namespace NurseRecordingSystem.Tests.ServiceTests.HelperServicesTests
+namespace NurseRecordingSystem.Test.ServiceTests.HelperServicesTests
 {
    public class SessionTokenHelperTests
    {
@@ -11,7 +9,7 @@ namespace NurseRecordingSystem.Tests.ServiceTests.HelperServicesTests
 
        public SessionTokenHelperTests()
        {
-           var inMemorySettings = new System.Collections.Generic.Dictionary<string, string> {
+           var inMemorySettings = new Dictionary<string, string> {
                {"ConnectionStrings:DefaultConnectionString", "Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;"}
            };
 
@@ -37,7 +35,6 @@ namespace NurseRecordingSystem.Tests.ServiceTests.HelperServicesTests
        [Fact]
        public void Constructor_ShouldSucceed_WhenConnectionStringPresent()
        {
-           
            var helper = new sessionTokenHelper(_config);
 
            // Assert

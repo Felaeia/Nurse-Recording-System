@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NurseRecordingSystem.Contracts.ControllerContracts;
-using NurseRecordingSystem.Contracts.ServiceContracts.User;
+using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
 using NurseRecordingSystem.Model.DTO.AuthDTOs;
-using NurseRecordingSystem.Model.DTO.UserDTOs;
+using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 using PresentationProject.Controllers;
 using Xunit;
 
@@ -11,54 +10,54 @@ namespace NurseRecordingSystemTest.ControllerTest
 {
     public class UserControllerTest
     {
-        private readonly Mock<ICreateUsersService> _mockCreateUserService;
-        private readonly IUserController _userController;
+        private readonly Mock<ICreateUsers> _mockCreateUserService;
+        private readonly CreateUserController _userController;
 
         public UserControllerTest()
         {
-            _mockCreateUserService = new Mock<ICreateUsersService>();
-            _userController = new UserController(_mockCreateUserService.Object);
+            _mockCreateUserService = new Mock<ICreateUsers>();
+            _userController = new CreateUserController(_mockCreateUserService.Object);
         }
         [Fact]
-        public async Task CreateUser_ValidRequest_ReturnsOkResult()
+        public async Task CreateAuthentication_ValidRequest_ReturnsOkResult()
         {
-            // Mock Data 
-            var userAuth = new CreateUserWithAuthenticationDTO
+            // ARRANGE
+
+            // 1. Define the inputs for the test
+            var combinedRequest = new CreateAuthenticationRequestDTO // Use the DTO accepted by the Controller's public method
             {
-                UserName = "Mags",
-                Password = "123123",
+                UserName = "testuser",
+                Password = "Test@123",
                 Email = "testuser@gmail.com",
                 FirstName = "Test",
                 MiddleName = "T",
                 LastName = "User",
                 ContactNumber = "1234567890",
-                Address = "LLC"
-            };
-            var request = new CreateAuthenticationRequestDTO
-            {
-                UserName = userAuth.Email,
-                Password = userAuth.Password,
-                Email = userAuth.Email
-            };
-            var user = new CreateUserRequestDTO
-            {
-                FirstName = userAuth.FirstName,
-                MiddleName = userAuth.MiddleName,
-                LastName = userAuth.LastName,
-                ContactNumber = userAuth.ContactNumber,
-                Address = userAuth.Address
+                Address = "123 Test St"
             };
 
-            var random = new Random();
-            var expectedAuthId = random.Next(100);
-            _mockCreateUserService.Setup(s => s.CreateUserAuthenticateAsync(request, user)).ReturnsAsync(expectedAuthId);
-            _mockCreateUserService.Setup(s => s.CreateUser(user)).Returns(Task.CompletedTask);
+            const int expectedAuthId = 42;
 
-            var result = await _userController.CreateAuthentication(userAuth) as OkObjectResult;
+            _mockCreateUserService
+                .Setup(s => s.CreateUserAuthenticateAsync(
+                    It.IsAny<CreateAuthenticationRequestDTO>(),
+                    It.IsAny<CreateUserRequestDTO>()
+                ))
+
+                .ReturnsAsync(expectedAuthId);
+
+
+            var result = await _userController.CreateAuthentication(combinedRequest) as OkObjectResult;
 
 
             Assert.NotNull(result);
             Assert.Equal(200, result.StatusCode);
+
+
+            dynamic resultValue = result.Value;
+            Assert.NotNull(resultValue);
+            Assert.Equal(expectedAuthId, resultValue.AuthId); 
+            Assert.Equal("Authentication created successfully.", resultValue.Message);
         }
     }
 }

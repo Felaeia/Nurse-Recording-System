@@ -1,8 +1,6 @@
 ﻿
-using Microsoft.Extensions.Configuration;
-using NurseRecordingSystem.Class.Services.UserServices;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
-using NurseRecordingSystem.Model.DTO.UserDTOs;
+using NurseRecordingSystem.Class.Services.UserServices.Users;
+using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 using Xunit;
 
 namespace NurseRecordingSystem.Tests.ServiceTests.UserServicesTests
@@ -32,7 +30,7 @@ namespace NurseRecordingSystem.Tests.ServiceTests.UserServicesTests
 
             // Act & Assert
             var ex = Assert.Throws<InvalidOperationException>(() =>
-                new CreateUsersServices(badConfig)
+                new CreateUser(badConfig)
             );
 
             Assert.Contains("Connection string 'DefaultConnection' not found", ex.Message);
@@ -42,7 +40,7 @@ namespace NurseRecordingSystem.Tests.ServiceTests.UserServicesTests
         public async Task CreateUserAuthenticateAsync_ShouldThrow_WhenAuthRequestIsNull()
         {
             // Arrange
-            var service = new CreateUsersServices(_config);
+            var service = new CreateUser(_config);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
@@ -54,11 +52,11 @@ namespace NurseRecordingSystem.Tests.ServiceTests.UserServicesTests
         public async Task CreateUser_ShouldThrow_WhenUserIsNull()
         {
             
-            var service = new CreateUsersServices(_config);
+            var service = new CreateUser(_config);
 
             
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                service.CreateUser(null!)
+                service.CreateUserAsync(null!)
             );
         }
 
