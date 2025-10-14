@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
 using NurseRecordingSystem.Controllers;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
+using NurseRecordingSystem.Model.DTO.HelperDTOs;
 using Xunit;
 
 namespace NurseRecordingSystemTest.ControllerTest
@@ -22,22 +22,15 @@ namespace NurseRecordingSystemTest.ControllerTest
         [Fact]
         public async Task LoginUser_ValidCredentials_ReturnsOkResult()
         {
-
+            
             var loginRequest = new LoginRequestDTO
             {
                 Email = "testuser@gmail.com",
                 Password = "Test@123"
             };
-            var expectedResponse = new LoginResponseDTO 
-            {
-                AuthId = 1,
-                Email = loginRequest.Email,
-                UserName = "testuser",
-                Role = 1,
-                IsAuthenticated = true
-            };
+            var expectedResponse = new LoginResponseDTO { };
 
-            _mockAuthService.Setup(service => service.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ReturnsAsync(expectedResponse);
+            _mockAuthService.Setup(s => s.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ReturnsAsync(expectedResponse);
 
 
             var result = await _authController.LoginUser(loginRequest) as OkObjectResult;
@@ -58,8 +51,7 @@ namespace NurseRecordingSystemTest.ControllerTest
                 Email = "wronguser@gmail.com",
                 Password = "WrongPassword"
             };
-            _mockAuthService.Setup(iuserauthservice => iuserauthservice.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ReturnsAsync((LoginResponseDTO?)null);
-
+           _mockAuthService.Setup(s => s.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ReturnsAsync((LoginResponseDTO?)null);
 
 
             var result = await _authController.LoginUser(loginRequest) as UnauthorizedObjectResult;

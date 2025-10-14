@@ -1,0 +1,74 @@
+{
+  "nurse": [
+    {
+      "id": 1,
+      "username": "aclcnurse",
+      "password": "aclcnurse123",
+      "email": "aclcnurse@gmail.com"
+    }
+  ],
+  "patients": [
+    {
+      "id": 1,
+      "firstname": "Arcgel",
+      "middlename": "Bataluna",
+      "lastname": "Chavez",
+      "address": "Tugas Gun-ob Lapu Lapu City",
+      "password": "chavezpassword",
+      "facebook": "facebook.com/arcgel",
+      "email": "arcgel@email.com",
+      "emergencyContact": "09112233445"
+    },
+    {
+      "id": 2,
+      "firstname": "Rajie Mae",
+      "middlename": "",
+      "lastname": "Villa",
+      "address": "Ibabao Lapu Lapu City",
+      "password": "villapassword",
+      "facebook": "",
+      "email": "rajie@email.com",
+      "emergencyContact": "09223344556"
+    },
+    {
+      "id": 3,
+      "firstname": "Raizza Mae",
+      "middlename": "",
+      "lastname": "Empeno",
+      "address": "Kagudoy Lapu Lapu City",
+      "password": "empenopassword",
+      "facebook": "",
+      "email": "",
+      "emergencyContact": "09334455667"
+    }
+  ],
+  "patientRecords": [
+    {
+      "recordId": "r001",
+      "patientId": "1",
+      "date": "2025-08-01",
+      "diagnosis": "Hypertension",
+      "symptom": "Headaches, dizziness",
+      "treatment": "Medication prescribed",
+      "notes": "Follow-up in 2 weeks"
+    },
+    {
+      "recordId": "r002",
+      "patientId": "1",
+      "date": "2025-08-01",
+      "diagnosis": "Diarhhea",
+      "symptom": "Stomach cramps, dehydration",
+      "treatment": "Medication prescribed",
+      "notes": "Follow-up Tommorow"
+    },
+    {
+      "recordId": "r003",
+      "patientId": "3",
+      "date": "2025-08-01",
+      "diagnosis": "Common Cold",
+      "symptom": "Cough, sneezing, sore throat",
+      "treatment": "Medication prescribed, and lots of rest",
+      "notes": "Follow-up in 2 days"
+    }
+  ]
+}
