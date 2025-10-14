@@ -23,10 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\HelperContracts\" />
-    <Folder Include="Contracts\ServiceContracts\IAdminServices\" />
-    <Folder Include="Contracts\ServiceContracts\INurseServices\" />
-    <Folder Include="Model\DTO\NurseServiceDTOs\" />
+    <Folder Include="Contracts\ServiceContracts\IAdminServices\IAdminPatientRecords\" />
+    <Folder Include="Contracts\ServiceContracts\IAdminServices\IAdminClinicStatus\" />
     <Folder Include="SqlQuerries\StoredProcedures\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

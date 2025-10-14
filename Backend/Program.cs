@@ -5,6 +5,8 @@ using NurseRecordingSystem.Class.Services.UserServices.Users;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.RepositoryContracts.User;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
+using NurseRecordingSystem.Contracts.ServiceContracts.IAdminServices.IAdminUser;
+using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseUsers;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
@@ -17,6 +19,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Services
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+//Admin: User services
+builder.Services.AddScoped<IDeleteUser, DeleteUser>();
+//Nurse: User services
+builder.Services.AddScoped<IViewAllUsers, ViewAllUsers>();
 //User: User services
 builder.Services.AddScoped<ICreateUsers, CreateUser>();
 builder.Services.AddScoped<IViewUserProfile, ViewUserProfile>();

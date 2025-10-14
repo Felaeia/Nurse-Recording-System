@@ -1,4 +1,4 @@
-﻿using NurseRecordingSystem.Model.DTO.AuthDTOs;
+﻿using NurseRecordingSystem.DTO.AuthServiceDTOs;
 
 namespace NurseRecordingSystem.Class.Services.Authentication
 {

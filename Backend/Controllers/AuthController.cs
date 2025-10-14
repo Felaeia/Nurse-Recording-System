@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
+using NurseRecordingSystem.DTO.AuthServiceDTOs;
 
 namespace NurseRecordingSystem.Controllers
 {

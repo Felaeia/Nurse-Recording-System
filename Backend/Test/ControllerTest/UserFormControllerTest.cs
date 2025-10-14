@@ -3,7 +3,7 @@ using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
 using NurseRecordingSystem.Controllers;
-using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs;
+using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
 using Xunit;
 
 namespace NurseRecordingSystemTest.ControllerTest

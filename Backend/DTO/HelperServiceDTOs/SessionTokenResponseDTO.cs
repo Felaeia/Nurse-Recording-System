@@ -1,4 +1,4 @@
-﻿namespace NurseRecordingSystem.Model.DTO.HelperDTOs
+﻿namespace NurseRecordingSystem.DTO.HelperServiceDTOs
 {
     public class SessionTokenResponseDto
     {

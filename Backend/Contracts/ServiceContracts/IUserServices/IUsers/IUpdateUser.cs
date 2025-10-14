@@ -1,7 +1,7 @@
 ﻿// File: NurseRecordingSystem.Contracts.ServiceContracts.User/IUpdateUserService.cs
 
 using System.Threading.Tasks;
-using NurseRecordingSystem.Model.DTO.UserDTOs;
+using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace NurseRecordingSystem.Contracts.ServiceContracts.User
 {

@@ -1,4 +1,4 @@
-﻿namespace NurseRecordingSystem.Model.DTO.AuthDTOs
+﻿namespace NurseRecordingSystem.DTO.AuthServiceDTOs
 {
     public class LoginResponseDTO
     {

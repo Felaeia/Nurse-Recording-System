@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
+using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
 using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace PresentationProject.Controllers

@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace NurseRecordingSystem.Model.DTO.UserDTOs
+namespace NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs
 {
     public class UpdateUserRequestDTO
     {

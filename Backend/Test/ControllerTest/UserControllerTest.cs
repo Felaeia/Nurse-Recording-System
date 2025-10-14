@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
-using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
+using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
 using PresentationProject.Controllers;
 using Xunit;
 

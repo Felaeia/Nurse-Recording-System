@@ -1,4 +1,4 @@
-﻿using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs;
+﻿using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
 
 namespace NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms
 {

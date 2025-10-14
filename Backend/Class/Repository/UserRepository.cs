@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Contracts.RepositoryContracts.User;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
+using NurseRecordingSystem.DTO.AuthServiceDTOs;
+
 
 //UNUSED FOLDER/FILE MAY BE DELETED LATER
 namespace NurseRecordingSystem.Class.Repository

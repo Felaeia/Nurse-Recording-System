@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs
+namespace NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs
 {
     public class UpdateUserFormRequestDTO
     {

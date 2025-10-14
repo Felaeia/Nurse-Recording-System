@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
 using NurseRecordingSystem.Controllers;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
+using NurseRecordingSystem.DTO.AuthServiceDTOs;
 using Xunit;
 
 namespace NurseRecordingSystemTest.ControllerTest

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs
+namespace NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs
 {
     public class ViewUserProfileDTO
     {

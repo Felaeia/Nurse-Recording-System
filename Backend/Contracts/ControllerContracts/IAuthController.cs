@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
+using NurseRecordingSystem.DTO.AuthServiceDTOs;
 
 namespace NurseRecordingSystem.Contracts.ControllerContracts
 {

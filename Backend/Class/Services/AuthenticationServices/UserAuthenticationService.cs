@@ -2,7 +2,7 @@ using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Class.Services.HelperServices.HelperAuthentication;
 using NurseRecordingSystem.Contracts.RepositoryContracts.User;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
+using NurseRecordingSystem.DTO.AuthServiceDTOs;
 
 namespace NurseRecordingSystem.Class.Services.Authentication
 {

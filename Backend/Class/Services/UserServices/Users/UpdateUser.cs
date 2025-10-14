@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Contracts.ServiceContracts.User;
-using NurseRecordingSystem.Model.DTO.UserDTOs; // Assuming an UpdateUserRequestDTO exists
+using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace NurseRecordingSystem.Class.Services.UserServices.Users
 {

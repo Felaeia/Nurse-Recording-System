@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
-using NurseRecordingSystem.Model.DTO.UserDTOs;
-using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs;
-using System.Security.Claims;
+using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
 
 namespace NurseRecordingSystem.Controllers
 {

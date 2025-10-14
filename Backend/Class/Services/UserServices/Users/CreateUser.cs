@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Class.Services.HelperServices.HelperAuthentication;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
-using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
+using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace NurseRecordingSystem.Class.Services.UserServices.Users
 {
@@ -22,11 +22,6 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
             {
                 throw new ArgumentNullException(nameof(authRequest), "Authentication cannot be null");
             }
-            //Integer(1) = User Access
-            //CHORE: Updated Insert SqlCommand to accept updatedOn, updatedBy, isActive(bit) :,(
-            //Note: Convert userName to isUnique
-            //CHORE: Create A DisplayName in Database and DTO for DisplayNames
-            //CHORE: Test Response time for this function after convertion of sqlcommands to stored procedures
             var role = 1;
             byte[] passwordSalt, PasswordHash;
             PasswordHelper.CreatePasswordHash(authRequest.Password, out PasswordHash, out passwordSalt);
@@ -78,43 +73,6 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
                 catch (Exception ex)
                 {
                     throw new Exception("An error occurred while creating authentication and user.", ex);
-                }
-            }
-        }
-
-        //User Login 
-        //CHORE: Updated Insert SqlCommand to accept updatedOn, updatedBy, isActive(bit) :,(
-        //Uneeded Function -> Transfered this to CreateUserAuthenticateAsync
-        public async Task CreateUserAsync(CreateUserRequestDTO user)
-        {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user), "User cannot be null");
-            }
-            var userAuthId = user.AuthId.ToString();
-            await using(var connection = new SqlConnection(_connectionString))
-            await using(var cmdCreateUser =
-                new SqlCommand("INSERT INTO [Users] (authId, firstName, middleName, lastName, contactNumber, address, createdBy, updatedOn, updatedBy, isActive) " +
-                "VALUES (@authId, @firstName, @middleName, @lastName, @contactNumber, @address, @createdBy, @updatedOn, @updatedBy, @isActive)", connection))
-            {
-                cmdCreateUser.Parameters.AddWithValue("@firstName", user.FirstName);
-                cmdCreateUser.Parameters.AddWithValue("@middleName", user.MiddleName);
-                cmdCreateUser.Parameters.AddWithValue("@lastName", user.LastName);
-                cmdCreateUser.Parameters.AddWithValue("@contactNumber", user.ContactNumber);
-                cmdCreateUser.Parameters.AddWithValue("@address", user.Address);
-                cmdCreateUser.Parameters.AddWithValue("@authId", user.AuthId);
-                cmdCreateUser.Parameters.AddWithValue("@createdBy", userAuthId);
-                cmdCreateUser.Parameters.AddWithValue("@updatedOn", DateTime.UtcNow);
-                cmdCreateUser.Parameters.AddWithValue("@updatedBy", userAuthId);
-                cmdCreateUser.Parameters.AddWithValue("@isActive", 1);
-                try
-                {
-                    await connection.OpenAsync();
-                    await cmdCreateUser.ExecuteNonQueryAsync();
-                }
-                catch (SqlException ex)
-                {
-                    throw new Exception("Database ERROR occured during creating during USER", ex);
                 }
             }
         }
