@@ -1,21 +1,34 @@
 using NurseRecordingSystem.Class.Repository;
 using NurseRecordingSystem.Class.Services.Authentication;
+using NurseRecordingSystem.Class.Services.UserServices.UserForms;
 using NurseRecordingSystem.Class.Services.UserServices.Users;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.RepositoryContracts.User;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
+using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
+using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
+using NurseRecordingSystem.Contracts.ServiceContracts.User;
 using NurseRecordingSystem.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<UserAuthenticationService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ICreateUsers, CreateUser>();
-builder.Services.AddScoped<IAuthController, AuthController>();
+// Services
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+//User: User services
+builder.Services.AddScoped<ICreateUsers, CreateUser>();
+builder.Services.AddScoped<IViewUserProfile, ViewUserProfile>();
+builder.Services.AddScoped<IUpdateUser, UpdateUser>();
+// User: Form Services
+builder.Services.AddScoped<ICreateUserForm, CreateUserForm>();
+builder.Services.AddScoped<IUpdateUserForm, UpdateUserForm>();
+builder.Services.AddScoped<IDeleteUserForm, DeleteUserForm>();
 
+
+// Controllers
+builder.Services.AddScoped<IAuthController, AuthController>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

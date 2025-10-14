@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
-using NurseRecordingSystem.Model.DTO.UserDTOs;
+using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace PresentationProject.Controllers
 {
@@ -23,7 +22,7 @@ namespace PresentationProject.Controllers
         /// Create authentication (login credentials) for a new user.
         /// </summary>
         [HttpPost("create-user")]
-        public async Task<IActionResult> CreateAuthentication([FromBody] CreateUserWithAuthenticationDTO request)
+        public async Task<IActionResult> CreateAuthentication([FromBody] CreateAuthenticationRequestDTO request)
         {
             try
             {
