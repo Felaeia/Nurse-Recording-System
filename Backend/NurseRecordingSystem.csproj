@@ -25,6 +25,7 @@
   <ItemGroup>
     <Folder Include="Contracts\ServiceContracts\IAdminServices\IAdminPatientRecords\" />
     <Folder Include="Contracts\ServiceContracts\IAdminServices\IAdminClinicStatus\" />
+    <Folder Include="DTO\AdminServiceDTOs\" />
     <Folder Include="SqlQuerries\StoredProcedures\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

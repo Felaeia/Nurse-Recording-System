@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
+using NurseRecordingSystem.Controllers.UserControllers;
 using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
-using PresentationProject.Controllers;
 using Xunit;
 
 namespace NurseRecordingSystemTest.ControllerTest

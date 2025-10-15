@@ -2,7 +2,7 @@
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseUsers;
 using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 
-namespace NurseRecordingSystem.API.Controllers
+namespace NurseRecordingSystem.Controllers.NurseControllers
 {
     // Sets the base route for the controller to api/nurseuser
     [Route("api/[controller]")]

@@ -4,7 +4,7 @@ using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
 using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
 using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 
-namespace PresentationProject.Controllers
+namespace NurseRecordingSystem.Controllers.UserControllers
 {
     [Route("api/[controller]")]
     [ApiController]

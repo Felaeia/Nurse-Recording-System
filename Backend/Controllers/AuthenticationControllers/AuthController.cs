@@ -3,7 +3,7 @@ using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
 using NurseRecordingSystem.DTO.AuthServiceDTOs;
 
-namespace NurseRecordingSystem.Controllers
+namespace NurseRecordingSystem.Controllers.AuthenticationControllers
 {
     [Route("api/[controller]")]
     [ApiController]

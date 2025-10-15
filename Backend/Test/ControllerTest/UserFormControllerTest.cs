@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
-using NurseRecordingSystem.Controllers;
+using NurseRecordingSystem.Controllers.UserControllers;
 using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
 using Xunit;
 

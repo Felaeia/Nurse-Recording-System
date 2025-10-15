@@ -3,7 +3,7 @@ using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
 using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
 
-namespace NurseRecordingSystem.Controllers
+namespace NurseRecordingSystem.Controllers.UserControllers
 {
     [ApiController]
     [Route("api/[controller]")] // e.g., /api/UserForm

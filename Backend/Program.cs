@@ -3,31 +3,47 @@ using NurseRecordingSystem.Class.Services.Authentication;
 using NurseRecordingSystem.Class.Services.UserServices.UserForms;
 using NurseRecordingSystem.Class.Services.UserServices.Users;
 using NurseRecordingSystem.Contracts.ControllerContracts;
+using NurseRecordingSystem.Contracts.HelperContracts.IHelperUserForm;
 using NurseRecordingSystem.Contracts.RepositoryContracts.User;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
 using NurseRecordingSystem.Contracts.ServiceContracts.IAdminServices.IAdminUser;
+using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseUserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseUsers;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
 using NurseRecordingSystem.Contracts.ServiceContracts.User;
-using NurseRecordingSystem.Controllers;
+using NurseRecordingSystem.Controllers.AuthenticationControllers;
 
 var builder = WebApplication.CreateBuilder(args);
-
+// Services
 // Add services to the container.
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-// Services
+
+// Authentication:
+// Authentication services
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
-//Admin: User services
+
+//Admin:
+//User services
 builder.Services.AddScoped<IDeleteUser, DeleteUser>();
-//Nurse: User services
+
+//Helper:
+//UserForm services
+builder.Services.AddScoped<IViewUserForm, ViewUserForm>();
+
+//Nurse:
+//User services
 builder.Services.AddScoped<IViewAllUsers, ViewAllUsers>();
-//User: User services
+//Form Services
+builder.Services.AddScoped<IViewUserFormList, ViewUserFormList>();
+
+//User:
+//User services
 builder.Services.AddScoped<ICreateUsers, CreateUser>();
 builder.Services.AddScoped<IViewUserProfile, ViewUserProfile>();
 builder.Services.AddScoped<IUpdateUser, UpdateUser>();
-// User: Form Services
+// Form Services
 builder.Services.AddScoped<ICreateUserForm, CreateUserForm>();
 builder.Services.AddScoped<IUpdateUserForm, UpdateUserForm>();
 builder.Services.AddScoped<IDeleteUserForm, DeleteUserForm>();

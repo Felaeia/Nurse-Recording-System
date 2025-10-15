@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.IAdminServices.IAdminUser;
 
-namespace NurseRecordingSystem.API.Controllers
+namespace NurseRecordingSystem.Controllers.AdminControllers
 {
     // Sets the base route for the controller to api/adminusers
     [Route("api/[controller]")]
