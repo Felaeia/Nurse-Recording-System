@@ -1,51 +1,49 @@
 ﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Class.Services.HelperServices.HelperAuthentication;
-using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
-using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
+using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.NurseCreation;
+using NurseRecordingSystem.Model.DTO.NurseServicesDTOs.NurseCreation;
 
-namespace NurseRecordingSystem.Class.Services.UserServices.Users
+namespace NurseRecordingSystem.Class.Services.NurseServices.NurseCreation
 {
-    public class CreateUser : ICreateUsers
+    public class CreateNurse : ICreateNurse
     {
         private readonly string? _connectionString;
 
-        public CreateUser(IConfiguration configuration)
+        public CreateNurse(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         }
 
-        //Create Auth for User Function (role = user)
-        public async Task<int> CreateUserAuthenticateAsync(CreateAuthenticationRequestDTO authRequest, CreateUserRequestDTO user)
+        public async Task<int> CreateNurseAsync(CreateNurseRequestDTO request)
         {
-            if (authRequest == null)
+            if (request == null)
             {
-                throw new ArgumentNullException(nameof(authRequest), "Authentication cannot be null");
+                throw new ArgumentNullException(nameof(request), "Authentication cannot be null");
             }
             byte[] passwordSalt, PasswordHash;
-            PasswordHelper.CreatePasswordHash(authRequest.Password, out PasswordHash, out passwordSalt);
+            PasswordHelper.CreatePasswordHash(request.Password, out PasswordHash, out passwordSalt);
 
             await using (var connection = new SqlConnection(_connectionString))
-            await using (var cmd = new SqlCommand("dbo.usp_CreateUserAndAuth", connection))
+            await using (var cmd = new SqlCommand("dbo.asp_CreateNurse", connection))
             {
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                 // Parameters for [Auth] table
-                cmd.Parameters.AddWithValue("@userName", authRequest.UserName);
+                cmd.Parameters.AddWithValue("@userName", request.UserName);
                 cmd.Parameters.AddWithValue("@passwordHash", PasswordHash);
                 cmd.Parameters.AddWithValue("@passwordSalt", passwordSalt);
-                cmd.Parameters.AddWithValue("@email", authRequest.Email);
-                cmd.Parameters.AddWithValue("@createdBy", "System");
+                cmd.Parameters.AddWithValue("@email", request.Email);
+                cmd.Parameters.AddWithValue("@createdBy", "Admin");
                 cmd.Parameters.AddWithValue("@updatedOn", DateTime.UtcNow);
-                cmd.Parameters.AddWithValue("@updatedBy", "System");
+                cmd.Parameters.AddWithValue("@updatedBy", "Admin");
                 cmd.Parameters.AddWithValue("@isActive", 1);
 
                 // Parameters for [Users] table
-                cmd.Parameters.AddWithValue("@firstName", user.FirstName);
-                cmd.Parameters.AddWithValue("@middleName", user.MiddleName);
-                cmd.Parameters.AddWithValue("@lastName", user.LastName);
-                cmd.Parameters.AddWithValue("@contactNumber", user.ContactNumber);
-                cmd.Parameters.AddWithValue("@address", user.Address);
+                cmd.Parameters.AddWithValue("@firstName", request.FirstName);
+                cmd.Parameters.AddWithValue("@middleName", request.MiddleName);
+                cmd.Parameters.AddWithValue("@lastName", request.LastName);
+                cmd.Parameters.AddWithValue("@contactNumber", request.ContactNumber);
 
                 try
                 {
@@ -66,7 +64,7 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
                 }
                 catch (SqlException ex)
                 {
-                    throw new Exception("Database ERROR occured during creating AUTH & USER", ex);
+                    throw new Exception("Database ERROR occured during creating AUTH & Nurse", ex);
                 }
                 catch (Exception ex)
                 {

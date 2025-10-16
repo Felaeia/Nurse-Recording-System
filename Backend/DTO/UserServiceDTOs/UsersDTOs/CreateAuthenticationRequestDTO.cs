@@ -23,7 +23,5 @@ namespace NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs
 
         public string ContactNumber { get; set; } = null!;
 
-        public int AuthId { get; set; }
-
     }
 }
