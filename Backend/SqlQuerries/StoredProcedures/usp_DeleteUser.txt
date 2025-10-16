@@ -1,0 +1,67 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_DeleteUser]    Script Date: 10/16/2025 4:32:45 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_DeleteUser]
+    @userId INT,
+    @deletedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Start Transaction for atomicity
+    BEGIN TRANSACTION;
+    
+    DECLARE @authId INT;
+
+    -- Get the authId linked to the user
+    SELECT @authId = authId FROM [dbo].[Users] WHERE userId = @userId;
+
+    -- 1. Soft Delete in [Users] Table
+    UPDATE [dbo].[Users]
+    SET 
+        [isActive] = 0,
+        [deletedOn] = GETDATE(),
+        [deletedBy] = @deletedBy
+    WHERE 
+        [userId] = @userId
+        AND [isActive] = 1; -- Only delete if active
+
+    -- Check for errors and if a row was actually updated
+    IF @@ERROR <> 0 OR @@ROWCOUNT = 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        RETURN -1;
+    END
+
+    -- 2. Soft Delete in [Auth] Table using the retrieved @authId
+    IF @authId IS NOT NULL
+    BEGIN
+        UPDATE [dbo].[Auth]
+        SET 
+            [isActive] = 0,
+            [updatedOn] = GETDATE(), -- Re-using updated fields for tracking soft-delete in Auth
+            [updatedBy] = @deletedBy 
+        WHERE 
+            [authId] = @authId;
+
+        IF @@ERROR <> 0 
+        BEGIN
+            ROLLBACK TRANSACTION;
+            RETURN -1;
+        END
+    END
+
+    COMMIT TRANSACTION;
+    RETURN 0; -- Success
+END
+GO
+
+

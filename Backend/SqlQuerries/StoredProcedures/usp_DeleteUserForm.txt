@@ -1,0 +1,48 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_DeleteUserForm]    Script Date: 10/16/2025 4:33:19 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_DeleteUserForm]
+    -- Parameters required for soft-delete
+    @FormId INT,
+    @DeletedBy NVARCHAR(50),
+    @ReturnCode INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @ReturnCode = 0; -- Default to success
+
+    -- 1. Check if the form exists and is currently active
+    IF NOT EXISTS (SELECT 1 FROM [dbo].[PatientForms] WHERE [formId] = @FormId AND [isActive] = 1)
+    BEGIN
+        SET @ReturnCode = 1; -- Error code for "Form not found or already deleted"
+        RETURN @ReturnCode;
+    END
+
+    -- 2. Perform the soft-delete (update the status fields)
+    UPDATE [dbo].[PatientForms]
+    SET
+        [deletedOn] = SYSDATETIME(), -- Set deletion timestamp
+        [DeletedBy] = @DeletedBy,    -- Record who performed the deletion
+        [isActive] = 0               -- Mark the record as inactive (deleted)
+    WHERE
+        [formId] = @FormId;
+
+    -- 3. Check for successful update
+    IF @@ROWCOUNT = 0
+    BEGIN
+        SET @ReturnCode = 2; -- Error code for "Update failed"
+    END
+
+    RETURN @ReturnCode;
+END
+GO
+
+

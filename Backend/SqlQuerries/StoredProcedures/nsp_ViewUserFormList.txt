@@ -1,0 +1,44 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_ViewUserFormList]    Script Date: 10/16/2025 4:30:05 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- Stored procedure to view a list of patient forms
+CREATE PROCEDURE [dbo].[nsp_ViewUserFormList]
+    @userId INT = NULL,       -- Optional filter by the user who created the form
+    @status NVARCHAR(10) = NULL -- Optional filter by the current form status
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        SELECT
+            pf.formId,
+            pf.issueType,
+            pf.status,
+            pf.patientName
+        FROM
+            dbo.PatientForms pf
+        WHERE
+            pf.deletedOn IS NULL -- Exclude soft-deleted forms
+            AND (@userId IS NULL OR pf.userId = @userId)
+            AND (@status IS NULL OR pf.status = @status)
+            -- Optionally, you may want to only show active forms: AND pf.isActive = 1
+        ORDER BY
+            pf.createdOn DESC;
+
+    END TRY
+    BEGIN CATCH
+        -- Log or raise the original error
+        THROW; 
+    END CATCH
+END
+GO
+
+

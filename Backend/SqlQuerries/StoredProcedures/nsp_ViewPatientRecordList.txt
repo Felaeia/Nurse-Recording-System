@@ -1,0 +1,41 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_ViewPatientRecordList]    Script Date: 10/16/2025 4:29:42 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[nsp_ViewPatientRecordList]
+    @nurseId INT = NULL -- Optional filter by the creating nurse
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        SELECT
+            pr.patientRecordId,
+            pr.nursingDiagnosis,
+            pr.nursingIntervention,
+            pr.createdOn,
+            pr.createdBy
+            -- Note: createdOn is selected twice in your requested list format, using it once for the actual column
+        FROM
+            dbo.PatientRecords pr
+        WHERE
+            pr.deletedOn IS NULL -- Exclude soft-deleted records
+            AND (@nurseId IS NULL OR pr.nurseId = @nurseId)
+        ORDER BY
+            pr.createdOn DESC;
+
+    END TRY
+    BEGIN CATCH
+        THROW; 
+    END CATCH
+END
+GO
+
+

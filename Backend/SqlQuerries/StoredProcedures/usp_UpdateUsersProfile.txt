@@ -1,0 +1,72 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_UpdateUserProfile]    Script Date: 10/16/2025 4:34:49 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_UpdateUserProfile]
+    @userId INT,
+    @email NVARCHAR(100), -- Auth Table Field
+    @firstName NVARCHAR(50),
+    @middleName NVARCHAR(50),
+    @lastName NVARCHAR(50),
+    @contactNumber NVARCHAR(15),
+    @address NVARCHAR(50),
+    @updatedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Start Transaction for atomicity
+    BEGIN TRANSACTION;
+
+    -- 1. Update [Users] Table
+    UPDATE [dbo].[Users]
+    SET 
+        [firstName] = @firstName,
+        [middleName] = @middleName,
+        [lastName] = @lastName,
+        [contactNumber] = @contactNumber,
+        [address] = @address,
+        [updatedOn] = GETDATE(),
+        [updatedBy] = @updatedBy
+    WHERE 
+        [userId] = @userId;
+
+    -- Check for errors after Users update
+    IF @@ERROR <> 0 OR @@ROWCOUNT = 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        -- Return -1 or RAISERROR
+        RETURN -1; 
+    END
+
+    -- 2. Update [Auth] Table (Use an INNER JOIN or a subquery to find authId)
+    UPDATE A
+    SET 
+        A.[email] = @email
+    FROM 
+        [dbo].[Auth] A
+    INNER JOIN 
+        [dbo].[Users] U ON A.authId = U.authId
+    WHERE 
+        U.[userId] = @userId;
+
+    -- Check for errors after Auth update
+    IF @@ERROR <> 0 
+    BEGIN
+        ROLLBACK TRANSACTION;
+        RETURN -1;
+    END
+
+    COMMIT TRANSACTION;
+    RETURN 0; -- Success
+END
+GO
+
+

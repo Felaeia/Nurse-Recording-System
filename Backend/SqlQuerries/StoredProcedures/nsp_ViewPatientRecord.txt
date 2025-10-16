@@ -1,0 +1,47 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_ViewPatientRecord]    Script Date: 10/16/2025 4:29:19 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[nsp_ViewPatientRecord]
+    @patientRecordId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        SELECT
+            pr.patientRecordId,
+            pr.nursingDiagnosis,
+            pr.nursingIntervention,
+            pr.nurseId,
+            pr.createdOn,
+            pr.createdBy,
+            pr.updatedOn,
+            pr.updatedBy,
+            pr.isActive
+        FROM
+            dbo.PatientRecords pr
+        WHERE
+            pr.patientRecordId = @patientRecordId
+            AND pr.deletedOn IS NULL; -- Exclude soft-deleted records
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            THROW 50001, 'Patient record not found or is archived.', 1;
+        END
+
+    END TRY
+    BEGIN CATCH
+        THROW; 
+    END CATCH
+END
+GO
+
+

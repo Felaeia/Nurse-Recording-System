@@ -1,0 +1,125 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[asp_CreateNurse]    Script Date: 10/16/2025 4:24:23 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[asp_CreateNurse]
+    -- Parameters for the [Auth] table
+    @userName NVARCHAR(50),
+    @passwordHash VARBINARY(MAX),
+    @passwordSalt VARBINARY(MAX),
+    @email NVARCHAR(100),
+    @createdBy NVARCHAR(50),
+    @updatedOn DATETIME2,
+    @updatedBy NVARCHAR(50),
+    @isActive BIT,
+
+    -- Parameters for the [Nurse] table
+    @firstName NVARCHAR(50),
+    @middleName NVARCHAR(50),
+    @lastName NVARCHAR(50),
+    @contactNumber NVARCHAR(20)
+
+AS
+BEGIN
+    -- ====================================================================
+    -- 1. EMAIL UNIQUENESS CHECK
+    -- ====================================================================
+    IF EXISTS (SELECT 1 FROM [dbo].[Auth] WHERE [email] = @email)
+    BEGIN
+        -- If the email is found, raise a custom error and stop execution.
+        -- State 1 indicates the error is the first occurrence in the batch.
+        -- Severity 16 is a general user error that can be caught by the application.
+        RAISERROR('Email already existing. Please use a different email address.', 16, 1);
+        RETURN -1; -- Return a status code indicating the email was a duplicate
+    END
+
+    -- If the email is unique, proceed with the transaction.
+    BEGIN TRANSACTION;
+    SET NOCOUNT ON; -- Prevents extra result sets from interfering with the return value
+
+    DECLARE @newAuthId INT;
+    DECLARE @DefaultRole NVARCHAR(50) = 'Nurse';
+    
+    -- 1. Insert into Auth Table
+    INSERT INTO [Auth] (
+        userName, 
+        passwordHash, 
+        passwordSalt, 
+        email, 
+        role, 
+        createdBy, 
+        updatedOn, 
+        updatedBy, 
+        isActive
+    ) 
+    VALUES (
+        @userName, 
+        @passwordHash, 
+        @passwordSalt, 
+        @email, 
+        @DefaultRole, 
+        @createdBy, 
+        @updatedOn, 
+        @updatedBy, 
+        @isActive
+    );
+
+    -- Get the ID of the newly inserted Auth record
+    SET @newAuthId = SCOPE_IDENTITY();
+
+    -- Check if the Auth insert failed (optional, but good practice)
+    IF @newAuthId IS NULL OR @newAuthId = 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        -- Use RAISERROR to signal an error back to the application
+        RAISERROR('Failed to insert into Auth table.', 16, 1);
+        RETURN -1; -- Return a status code indicating failure
+    END
+
+    -- 2. Insert into Users Table
+    INSERT INTO [Nurses] (
+        authId, 
+        firstName, 
+        middleName, 
+        lastName, 
+        contactNumber, 
+        createdBy, 
+        updatedOn, 
+        updatedBy, 
+        isActive
+    ) 
+    VALUES (
+        @newAuthId, -- Use the new ID from the Auth table
+        @firstName, 
+        @middleName, 
+        @lastName, 
+        @contactNumber, 
+        @createdBy, 
+        @updatedOn, 
+        @updatedBy, 
+        @isActive
+    );
+
+    -- Check for errors after the Users insert
+    IF @@ERROR <> 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        RETURN -1; -- Return a status code indicating failure
+    END
+    
+    -- If both inserts succeeded, commit the transaction
+    COMMIT TRANSACTION;
+    
+    -- Return the new AuthId to the application
+    SELECT @newAuthId;
+END
+GO
+
+
