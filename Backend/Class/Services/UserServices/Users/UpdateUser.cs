@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Contracts.ServiceContracts.User;
-using NurseRecordingSystem.Model.DTO.UserDTOs; // Assuming an UpdateUserRequestDTO exists
+using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace NurseRecordingSystem.Class.Services.UserServices.Users
 {
@@ -14,7 +14,7 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         }
 
-        public async Task<bool> UpdateUserProfileAsync(int userId, UpdateUserRequestDTO userRequest, string updatedBy)
+        public async Task<bool> UpdateUserProfileAsync(int userId, UpdateUserRequestDTO userRequest)
         {
             await using (var connection = new SqlConnection(_connectionString))
             await using (var cmd = new SqlCommand("dbo.usp_UpdateUserProfile", connection))
@@ -29,7 +29,7 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
                 cmd.Parameters.AddWithValue("@lastName", userRequest.LastName);
                 cmd.Parameters.AddWithValue("@contactNumber", userRequest.ContactNumber);
                 cmd.Parameters.AddWithValue("@address", userRequest.Address);
-                cmd.Parameters.AddWithValue("@updatedBy", updatedBy);
+                cmd.Parameters.AddWithValue("@updatedBy", "Nurse");
 
                 // Output/Return Parameter from SP
                 var returnValue = cmd.Parameters.Add("@ReturnValue", System.Data.SqlDbType.Int);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
-using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs;
+using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
 using System.Data;
 
 

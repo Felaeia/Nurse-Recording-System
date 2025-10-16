@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using NurseRecordingSystem.Model.DTO.HelperDTOs;
 using System.Security.Cryptography;
 
 namespace NurseRecordingSystem.Class.Services.HelperServices.HelperAuthentication

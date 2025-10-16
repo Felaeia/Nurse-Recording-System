@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
-using NurseRecordingSystem.Controllers;
-using NurseRecordingSystem.Model.DTO.AuthDTOs;
+using NurseRecordingSystem.Controllers.AuthenticationControllers;
+using NurseRecordingSystem.DTO.AuthServiceDTOs;
 using Xunit;
 
 namespace NurseRecordingSystemTest.ControllerTest
@@ -37,7 +37,7 @@ namespace NurseRecordingSystemTest.ControllerTest
                 IsAuthenticated = true
             };
 
-            _mockAuthService.Setup(s => s.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ReturnsAsync(expectedResponse);
+            _mockAuthService.Setup(service => service.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ReturnsAsync(expectedResponse);
 
 
             var result = await _authController.LoginUser(loginRequest) as OkObjectResult;

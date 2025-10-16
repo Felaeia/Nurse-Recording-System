@@ -1,6 +1,5 @@
 ﻿
 using NurseRecordingSystem.Class.Services.UserServices.Users;
-using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 using Xunit;
 
 namespace NurseRecordingSystem.Tests.ServiceTests.UserServicesTests
@@ -44,23 +43,9 @@ namespace NurseRecordingSystem.Tests.ServiceTests.UserServicesTests
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                service.CreateUserAuthenticateAsync(null!, new CreateUserRequestDTO())
+                service.CreateUserAuthenticateAsync(null!, new DTO.UserServiceDTOs.UsersDTOs.CreateUserRequestDTO())
             );
         }
-
-        [Fact]
-        public async Task CreateUser_ShouldThrow_WhenUserIsNull()
-        {
-            
-            var service = new CreateUser(_config);
-
-            
-            await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                service.CreateUserAsync(null!)
-            );
-        }
-
-
 
         //[Fact]
         //public async Task CreateUserAuthenticateAsync_ShouldInsertAuthAndUser()

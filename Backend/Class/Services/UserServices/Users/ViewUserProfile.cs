@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
-using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs; // Assuming a DTO for user profile data
+using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace NurseRecordingSystem.Class.Services.UserServices.Users
 {
