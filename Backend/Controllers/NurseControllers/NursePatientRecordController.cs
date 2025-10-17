@@ -29,7 +29,7 @@ namespace NurseRecordingSystem.API.Controllers
         }
 
         // POST: api/NursePatientRecord
-        [HttpPost]
+        [HttpPost("create/patient_record")]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateRecord([FromBody] CreatePatientRecordRequestDTO request, [FromHeader(Name = "X-Created-By")] string createdBy)
@@ -48,7 +48,7 @@ namespace NurseRecordingSystem.API.Controllers
         }
 
         // GET: api/NursePatientRecord/{patientRecordId}
-        [HttpGet("{patientRecordId}")]
+        [HttpGet("view/patient_record/{patientRecordId}")]
         [ProducesResponseType(typeof(ViewPatientRecordResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetRecord(int patientRecordId)
@@ -69,7 +69,7 @@ namespace NurseRecordingSystem.API.Controllers
         }
 
         // GET: api/NursePatientRecord/list?nurseId=1
-        [HttpGet("list")]
+        [HttpGet("view/patient_record_list")]
         [ProducesResponseType(typeof(List<PatientRecordListItemDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetRecordList([FromQuery] int? nurseId)
         {
@@ -85,7 +85,7 @@ namespace NurseRecordingSystem.API.Controllers
         }
 
         // PUT: api/NursePatientRecord/{patientRecordId}
-        [HttpPut("{patientRecordId}")]
+        [HttpPut("update/patient_record/{patientRecordId}")]
         [ProducesResponseType(typeof(UpdatePatientRecordResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

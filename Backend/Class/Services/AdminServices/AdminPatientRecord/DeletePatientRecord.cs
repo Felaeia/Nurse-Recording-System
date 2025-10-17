@@ -3,11 +3,11 @@ using NurseRecordingSystem.Contracts.ServiceContracts.IAdminServices.IAdminPatie
 
 namespace NurseRecordingSystem.Class.Services.NurseServices.PatientRecords
 {
-    public class DeletedPatientRecord : IDeletedPatientRecord
+    public class DeletePatientRecord : IDeletedPatientRecord
     {
         private readonly string? _connectionString;
 
-        public DeletedPatientRecord(IConfiguration configuration)
+        public DeletePatientRecord(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }

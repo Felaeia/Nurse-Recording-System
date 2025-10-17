@@ -3,32 +3,30 @@ using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices;
 using NurseRecordingSystem.DTO.NurseServiceDTOs.NurseAppointmentScheduleDTOs;
 using System.Data;
 
-namespace NurseRecordingSystem.Class.Services.NurseServices.AppointmentSchedules
+namespace NurseRecordingSystem.Class.Services.AdminServices.AdminAppointmentSchedule
 {
-    public class UpdateAppointmentSchedule : IUpdateAppointmentSchedule
+    public class DeleteAppointmentSchedule : IDeleteAppointmentSchedule
     {
         private readonly IDbConnection _dbConnection;
 
-        public UpdateAppointmentSchedule(IDbConnection dbConnection)
+        public DeleteAppointmentSchedule(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        public async Task<bool> UpdateAppointmentAsync(int appointmentId,UpdateAppointmentScheduleRequestDTO request)
+        public async Task<bool> DeleteAppointmentAsync(int appointmentId, DeleteAppointmentScheduleRequestDTO request)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@AppointmentId", appointmentId);
-            parameters.Add("@AppointmentTime", request.AppointmentTime, DbType.DateTime);
-            parameters.Add("@AppointmentDescription", request.AppointmentDescription, DbType.String);
             parameters.Add("@NurseId", request.NurseId, DbType.Int32);
-            parameters.Add("@UpdatedBy", request.UpdatedBy, DbType.String, size: 50);
+            parameters.Add("@DeletedBy", request.DeletedBy, DbType.String, size: 50);
             parameters.Add("@ResultCode", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             try
             {
                 // Execute the stored procedure
                 await _dbConnection.ExecuteAsync(
-                    "nsp_UpdateAppointmentSchedule",
+                    "nsp_DeleteAppointmentSchedule",
                     parameters,
                     commandType: CommandType.StoredProcedure
                 );
@@ -37,15 +35,15 @@ namespace NurseRecordingSystem.Class.Services.NurseServices.AppointmentSchedules
 
                 if (resultCode == 1)
                 {
-                    throw new UnauthorizedAccessException("User is not authorized as a Nurse to update an appointment.");
+                    throw new UnauthorizedAccessException("User is not authorized as a Nurse to delete an appointment.");
                 }
                 else if (resultCode == 2)
                 {
-                    throw new KeyNotFoundException($"Appointment with ID {appointmentId} not found or is inactive.");
+                    throw new KeyNotFoundException($"Appointment with ID {request.AppointmentId} not found or is already deleted.");
                 }
                 else if (resultCode == -1)
                 {
-                    throw new Exception("An unknown database error occurred while updating the appointment.");
+                    throw new Exception("An unknown database error occurred while deleting the appointment.");
                 }
 
                 return resultCode == 0;
@@ -53,7 +51,7 @@ namespace NurseRecordingSystem.Class.Services.NurseServices.AppointmentSchedules
             catch (Exception ex)
             {
                 // Log the error
-                throw new ApplicationException("Service failed to update appointment.", ex);
+                throw new ApplicationException("Service failed to soft-delete appointment.", ex);
             }
         }
     }

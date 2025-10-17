@@ -1,5 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
-using NurseRecordingSystem.Contracts.HelperContracts.IHelperUserForm;
+using NurseRecordingSystem.Contracts.ServiceContracts.HelperContracts.IHelperUserForm;
 
 namespace NurseRecordingSystem.Class.Services.UserServices.UserForms
 {

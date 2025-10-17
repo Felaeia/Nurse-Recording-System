@@ -21,7 +21,7 @@ namespace NurseRecordingSystem.Controllers.AuthenticationControllers
         /// <summary>
         /// Create user profile linked to an authentication record.
         /// </summary>
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginRequestDTO loginUser)
         {
             try
@@ -36,7 +36,6 @@ namespace NurseRecordingSystem.Controllers.AuthenticationControllers
                 {
                     return Unauthorized("Invalid credentials.");
                 }
-
                 return Ok(new { Response = response ,Message = "Login Succesful" });
             }
             catch (Exception ex)

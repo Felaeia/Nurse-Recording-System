@@ -17,7 +17,7 @@ namespace NurseRecordingSystem.API.Controllers
         }
 
         // DELETE: api/AdminPatientRecord/{patientRecordId}
-        [HttpDelete("{patientRecordId}")]
+        [HttpDelete("delete/patient_record/{patientRecordId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

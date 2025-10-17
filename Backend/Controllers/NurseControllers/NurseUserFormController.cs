@@ -21,7 +21,7 @@ namespace NurseRecordingSystem.API.Controllers
         /// <summary>
         /// Retrieves a summary list of patient forms with optional filters.
         /// </summary>
-        [HttpGet("list")]
+        [HttpGet("user/form_list")]
         [ProducesResponseType(typeof(List<UserFormListItemDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserFormList(
