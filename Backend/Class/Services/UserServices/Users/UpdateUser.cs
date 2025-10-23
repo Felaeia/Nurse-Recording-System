@@ -16,6 +16,19 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
 
         public async Task<bool> UpdateUserProfileAsync(int userId, UpdateUserRequestDTO userRequest, string updatedBy)
         {
+            if (userRequest == null)
+            {
+                throw new ArgumentNullException(nameof(userRequest), "User request cannot be null");
+            }
+            if (string.IsNullOrEmpty(updatedBy))
+            {
+                throw new ArgumentException("Updated by cannot be null or empty", nameof(updatedBy));
+            }
+            if (userId <= 0)
+            {
+                throw new ArgumentException("User ID must be greater than zero", nameof(userId));
+            }
+
             await using (var connection = new SqlConnection(_connectionString))
             await using (var cmd = new SqlCommand("dbo.usp_UpdateUserProfile", connection))
             {
