@@ -1,0 +1,50 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_CreatePatientRecord]    Script Date: 10/16/2025 4:30:50 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_CreatePatientRecord]
+    @nursingDiagnosis NVARCHAR(50),
+    @nursingIntervention NVARCHAR(MAX),
+    @nurseId INT,
+    @createdBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Insert the new record
+    INSERT INTO [dbo].[PatientRecords]
+    (
+        [nursingDiagnosis],
+        [nursingIntervention],
+        [nurseId],
+        [createdOn],
+        [createdBy],
+        [isActive]
+    )
+    VALUES
+    (
+        @nursingDiagnosis,
+        @nursingIntervention,
+        @nurseId,
+        GETDATE(), -- Sets the current date and time
+        @createdBy,
+        1          -- New records should be active (1) by default
+    );
+
+    -- Return the ID of the newly created record
+    SELECT SCOPE_IDENTITY() AS NewPatientRecordId;
+END
+GO
+
+

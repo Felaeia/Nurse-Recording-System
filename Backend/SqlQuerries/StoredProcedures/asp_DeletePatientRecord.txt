@@ -1,0 +1,43 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[asp_DeletePatientRecord]    Script Date: 10/16/2025 4:26:27 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[asp_DeletePatientRecord]
+    @patientRecordId INT,
+    @deletedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @CurrentTime DATETIME2(7) = SYSDATETIME();
+
+    BEGIN TRY
+        UPDATE dbo.PatientRecords
+        SET
+            isActive = 0, -- Mark as operationally inactive
+            deletedOn = @CurrentTime, -- Mark with archival timestamp
+            deletedBy = @deletedBy
+        WHERE
+            patientRecordId = @patientRecordId
+            AND deletedOn IS NULL; -- Prevent deleting an already archived record
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            THROW 50003, 'Patient record not found or is already deleted.', 1;
+        END
+
+    END TRY
+    BEGIN CATCH
+        THROW;
+    END CATCH
+END
+GO
+
+

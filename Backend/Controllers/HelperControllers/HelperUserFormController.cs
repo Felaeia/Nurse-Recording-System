@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NurseRecordingSystem.Contracts.HelperContracts.IHelperUserForm;
+using NurseRecordingSystem.Contracts.ServiceContracts.HelperContracts.IHelperUserForm;
 
 namespace NurseRecordingSystem.API.Controllers
 {
@@ -19,7 +19,7 @@ namespace NurseRecordingSystem.API.Controllers
         /// <summary>
         /// Retrieves the full details of a single patient form by ID.
         /// </summary>
-        [HttpGet("{formId}")]
+        [HttpGet("view_user_form/{formId}")]
         [ProducesResponseType(typeof(ViewUserFormResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

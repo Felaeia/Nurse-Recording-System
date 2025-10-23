@@ -2,7 +2,6 @@
 using NurseRecordingSystem.Contracts.ControllerContracts;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.Users;
 using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
-using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 
 namespace NurseRecordingSystem.Controllers.UserControllers
 {
@@ -22,7 +21,7 @@ namespace NurseRecordingSystem.Controllers.UserControllers
         /// <summary>
         /// Create authentication (login credentials) for a new user.
         /// </summary>
-        [HttpPost("create-user")]
+        [HttpPost("user")]
         public async Task<IActionResult> CreateAuthentication([FromBody] CreateAuthenticationRequestDTO request)
         {
             try

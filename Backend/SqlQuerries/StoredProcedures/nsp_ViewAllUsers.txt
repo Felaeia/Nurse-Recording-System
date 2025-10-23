@@ -1,0 +1,55 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_ViewAllUsers]    Script Date: 10/16/2025 4:28:56 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- Stored procedure to view all users, optionally filtered by isActive status
+CREATE PROCEDURE [dbo].[nsp_ViewAllUsers]
+    @IsActive BIT = NULL -- NULL retrieves all, TRUE retrieves active, FALSE retrieves inactive
+AS
+BEGIN
+    -- Standard T-SQL Error Handling
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        SELECT
+            u.userId,
+            u.firstName,
+            u.middleName,
+            u.lastName,
+            u.contactNumber,
+            u.address,
+            u.isActive,
+            a.userName,
+            a.email,
+            a.role,
+            u.createdOn,
+            u.createdBy,
+            u.updatedOn,
+            u.updatedBy
+        FROM
+            dbo.Users u
+        INNER JOIN
+            dbo.Auth a ON u.authId = a.authId
+        WHERE
+            u.deletedOn IS NULL -- Only show non-soft-deleted records from Users
+            AND (@IsActive IS NULL OR u.isActive = @IsActive)
+        ORDER BY
+            u.lastName, u.firstName;
+
+    END TRY
+    BEGIN CATCH
+        -- Log or raise the error
+        THROW; 
+        RETURN 50000; -- Return a custom error code
+    END CATCH
+END
+GO
+
+

@@ -1,4 +1,4 @@
-﻿namespace NurseRecordingSystem.Contracts.HelperContracts.IHelperUserForm
+﻿namespace NurseRecordingSystem.Contracts.ServiceContracts.HelperContracts.IHelperUserForm
 {
     public interface IViewUserForm
     {

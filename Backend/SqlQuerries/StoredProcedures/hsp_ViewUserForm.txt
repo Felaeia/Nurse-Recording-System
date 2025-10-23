@@ -1,0 +1,53 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[hsp_ViewUserForm]    Script Date: 10/16/2025 4:27:36 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- Stored procedure to view all details for a single patient form
+CREATE PROCEDURE [dbo].[hsp_ViewUserForm]
+    @formId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        SELECT
+            pf.formId,
+            pf.issueType,
+            pf.issueDescryption,
+            pf.status,
+            pf.userId,
+            pf.patientName,
+            pf.createdOn,
+            pf.createdBy,
+            pf.updatedOn,
+            pf.updatedBy,
+            pf.isActive
+        FROM
+            dbo.PatientForms pf
+        WHERE
+            pf.formId = @formId
+            AND pf.deletedOn IS NULL; -- Exclude soft-deleted forms
+
+        -- Check if a form was found and return a custom error if not
+        IF @@ROWCOUNT = 0
+        BEGIN
+            -- This custom error can be caught by the C# service
+            THROW 50001, 'Patient form not found or is archived.', 1;
+        END
+
+    END TRY
+    BEGIN CATCH
+        -- Log or raise the original error
+        THROW; 
+    END CATCH
+END
+GO
+
+

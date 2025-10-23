@@ -1,0 +1,45 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_DeletePatientRecord]    Script Date: 10/16/2025 4:32:35 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_DeletePatientRecord]
+    @patientRecordId INT,
+    @updatedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Perform a "soft delete" by setting isActive to 0
+    UPDATE [dbo].[PatientRecords]
+    SET 
+        [isActive] = 0,
+        [updatedOn] = GETDATE(), -- Sets the date/time of the deletion
+        [updatedBy] = @updatedBy
+    WHERE 
+        [patientRecordId] = @patientRecordId;
+
+    -- Optional: Check if a row was affected
+    IF @@ROWCOUNT = 0
+    BEGIN
+        -- Raise an error if the record ID wasn't found
+        RAISERROR('Patient Record ID %d not found or already deleted.', 16, 1, @patientRecordId);
+        RETURN 1; -- Return a non-zero value to indicate failure
+    END
+    
+    RETURN 0; -- Return 0 to indicate success
+
+END
+GO
+
+

@@ -1,0 +1,44 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_UpdatePatientRecord]    Script Date: 10/16/2025 4:28:24 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[nsp_UpdatePatientRecord]
+    @patientRecordId INT,
+    @nursingDiagnosis NVARCHAR(50),
+    @nursingIntervention NVARCHAR(MAX),
+    @updatedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        UPDATE dbo.PatientRecords
+        SET
+            nursingDiagnosis = @nursingDiagnosis,
+            nursingIntervention = @nursingIntervention,
+            updatedOn = SYSDATETIME(),
+            updatedBy = @updatedBy
+        WHERE
+            patientRecordId = @patientRecordId
+            AND deletedOn IS NULL; -- Cannot update archived records
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            THROW 50002, 'Patient record not found or cannot be updated.', 1;
+        END
+
+    END TRY
+    BEGIN CATCH
+        THROW;
+    END CATCH
+END
+GO
+
+

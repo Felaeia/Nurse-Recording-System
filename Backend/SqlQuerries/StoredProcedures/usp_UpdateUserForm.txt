@@ -1,0 +1,57 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_UpdateUserForm]    Script Date: 10/16/2025 4:34:22 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_UpdateUserForm]
+    -- Input Parameters from the DTO
+    @FormId INT,
+    @IssueType NVARCHAR(MAX),
+    @IssueDescryption NVARCHAR(MAX),
+    @Status NVARCHAR(10),
+    @PatientName NVARCHAR(MAX),
+    -- Audit Parameters
+    @UpdatedBy NVARCHAR(50),
+    @ReturnCode INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @ReturnCode = 0; -- Default to success
+
+    -- 1. Check if the form exists and is currently active
+    IF NOT EXISTS (SELECT 1 FROM [dbo].[PatientForms] WHERE [formId] = @FormId AND [isActive] = 1)
+    BEGIN
+        SET @ReturnCode = 1; -- Error code for "Form not found or inactive"
+        RETURN @ReturnCode;
+    END
+
+    -- 2. Perform the update
+    UPDATE [dbo].[PatientForms]
+    SET
+        [issueType] = @IssueType,
+        [issueDescryption] = @IssueDescryption,
+        [status] = @Status,
+        [patientName] = @PatientName,
+        -- Set update audit fields
+        [updatedOn] = SYSDATETIME(),
+        [updatedBy] = @UpdatedBy
+    WHERE
+        [formId] = @FormId;
+
+    -- 3. Check for successful update
+    IF @@ROWCOUNT = 0
+    BEGIN
+        SET @ReturnCode = 2; -- Error code for "Update failed (no rows affected)"
+    END
+
+    RETURN @ReturnCode;
+END
+GO
+
+

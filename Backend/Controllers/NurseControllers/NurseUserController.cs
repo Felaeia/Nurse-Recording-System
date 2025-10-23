@@ -20,7 +20,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
 
         // GET: api/NurseUser/all (Retrieves all users)
         // GET: api/NurseUser/all?isActive=true (Retrieves only active users)
-        [HttpGet("all")]
+        [HttpGet("view/all_users")]
         [ProducesResponseType(typeof(List<ViewAllUsersDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         // Accepts an optional query parameter 'isActive' to filter the results

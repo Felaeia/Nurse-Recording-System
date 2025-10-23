@@ -1,0 +1,65 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[asp_DeleteUser]    Script Date: 10/16/2025 4:27:00 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- Stored procedure for soft-deleting a user
+CREATE PROCEDURE [dbo].[asp_DeleteUser]
+    @userId INT,
+    @updatedBy NVARCHAR(50) -- The user performing the soft delete
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Check if the user performing the deletion exists (optional but recommended in real-world logic)
+    -- IF NOT EXISTS (SELECT 1 FROM dbo.Auth WHERE userName = @updatedBy)
+    -- BEGIN
+    --    RAISERROR('Deletor not found.', 16, 1);
+    --    RETURN 40401;
+    -- END
+
+    BEGIN TRANSACTION;
+    
+    BEGIN TRY
+        -- 1. Check if the user exists and is not already deleted
+        IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE userId = @userId AND deletedOn IS NULL)
+        BEGIN
+            -- Raise a custom error if user not found/already deleted
+            THROW 50001, 'User not found or already deleted.', 1;
+        END
+
+        -- 2. Perform the soft delete (update isActive, set deletedOn/DeletedBy)
+        UPDATE dbo.Users
+        SET 
+            isActive = 0,
+            deletedOn = SYSDATETIME(), -- Use SYSDATETIME() for datetime2(0) 
+            DeletedBy = @updatedBy,
+            updatedOn = SYSDATETIME(), -- Also update updated fields for consistency
+            updatedBy = @updatedBy
+        WHERE 
+            userId = @userId;
+
+        -- 3. Commit the transaction if successful
+        COMMIT TRANSACTION;
+        RETURN 0; -- Success
+
+    END TRY
+    BEGIN CATCH
+        -- 4. Rollback the transaction on error
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        -- Log or raise the error
+        THROW; 
+        RETURN 50000; -- Return a custom error code
+    END CATCH
+END
+GO
+
+

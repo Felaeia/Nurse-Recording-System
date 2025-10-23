@@ -1,0 +1,40 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_GetUserProfileById]    Script Date: 10/16/2025 4:33:44 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_GetUserProfileById]
+    @userId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Join Users and Auth tables to get a complete profile view
+    SELECT
+        UserTable.[userId],
+        UserTable.[firstName],
+        UserTable.[middleName],
+        UserTable.[lastName],
+        UserTable.[contactNumber],
+        UserTable.[address],
+        AuthTable.[userName],     -- Auth details
+        AuthTable.[email],        -- Auth details
+        AuthTable.[role],         -- Auth details
+        UserTable.[createdOn]
+    FROM 
+        [dbo].[Users] UserTable
+    INNER JOIN 
+        [dbo].[Auth] AuthTable ON UserTable.authId = AuthTable.authId
+    WHERE 
+        UserTable.[userId] = @userId
+        AND UserTable.[isActive] = 1; -- Only retrieve active users
+END
+GO
+
+
