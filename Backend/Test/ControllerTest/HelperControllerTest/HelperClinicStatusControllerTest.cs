@@ -26,7 +26,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.HelperControllerTest
                 new ViewClinicStatusResponseDTO { LogId = 1, Status = true },
                 new ViewClinicStatusResponseDTO { LogId = 2, Status = false }
             };
-            _mockViewService.Setup(s => s.ViewAllAsync()).ReturnsAsync(expectedList);
+            _mockViewService.Setup(IViewClinicStatus => IViewClinicStatus.ViewAllAsync()).ReturnsAsync(expectedList);
 
             // Act
             var result = await _controller.ViewAllStatus() as OkObjectResult;
@@ -41,7 +41,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.HelperControllerTest
         public async Task ViewAllStatus_ExceptionThrown_ReturnsInternalServerError()
         {
             // Arrange
-            _mockViewService.Setup(s => s.ViewAllAsync()).ThrowsAsync(new Exception("Database error"));
+            _mockViewService.Setup(IViewClinicStatus => IViewClinicStatus.ViewAllAsync()).ThrowsAsync(new Exception("Database error"));
 
             // Act
             var result = await _controller.ViewAllStatus() as ObjectResult;
