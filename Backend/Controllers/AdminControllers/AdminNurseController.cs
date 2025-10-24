@@ -28,6 +28,11 @@ namespace NurseRecordingSystem.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterNurse([FromBody] CreateNurseRequestDTO request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
                 // The service returns the new AuthId

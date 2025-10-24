@@ -22,8 +22,7 @@ namespace NurseRecordingSystemTest.ControllerTest
         {
             // ARRANGE
 
-            // 1. Define the inputs for the test
-            var combinedRequest = new CreateAuthenticationRequestDTO // Use the DTO accepted by the Controller's public method
+            var combinedRequest = new CreateAuthenticationRequestDTO 
             {
                 UserName = "testuser",
                 Password = "Test@123",
