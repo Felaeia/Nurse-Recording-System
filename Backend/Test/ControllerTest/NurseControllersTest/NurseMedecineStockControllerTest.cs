@@ -62,7 +62,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         public async Task CreateStock_InvalidModel_ReturnsBadRequest()
         {
             // Arrange
-            var request = new CreateMedecineStockRequestDTO(); // Invalid as required fields are empty
+            var request = new CreateMedecineStockRequestDTO(); 
             _controller.ModelState.AddModelError("MedecineName", "Required");
 
             // Act
@@ -196,7 +196,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var id = 1;
-            var request = new UpdateMedecineStockRequestDTO(); // Invalid as required fields are empty
+            var request = new UpdateMedecineStockRequestDTO(); 
             _controller.ModelState.AddModelError("MedecineName", "Required");
 
             // Act

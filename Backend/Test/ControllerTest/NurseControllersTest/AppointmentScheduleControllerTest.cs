@@ -57,7 +57,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         public async Task CreateAppointment_InvalidModel_ReturnsBadRequest()
         {
             // Arrange
-            var request = new CreateAppointmentScheduleRequestDTO(); // Invalid as required fields are missing
+            var request = new CreateAppointmentScheduleRequestDTO(); 
             _controller.ModelState.AddModelError("AppointmentTime", "Required");
 
             // Act

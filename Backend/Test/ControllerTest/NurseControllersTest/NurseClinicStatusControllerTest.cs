@@ -52,7 +52,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var id = 1;
-            var request = new UpdateClinicStatusRequestDTO(); // Invalid as no required fields, but in this case, it's simple
+            var request = new UpdateClinicStatusRequestDTO();
             _controller.ModelState.AddModelError("Status", "Required");
 
             // Act

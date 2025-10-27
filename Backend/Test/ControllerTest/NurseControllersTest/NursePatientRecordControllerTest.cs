@@ -35,7 +35,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         public async Task CreateRecord_ValidRequest_ReturnsCreated()
         {
             // Arrange
-            var request = new CreatePatientRecordRequestDTO { /* populate as needed */ };
+            var request = new CreatePatientRecordRequestDTO { };
             var createdBy = "Nurse1";
             var newId = 1;
 
@@ -60,7 +60,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         public async Task CreateRecord_MissingHeader_ReturnsBadRequest()
         {
             // Arrange
-            var request = new CreatePatientRecordRequestDTO { /* populate */ };
+            var request = new CreatePatientRecordRequestDTO { };
             var createdBy = "";
 
             // Act
@@ -76,7 +76,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         public async Task CreateRecord_ExceptionThrown_ReturnsBadRequest()
         {
             // Arrange
-            var request = new CreatePatientRecordRequestDTO { /* populate */ };
+            var request = new CreatePatientRecordRequestDTO { };
             var createdBy = "Nurse1";
 
             _controller.ControllerContext = new ControllerContext
@@ -101,7 +101,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var patientRecordId = 1;
-            var response = new ViewPatientRecordResponseDTO { /* populate */ };
+            var response = new ViewPatientRecordResponseDTO { };
 
             _mockViewService.Setup(service => service.GetPatientRecordAsync(patientRecordId)).ReturnsAsync(response);
 
@@ -152,7 +152,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var nurseId = 1;
-            var records = new List<PatientRecordListItemDTO> { /* populate */ };
+            var records = new List<PatientRecordListItemDTO> { };
 
             _mockViewListService.Setup(service => service.GetPatientRecordListAsync(nurseId)).ReturnsAsync(records);
 
@@ -187,9 +187,9 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var patientRecordId = 1;
-            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 1, /* populate */ };
+            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 1, };
             var updatedBy = "Nurse1";
-            var response = new UpdatePatientRecordResponseDTO { /* populate */ };
+            var response = new UpdatePatientRecordResponseDTO { };
 
             _controller.ControllerContext = new ControllerContext
             {
@@ -213,7 +213,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var patientRecordId = 1;
-            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 2, /* populate */ };
+            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 2, };
             var updatedBy = "Nurse1";
 
             // Act
@@ -230,7 +230,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var patientRecordId = 1;
-            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 1, /* populate */ };
+            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 1, };
             var updatedBy = "";
 
             // Act
@@ -247,7 +247,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var patientRecordId = 1;
-            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 1, /* populate */ };
+            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 1, };
             var updatedBy = "Nurse1";
 
             _controller.ControllerContext = new ControllerContext
@@ -272,7 +272,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var patientRecordId = 1;
-            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 1, /* populate */ };
+            var request = new UpdatePatientRecordRequestDTO { PatientRecordId = 1, };
             var updatedBy = "Nurse1";
 
             _controller.ControllerContext = new ControllerContext

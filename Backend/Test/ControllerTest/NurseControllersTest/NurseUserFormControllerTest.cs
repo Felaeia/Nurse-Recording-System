@@ -23,7 +23,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         public async Task GetUserFormList_ValidRequestWithoutFilters_ReturnsOk()
         {
             // Arrange
-            var forms = new List<UserFormListItemDTO> { new UserFormListItemDTO { /* populate */ } };
+            var forms = new List<UserFormListItemDTO> { new UserFormListItemDTO {  } };
             _mockViewUserFormListService.Setup(service => service.GetUserFormListAsync(null, null)).ReturnsAsync(forms);
 
             // Act
@@ -40,7 +40,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var userId = 101;
-            var forms = new List<UserFormListItemDTO> { new UserFormListItemDTO { /* populate */ } };
+            var forms = new List<UserFormListItemDTO> { new UserFormListItemDTO {} };
             _mockViewUserFormListService.Setup(service => service.GetUserFormListAsync(userId, null)).ReturnsAsync(forms);
 
             // Act
@@ -57,7 +57,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
         {
             // Arrange
             var status = "Pending";
-            var forms = new List<UserFormListItemDTO> { new UserFormListItemDTO { /* populate */ } };
+            var forms = new List<UserFormListItemDTO> { new UserFormListItemDTO {  } };
             _mockViewUserFormListService.Setup(service => service.GetUserFormListAsync(null, status)).ReturnsAsync(forms);
 
             // Act
@@ -75,7 +75,7 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
             // Arrange
             var userId = 101;
             var status = "Pending";
-            var forms = new List<UserFormListItemDTO> { new UserFormListItemDTO { /* populate */ } };
+            var forms = new List<UserFormListItemDTO> { new UserFormListItemDTO {  } };
             _mockViewUserFormListService.Setup(service => service.GetUserFormListAsync(userId, status)).ReturnsAsync(forms);
 
             // Act
