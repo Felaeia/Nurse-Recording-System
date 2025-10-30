@@ -18,7 +18,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
         {
             // Arrange
             var config = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string> { ["ConnectionStrings:DefaultConnection"] = "Server=localhost;Database=TestDB;Trusted_Connection=True;" })
+                .AddInMemoryCollection(new Dictionary<string, string?> { ["ConnectionStrings:DefaultConnection"] = "Server=localhost;Database=TestDB;Trusted_Connection=True;" })
                 .Build();
             var service = new CreateUserForm(config);
             UserFormRequestDTO request = null!;
@@ -36,7 +36,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
         {
             // Arrange
             var config = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string> { ["ConnectionStrings:DefaultConnection"] = null })
+                .AddInMemoryCollection(new Dictionary<string, string?> { ["ConnectionStrings:DefaultConnection"] = null })
                 .Build();
 
             // Act & Assert
@@ -47,31 +47,31 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
 
          //Need to check this test case later
 
-        // [Fact]
-        // public async Task CreateUserFormAsync_ValidRequest_ThrowsException()
-        // {
-        //     // Arrange
-        //     var config = new ConfigurationBuilder()
-        //         .AddInMemoryCollection(new Dictionary<string, string> { ["ConnectionStrings:DefaultConnection"] = "Server=localhost;Database=TestDB;Trusted_Connection=True;" })
-        //         .Build();
-        //     var service = new CreateUserForm(config);
-        //     var request = new UserFormRequestDTO
-        //     {
-        //         issueType = "Medical",
-        //         issueDescryption = "Patient needs assistance",
-        //         status = "Pending",
-        //         patientName = "John Doe",
-        //         createdBy = "Nurse1",
-        //         updatedBy = "Nurse1",
-        //         DeletedBy = "Nurse1"
-        //     };
-        //     var userId = "123";
-        //     var creator = "Nurse1";
+        [Fact]
+        public async Task CreateUserFormAsync_ValidRequest_ThrowsException()
+        {
+            // Arrange
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?> { ["ConnectionStrings:DefaultConnection"] = "Server=(localdb)//MSSQLLocalDB;Database=NurseRecordingSystem;Trusted_Connection=True;Connection timeout=1;" })
+                .Build();
+            var service = new CreateUserForm(config);
+            var request = new UserFormRequestDTO
+            {
+                issueType = "Medical",
+                issueDescryption = "Patient needs assistance",
+                status = "Pending",
+                patientName = "Mags",
+                createdBy = "Nurse1",
+                updatedBy = "Nurse1",
+
+            };
+            var userId = "123";
+            var creator = "Nurse1";
 
 
 
-        //     // Act & Assert
-        //     await Assert.ThrowsAsync<Exception>(() => service.CreateUserFormAsync(request, userId, creator));
-        // }
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => service.CreateUserFormAsync(request, userId, creator));
+        }
     }
 }
