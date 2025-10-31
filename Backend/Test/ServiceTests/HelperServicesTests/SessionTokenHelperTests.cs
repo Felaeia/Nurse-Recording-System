@@ -9,12 +9,12 @@ namespace NurseRecordingSystem.Test.ServiceTests.HelperServicesTests
 
        public SessionTokenHelperTests()
        {
-           var inMemorySettings = new Dictionary<string, string> {
+           var inMemorySettings = new Dictionary<string, string?> {
                {"ConnectionStrings:DefaultConnectionString", "Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;"}
            };
 
            _config = new ConfigurationBuilder()
-               .AddInMemoryCollection(inMemorySettings!)
+               .AddInMemoryCollection(inMemorySettings)
                .Build();
        }
 
