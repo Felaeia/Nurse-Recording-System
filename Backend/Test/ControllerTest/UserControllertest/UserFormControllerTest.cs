@@ -36,7 +36,7 @@ namespace NurseRecordingSystemTest.ControllerTest
                 issueType = "Medical Issue",
                 issueDescryption = "Description",
                 status = "Active",
-                patientName = "John Doe",
+                patientName = "TestName",
                 createdBy = "Nurse1",
                 updatedBy = "Nurse1",
                 DeletedBy = "Nurse1"
@@ -50,7 +50,7 @@ namespace NurseRecordingSystemTest.ControllerTest
                 Message = "Form created successfully"
             };
 
-            _mockCreateUserFormService.Setup(s => s.CreateUserFormAsync(request, userId, creator))
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
                 .ReturnsAsync(expectedResponse);
 
             // Act
@@ -90,7 +90,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             {
                 issueType = "Medical Issue",
                 status = "Active",
-                patientName = "John Doe",
+                patientName = "TestName",
                 createdBy = "Nurse1",
                 updatedBy = "Nurse1",
                 DeletedBy = "Nurse1"
@@ -98,7 +98,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             var userId = "123";
             var creator = "Nurse1";
 
-            _mockCreateUserFormService.Setup(s => s.CreateUserFormAsync(request, userId, creator))
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
                 .ThrowsAsync(new ArgumentNullException("Some parameter is null"));
 
             // Act
@@ -117,7 +117,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             {
                 issueType = "Medical Issue",
                 status = "Active",
-                patientName = "John Doe",
+                patientName = "TestName",
                 createdBy = "Nurse1",
                 updatedBy = "Nurse1",
                 DeletedBy = "Nurse1"
@@ -125,7 +125,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             var userId = "123";
             var creator = "Nurse1";
 
-            _mockCreateUserFormService.Setup(s => s.CreateUserFormAsync(request, userId, creator))
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
                 .ThrowsAsync(new Exception("Database error"));
 
             // Act
@@ -147,7 +147,7 @@ namespace NurseRecordingSystemTest.ControllerTest
                 formId = 1,
                 issueType = "Updated Issue",
                 status = "Updated",
-                patientName = "John Doe"
+                patientName = "TestName"
             };
             var updatedBy = "Nurse1";
             var expectedResponse = new UserFormResponseDTO
@@ -212,11 +212,11 @@ namespace NurseRecordingSystemTest.ControllerTest
                 formId = 1,
                 issueType = "Issue",
                 status = "Active",
-                patientName = "John Doe"
+                patientName = "TestName"
             };
             var updatedBy = "Nurse1";
 
-            _mockUpdateUserFormService.Setup(s => s.UpdateUserFormAsync(request, updatedBy))
+            _mockUpdateUserFormService.Setup(ICreateUserForm => ICreateUserForm.UpdateUserFormAsync(request, updatedBy))
                 .ThrowsAsync(new ArgumentNullException("Parameter null"));
 
             // Act
@@ -236,11 +236,11 @@ namespace NurseRecordingSystemTest.ControllerTest
                 formId = 1,
                 issueType = "Issue",
                 status = "Active",
-                patientName = "John Doe"
+                patientName = "TestName"
             };
             var updatedBy = "Nurse1";
 
-            _mockUpdateUserFormService.Setup(s => s.UpdateUserFormAsync(request, updatedBy))
+            _mockUpdateUserFormService.Setup(ICreateUserForm => ICreateUserForm.UpdateUserFormAsync(request, updatedBy))
                 .ThrowsAsync(new Exception("Form not found or is already deleted"));
 
             // Act
@@ -260,11 +260,11 @@ namespace NurseRecordingSystemTest.ControllerTest
                 formId = 1,
                 issueType = "Issue",
                 status = "Active",
-                patientName = "John Doe"
+                patientName = "TestName"
             };
             var updatedBy = "Nurse1";
 
-            _mockUpdateUserFormService.Setup(s => s.UpdateUserFormAsync(request, updatedBy))
+            _mockUpdateUserFormService.Setup(ICreateUserForm => ICreateUserForm.UpdateUserFormAsync(request, updatedBy))
                 .ThrowsAsync(new Exception("Some error"));
 
             // Act
@@ -284,7 +284,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             int formId = 1;
             string deletedBy = "Nurse1";
 
-            _mockDeleteUserFormService.Setup(s => s.DeleteUserFormAsync(formId, deletedBy))
+            _mockDeleteUserFormService.Setup(ICreateUserForm => ICreateUserForm.DeleteUserFormAsync(formId, deletedBy))
                 .ReturnsAsync(true);
 
             // Act
@@ -333,7 +333,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             int formId = 1;
             string deletedBy = "Nurse1";
 
-            _mockDeleteUserFormService.Setup(s => s.DeleteUserFormAsync(formId, deletedBy))
+            _mockDeleteUserFormService.Setup(ICreateUserForm => ICreateUserForm.DeleteUserFormAsync(formId, deletedBy))
                 .ThrowsAsync(new Exception("Form not found or is already deleted"));
 
             // Act
@@ -351,7 +351,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             int formId = 1;
             string deletedBy = "Nurse1";
 
-            _mockDeleteUserFormService.Setup(s => s.DeleteUserFormAsync(formId, deletedBy))
+            _mockDeleteUserFormService.Setup(ICreateUserForm => ICreateUserForm.DeleteUserFormAsync(formId, deletedBy))
                 .ThrowsAsync(new Exception("Some error"));
 
             // Act

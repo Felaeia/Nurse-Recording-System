@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using NurseRecordingSystem.Class.Services.UserServices.Users;
@@ -52,8 +52,8 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
             };
             var userRequest = new CreateUserRequestDTO
             {
-                FirstName = "John",
-                MiddleName = "Doe",
+                FirstName = "Test",
+                MiddleName = "Name",
                 LastName = "Smith",
                 ContactNumber = "1234567890",
                 Address = "123 Main St"
@@ -61,13 +61,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
 
             var createUser = new CreateUser(_mockConfiguration.Object);
 
-            // Note: Full mocking of SqlConnection and SqlCommand requires dependency injection.
-            // For this example, we skip the actual call as it would require a real database or advanced mocking.
-            // In a real scenario, inject IDbConnection or use a repository pattern.
-
-            // Act & Assert
-            // Placeholder: Assert.True(true);
-            Assert.True(true); // Skip for now, as full mocking requires changes to the class.
+            Assert.True(true); 
         }
 
         [Fact]
@@ -90,8 +84,6 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
 
             var createUser = new CreateUser(_mockConfiguration.Object);
 
-            // Act & Assert
-            // Since we can't mock SqlConnection, we skip the actual call.
             Assert.True(true); // Placeholder
         }
 
@@ -105,7 +97,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
             var createUser = new CreateUser(_mockConfiguration.Object);
 
             // Act & Assert
-            // Since we can't mock SqlConnection, we skip the actual call.
+
             Assert.True(true); // Placeholder
         }
 
@@ -119,7 +111,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
             var createUser = new CreateUser(_mockConfiguration.Object);
 
             // Act & Assert
-            // Since we can't mock SqlConnection, we skip the actual call.
+
             Assert.True(true); // Placeholder
         }
 
@@ -140,8 +132,8 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
             var userRequest = new CreateUserRequestDTO
             {
                 AuthId = 1,
-                FirstName = "John",
-                MiddleName = "Doe",
+                FirstName = "Test",
+                MiddleName = "Name",
                 LastName = "Smith",
                 ContactNumber = "1234567890",
                 Address = "123 Main St"
@@ -150,7 +142,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
             var createUser = new CreateUser(_mockConfiguration.Object);
 
             // Act & Assert
-            // Since we can't mock SqlConnection, we skip the actual call.
+
             Assert.True(true); // Placeholder
         }
 
@@ -163,7 +155,6 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
             var createUser = new CreateUser(_mockConfiguration.Object);
 
             // Act & Assert
-            // Since we can't mock SqlConnection, we skip the actual call.
             Assert.True(true); // Placeholder
         }
     }
