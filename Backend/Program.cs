@@ -61,6 +61,8 @@ builder.Services.AddScoped<IDeleteClinicStatus, DeleteClinicStatus>();
 builder.Services.AddScoped<IViewUserForm, ViewUserForm>();
 //Clinic Status Services
 builder.Services.AddScoped<IViewClinicStatus, ViewClinicStatus>();
+//Session Token Services
+builder.Services.AddScoped<ISessionTokenService, SessionTokenService>();
 
 
 //Nurse:
