@@ -51,7 +51,7 @@ namespace NurseRecordingSystem.Class.Services.Authentication
                                     AuthId = int.Parse(reader["authId"].ToString()!),
                                     UserName = reader["userName"].ToString()!,
                                     Email = reader["email"].ToString()!,
-                                    Role = int.Parse(reader["role"].ToString()!),
+                                    Role = reader["role"].ToString()!,
                                     IsAuthenticated = true
                                 };
                             }

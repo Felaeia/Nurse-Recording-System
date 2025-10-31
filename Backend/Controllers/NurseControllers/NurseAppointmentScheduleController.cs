@@ -6,7 +6,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppointmentScheduleController : ControllerBase
+    public class NurseAppointmentScheduleController : ControllerBase
     {
         private readonly ICreateAppointmentSchedule _createService;
         private readonly IViewAppointmentScheduleList _viewListService;
@@ -14,7 +14,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         private readonly IUpdateAppointmentSchedule _updateService;
         private readonly IDeleteAppointmentSchedule _deleteService;
 
-        public AppointmentScheduleController(
+        public NurseAppointmentScheduleController(
             ICreateAppointmentSchedule createService,
             IViewAppointmentScheduleList viewListService,
             IViewAppointmentSchedule viewService,
