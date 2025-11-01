@@ -96,15 +96,16 @@ namespace NurseRecordingSystem.Authorization
                 return;
             }
 
-            // Step 5: Check if the role from the SP matches the policy requirement
-            if (userRole == requirement.Role)
+            // Step 5:
+            // Check if the role from the SP is in the requirement's list
+            if (requirement.AllowedRoles.Contains(userRole))
             {
-                // Success! The user has the required role.
+                // Success! The user's role is one of the allowed roles.
                 context.Succeed(requirement);
             }
             else
             {
-                context.Fail(); // User's role does not match
+                context.Fail(); // User's role is not in the allowed list
             }
         }
     }

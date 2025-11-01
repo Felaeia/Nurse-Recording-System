@@ -139,6 +139,9 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("MustBeUser", policy =>
         policy.Requirements.Add(new RoleRequirement("User")));
+
+    options.AddPolicy("NurseOrUser", policy =>
+        policy.Requirements.Add(new RoleRequirement("Nurse", "User")));
 });
 #endregion
 

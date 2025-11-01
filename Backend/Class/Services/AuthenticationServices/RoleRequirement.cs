@@ -5,11 +5,14 @@ namespace NurseRecordingSystem.Authorization
     // This class just holds the "rule" (e.g., "Role must be 'Nurse'")
     public class RoleRequirement : IAuthorizationRequirement
     {
-        public string Role { get; }
+        public IEnumerable<string> AllowedRoles { get; }
 
-        public RoleRequirement(string role)
+        // The "params" keyword lets you pass one or more roles easily:
+        // new RoleRequirement("Nurse")
+        // new RoleRequirement("Nurse", "User")
+        public RoleRequirement(params string[] roles)
         {
-            Role = role;
+            AllowedRoles = roles;
         }
     }
 }
