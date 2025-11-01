@@ -35,19 +35,19 @@ public class AdminClinicStatusController : ControllerBase
         }
     }
 
-    [HttpDelete("delete/clinic_status/{id}")]
+    [HttpDelete("delete/clinic_status/{clinicStatusId}")]
     [Authorize(Policy = "MustBeNurse")]
-    public async Task<IActionResult> DeleteStatus(int id)
+    public async Task<IActionResult> DeleteStatus(int clinicStatusId)
     {
         var deletedBy = User?.Identity?.Name ?? "AdminSystem";
 
         try
         {
-            var success = await _deleteService.DeleteAsync(id, deletedBy);
+            var success = await _deleteService.DeleteAsync(clinicStatusId, deletedBy);
 
             if (!success)
             {
-                return NotFound($"Clinic Status Log with ID {id} not found or is inactive.");
+                return NotFound($"Clinic Status Log with ID {clinicStatusId} not found or is inactive.");
             }
 
             return NoContent();

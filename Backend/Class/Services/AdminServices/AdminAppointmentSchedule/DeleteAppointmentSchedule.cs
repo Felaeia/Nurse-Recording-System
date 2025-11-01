@@ -13,13 +13,13 @@ namespace NurseRecordingSystem.Class.Services.AdminServices.AdminAppointmentSche
         {
             _dbConnection = dbConnection;
         }
-
+        // I was testing dapper hahahahahah T.T 
         public async Task<bool> DeleteAppointmentAsync(int appointmentId, DeleteAppointmentScheduleRequestDTO request)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@AppointmentId", appointmentId);
-            parameters.Add("@NurseId", request.NurseId, DbType.Int32);
-            parameters.Add("@DeletedBy", request.DeletedBy, DbType.String, size: 50);
+            parameters.Add("@NurseId", request.DeletedByNurseId, DbType.Int32);
+            parameters.Add("@DeletedBy", request.DeletedByNurseId, DbType.Int32, size: 50);
             parameters.Add("@ResultCode", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             try
@@ -39,7 +39,7 @@ namespace NurseRecordingSystem.Class.Services.AdminServices.AdminAppointmentSche
                 }
                 else if (resultCode == 2)
                 {
-                    throw new KeyNotFoundException($"Appointment with ID {request.AppointmentId} not found or is already deleted.");
+                    throw new KeyNotFoundException($"Appointment with ID {appointmentId} not found or is already deleted.");
                 }
                 else if (resultCode == -1)
                 {
