@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Class\Policies\" />
     <Folder Include="DTO\AdminServiceDTOs\AdminPatientRecordDTOs\" />
     <Folder Include="Policies\" />
     <Folder Include="wwwroot\" />

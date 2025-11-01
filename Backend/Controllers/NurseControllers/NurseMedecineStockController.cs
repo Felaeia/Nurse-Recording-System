@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseMedecineStock;
 using NurseRecordingSystem.DTO.NurseServiceDTOs.NurseMedecineStockDTOs;
 
@@ -19,6 +20,7 @@ public class NurseMedecineStockController : ControllerBase
     }
 
     [HttpPost("create_stock")]
+    [Authorize(Policy = "MustBeNurse")]
     public async Task<IActionResult> CreateStock([FromBody] CreateMedecineStockRequestDTO request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -38,6 +40,7 @@ public class NurseMedecineStockController : ControllerBase
     }
 
     [HttpDelete("delete_stock/{id}")]
+    [Authorize(Policy = "MustBeNurse")]
     public async Task<IActionResult> DeleteStock(int id)
     {
         var deletedBy = User?.Identity?.Name ?? "AdminUser";
@@ -60,6 +63,7 @@ public class NurseMedecineStockController : ControllerBase
     }
 
     [HttpPut("update_stock/{id}")]
+    [Authorize(Policy = "MustBeNurse")]
     public async Task<IActionResult> UpdateStock(int id, [FromBody] UpdateMedecineStockRequestDTO request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

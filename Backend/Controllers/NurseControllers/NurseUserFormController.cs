@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseUserForms;
 using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UserFormsDTOs;
 
@@ -22,6 +23,7 @@ namespace NurseRecordingSystem.API.Controllers
         /// Retrieves a summary list of patient forms with optional filters.
         /// </summary>
         [HttpGet("user/form_list")]
+        [Authorize(Policy = "MustBeNurse")]
         [ProducesResponseType(typeof(List<UserFormListItemDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserFormList(

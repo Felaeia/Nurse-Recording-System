@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices;
 using NurseRecordingSystem.DTO.NurseServiceDTOs.NurseAppointmentScheduleDTOs;
 
@@ -31,6 +32,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // POST: api/AppointmentSchedule
         // Create an appointment (Nurse Only)
         [HttpPost("create_appointment")]
+        [Authorize(Policy = "MustBeNurse")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentScheduleRequestDTO request)
         {
             if (!ModelState.IsValid)
@@ -62,6 +64,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // GET: api/AppointmentSchedule
         // Get list of all active appointments
         [HttpGet("view_appointment_list")]
+        [Authorize(Policy = "MustBeNurse")]
         public async Task<IActionResult> ViewAppointmentScheduleList()
         {
             try
@@ -79,6 +82,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // GET: api/AppointmentSchedule/{id}
         // Get single appointment by ID
         [HttpGet("view_appointment/{id}")]
+        [Authorize(Policy = "MustBeNurse")]
         public async Task<IActionResult> ViewAppointmentSchedule(int id)
         {
             try
@@ -100,6 +104,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // PUT: api/AppointmentSchedule
         // Update an appointment (Nurse Only)
         [HttpPut("update_appointment/{id}")]
+        [Authorize(Policy = "MustBeNurse")]
         public async Task<IActionResult> UpdateAppointment(int id, [FromBody] UpdateAppointmentScheduleRequestDTO request)
         {
             if (!ModelState.IsValid)
@@ -135,6 +140,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // Soft delete an appointment (Nurse Only)
         // Using HTTP DELETE with a body is non-standard but common for soft-deletes needing user context.
         [HttpDelete("delete_appointment/{id}")]
+        [Authorize(Policy = "MustBeNurse")]
         public async Task<IActionResult> DeleteAppointment(int id, [FromBody] DeleteAppointmentScheduleRequestDTO request)
         {
             if (!ModelState.IsValid)

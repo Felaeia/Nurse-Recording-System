@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.IAdminServices.IAdminClinicStatus;
 using NurseRecordingSystem.DTO.AdminServiceDTOs.AdminClinicStatusDTOs;
 
@@ -16,6 +17,7 @@ public class AdminClinicStatusController : ControllerBase
     }
 
     [HttpPost("create/clinic_status")]
+    [Authorize(Policy = "MustBeNurse")]
     public async Task<IActionResult> CreateStatus([FromBody] CreateClinicStatusRequestDTO request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -34,6 +36,7 @@ public class AdminClinicStatusController : ControllerBase
     }
 
     [HttpDelete("delete/clinic_status/{id}")]
+    [Authorize(Policy = "MustBeNurse")]
     public async Task<IActionResult> DeleteStatus(int id)
     {
         var deletedBy = User?.Identity?.Name ?? "AdminSystem";
