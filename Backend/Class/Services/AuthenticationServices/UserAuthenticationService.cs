@@ -23,6 +23,7 @@ namespace NurseRecordingSystem.Class.Services.Authentication
 
         //User Method: Login
         #region Login
+
         public async Task<LoginResponseDTO?> AuthenticateAsync(LoginRequestDTO request)
         {
             if (request == null)
@@ -35,36 +36,66 @@ namespace NurseRecordingSystem.Class.Services.Authentication
             {
                 cmdLoginUser.CommandType = System.Data.CommandType.StoredProcedure;
                 cmdLoginUser.Parameters.AddWithValue("@email", request.Email);
+
                 try
                 {
-
                     await connection.OpenAsync();
-                    using (var reader = cmdLoginUser.ExecuteReader())
+                    using (var reader = await cmdLoginUser.ExecuteReaderAsync()) // Use ExecuteReaderAsync
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync()) // Use ReadAsync
                         {
-
-                            if (PasswordHelper.VerifyPasswordHash(request.Password, (byte[])reader["passwordHash"], (byte[])reader["passwordSalt"]) == true && request.Email == (reader["email"].ToString())) // TODO: use hashing here
+                            // First, verify the password
+                            if (PasswordHelper.VerifyPasswordHash(request.Password,
+                                (byte[])reader["passwordHash"], (byte[])reader["passwordSalt"]))
                             {
-                                return new LoginResponseDTO
+                                string userRole = reader["role"].ToString()!;
+
+                                // Create the base response
+                                var response = new LoginResponseDTO
                                 {
-                                    AuthId = int.Parse(reader["authId"].ToString()!),
+                                    AuthId = (int)reader["authId"],
                                     UserName = reader["userName"].ToString()!,
                                     Email = reader["email"].ToString()!,
-                                    Role = reader["role"].ToString()!,
+                                    Role = userRole,
                                     IsAuthenticated = true
                                 };
+
+                                if (userRole == "User")
+                                {
+                                    response.UserDetails = new UserDetailsDTO
+                                    {
+                                        UserId = (int)reader["userId"],
+                                        FirstName = reader["User_firstName"].ToString()!,
+                                        // Check for DBNull before reading nullable fields
+                                        MiddleName = reader["User_middleName"] == DBNull.Value ? null : reader["User_middleName"].ToString(),
+                                        LastName = reader["User_lastName"].ToString()!,
+                                        ContactNumber = reader["User_contactNumber"].ToString()!,
+                                        Address = reader["User_address"] == DBNull.Value ? null : reader["User_address"].ToString()
+                                    };
+                                }
+                                else if (userRole == "Nurse")
+                                {
+                                    response.NurseDetails = new NurseDetailsDTO
+                                    {
+                                        NurseId = (int)reader["nurseId"],
+                                        FirstName = reader["Nurse_firstName"].ToString()!,
+                                        MiddleName = reader["Nurse_middleName"] == DBNull.Value ? null : reader["Nurse_middleName"].ToString(),
+                                        LastName = reader["Nurse_lastName"].ToString()!,
+                                        ContactNumber = reader["Nurse_contactNumber"] == DBNull.Value ? null : reader["Nurse_contactNumber"].ToString()
+                                    };
+                                }
+
+                                return response;
                             }
                         }
                     }
-
                 }
                 catch (SqlException ex)
                 {
-                    throw new Exception("Database ERROR occured during login", ex);
+                    throw new Exception("Database ERROR occurred during login", ex);
                 }
 
-                return null; // Invalid credentials
+                return null; // Invalid credentials (password wrong or user not found)
             }
         }
         #endregion

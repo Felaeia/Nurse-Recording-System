@@ -80,20 +80,34 @@ namespace NurseRecordingSystem.Class.Services.Authentication
         }
 
         /// <summary>
-        /// Deactivates the user's current active session token.
+        /// Deactivates the user's session token based on the token value.
         /// </summary>
-        public async Task EndSessionAsync(int authId)
+        /// <returns>True if the session was successfully ended, false otherwise.</returns>
+        public async Task<bool> EndSessionAsync(byte[] tokenBytes)
         {
             using (var connection = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand("dbo.usp_EndSessionToken", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@authId", authId);
+
+                // 1. Change the parameter to @Token
+                cmd.Parameters.Add(new SqlParameter
+                {
+                    ParameterName = "@Token",
+                    Value = tokenBytes,
+                    SqlDbType = SqlDbType.VarBinary,
+                    Size = 64
+                });
 
                 try
                 {
                     await connection.OpenAsync();
-                    await cmd.ExecuteNonQueryAsync(); // No data is returned
+
+                    // 2. Execute and get the number of rows affected
+                    int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                    // 3. Return true if we successfully updated 1 row
+                    return rowsAffected > 0;
                 }
                 catch (SqlException ex)
                 {
@@ -116,12 +130,6 @@ namespace NurseRecordingSystem.Class.Services.Authentication
                 ExpiresOn = (DateTime)reader["expiresOn"],
                 IsActive = (int)reader["isActive"]
             };
-        }
-
-        public class SessionValidationResult
-        {
-            public bool IsValid { get; set; }
-            public byte Token { get; set; }
         }
 
         /// <summary>

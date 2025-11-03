@@ -27,7 +27,7 @@ namespace NurseRecordingSystem.Controllers.AuthenticationControllers
                 ?? throw new ArgumentNullException(nameof(sessionTokenService), "SessionTokenService cannot be null");
         }
 
-        #region User Login (My eyes are huritng TT)
+        #region User LOGIN Endpoint
         /// <summary>
         /// Authenticates a user and provides a session token.
         /// </summary>
@@ -123,6 +123,43 @@ namespace NurseRecordingSystem.Controllers.AuthenticationControllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error in Login: {ex.Message}");
+            }
+        }
+        #endregion
+
+        #region User LOGOUT Endpoint
+        /// <summary>
+        /// Logs out a user by invalidating their session token.
+        /// </summary>
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogoutUser()
+        {
+            try
+            {
+                // 1. Retrieve the SessionToken from cookies
+                if (!Request.Cookies.TryGetValue("SessionToken", out string? tokenString) || string.IsNullOrEmpty(tokenString))
+                {
+                    return BadRequest("No session token found in cookies.");
+                }
+                // 2. Convert the token string back to byte[]
+                byte[] tokenBytes;
+                try
+                {
+                    tokenBytes = Convert.FromBase64String(tokenString);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest("Invalid session token format.");
+                }
+                // 3. Invalidate the session token
+                bool logoutSuccess = await _sessionTokenService.EndSessionAsync(tokenBytes);
+                // 4. Remove the cookie from the client
+                Response.Cookies.Delete("SessionToken");
+                return Ok("Logout successful.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error in Logout: {ex.Message}");
             }
         }
         #endregion

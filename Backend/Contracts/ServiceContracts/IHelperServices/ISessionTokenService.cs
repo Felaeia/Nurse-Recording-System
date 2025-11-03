@@ -18,7 +18,7 @@ namespace NurseRecordingSystem.Contracts.ServiceContracts.Auth
         /// <summary>
         /// Ends a user's active session by expiring the token.
         /// </summary>
-        Task EndSessionAsync(int authId);
+        Task<bool> EndSessionAsync(byte[] tokenBytes);
 
         /// <summary>
         /// Validates if an active, non-expired session exists for a user.

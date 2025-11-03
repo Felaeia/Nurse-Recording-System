@@ -26,7 +26,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
             var creator = "Nurse1";
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateUserFormAsync(request, userId, creator));
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateUserFormAsync(request, userId));
             Assert.Equal("userFormRequest", exception.ParamName);
             Assert.Contains("UserFormRequest Cannot be Null", exception.Message);
         }
@@ -60,9 +60,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
                 issueType = "Medical",
                 issueDescryption = "Patient needs assistance",
                 status = "Pending",
-                patientName = "Mags",
-                createdBy = "Nurse1",
-                updatedBy = "Nurse1",
+                patientName = "Mags"
 
             };
             var userId = "123";
@@ -71,7 +69,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
 
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => service.CreateUserFormAsync(request, userId, creator));
+            await Assert.ThrowsAsync<Exception>(() => service.CreateUserFormAsync(request, userId));
         }
     }
 }

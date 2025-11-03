@@ -36,8 +36,7 @@ namespace NurseRecordingSystem.Controllers.UserControllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateForm(
             [FromBody] UserFormRequestDTO request,
-            [FromHeader(Name = "X-User-ID")] string userId,
-            [FromHeader(Name = "X-Creator-ID")] string creator)
+            [FromHeader(Name = "X-User-ID")] string userId)
         {
             if (!ModelState.IsValid)
             {
@@ -47,7 +46,7 @@ namespace NurseRecordingSystem.Controllers.UserControllers
             try
             {
                 // The controller calls the blueprint's method
-                UserFormResponseDTO response = await _createUserFormService.CreateUserFormAsync(request, userId, creator);
+                UserFormResponseDTO response = await _createUserFormService.CreateUserFormAsync(request, userId);
 
                 // Assuming successful creation, return 201 Created.
                 return StatusCode(StatusCodes.Status201Created, response);

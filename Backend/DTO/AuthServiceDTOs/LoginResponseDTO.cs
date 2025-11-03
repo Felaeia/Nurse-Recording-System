@@ -7,5 +7,8 @@
         public string Email { get; set; } = null!;
         public string Role { get; set; } = null!;
         public bool IsAuthenticated { get; set; }
+
+        public UserDetailsDTO? UserDetails { get; set; }
+        public NurseDetailsDTO? NurseDetails { get; set; }
     }
 }
