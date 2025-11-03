@@ -1,0 +1,31 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[hsp_ViewAllMedecineStock]    Script Date: 11/3/2025 5:52:48 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[hsp_ViewAllMedecineStock]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        MS.[medicineId],
+        MS.[medecineName],
+        MS.[medecineDescription],
+        MS.[numberOfStock]
+    FROM 
+        [dbo].[MedecineStocks] MS
+    WHERE 
+        MS.[isActive] = 1 
+    ORDER BY
+        MS.[medecineName] ASC;
+END
+GO
+
+

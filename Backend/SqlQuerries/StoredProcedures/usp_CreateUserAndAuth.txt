@@ -1,107 +1,129 @@
+USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_CreateUserAndAuth]    Script Date: 11/3/2025 5:58:57 PM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE dbo.CreateUserAndAuth
-	-- Add the parameters for the stored procedure here
-	-- Parameters for the [Auth] table --
-	@userName NVARCHAR(50),
-	@passwordHash VARBINARY(MAX),
-	@passwordSalt VARBINARY(MAX),
-	@email NVARCHAR(100),
-	@role INT,
-	@createdBy NVARCHAR(50),
-	@updatedOn DATETIME2,
-	@updatedBy NVARCHAR(50),
-	@isActive BIT,
 
-	-- Parameters for the [Users] table --
-	@firstName NVARCHAR(50),
-	@middleName NVARCHAR(50),
-	@lastName NVARCHAR(50),
-	@contactNumber NVARCHAR(50),
-	@address NVARCHAR(50)
+-- Define the stored procedure and its parameters
+CREATE PROCEDURE [dbo].[usp_CreateUserAndAuth]
+-- Parameters for the [Auth] table
+    @userName NVARCHAR(50),
+    @passwordHash VARBINARY(MAX),
+    @passwordSalt VARBINARY(MAX),
+    @email NVARCHAR(100),
+    @createdBy NVARCHAR(50),
+    @updatedOn DATETIME2,
+    @updatedBy NVARCHAR(50),
+    @isActive BIT,
+
+    -- Parameters for the [Users] table
+    @firstName NVARCHAR(50),
+    @middleName NVARCHAR(50),
+    @lastName NVARCHAR(50),
+    @contactNumber NVARCHAR(20),
+    @address NVARCHAR(255)
 
 AS
 BEGIN
-	BEGIN TRANSACTION;
-	SET NOCOUNT ON;
+    -- ====================================================================
+    -- 1. EMAIL UNIQUENESS CHECK
+    -- ====================================================================
+    IF EXISTS (SELECT 1 FROM [dbo].[Auth] WHERE [email] = @email)
+    BEGIN
+        -- If the email is found, raise a custom error and stop execution.
+        -- State 1 indicates the error is the first occurrence in the batch.
+        -- Severity 16 is a general user error that can be caught by the application.
+        RAISERROR('Email already existing. Please use a different email address.', 16, 1);
+        RETURN -1; -- Return a status code indicating the email was a duplicate
+    END
 
-	DECLARE @newAuthId INT
-    -- Insert statements for procedure here --
-	INSERT INTO [Auth] (
-	userName,
-	passwordHash,
-	passwordSalt,
-	email,
-	role,
-	createdBy,
-	updatedOn,
-	updatedBy,
-	isActive
-	)
-	VALUES (
-	@userName,
-	@passwordHash,
-	@passwordSalt,
-	@email,
-	@role,
-	@createdBy,
-	@updatedOn,
-	@isActive
-	);
+    -- If the email is unique, proceed with the transaction.
+    BEGIN TRANSACTION;
+    SET NOCOUNT ON; -- Prevents extra result sets from interfering with the return value
 
-	-- Get the ID of the newly inserted Auth Record
-	SET @newAuthId = SCOPE_IDENTITY();
+    DECLARE @newAuthId INT;
+    DECLARE @DefaultRole NVARCHAR(50) = 'User';
+    
+    -- 1. Insert into Auth Table
+    INSERT INTO [Auth] (
+        userName, 
+        passwordHash, 
+        passwordSalt, 
+        email, 
+        role, 
+        createdBy, 
+        updatedOn, 
+        updatedBy, 
+        isActive
+    ) 
+    VALUES (
+        @userName, 
+        @passwordHash, 
+        @passwordSalt, 
+        @email, 
+        @DefaultRole, 
+        @createdBy, 
+        @updatedOn, 
+        @updatedBy, 
+        @isActive
+    );
 
-	-- Check if the Auth insert failed
-	IF @newAuthId IS NULL OR @newAuthId = 0
-	BEGIN
-		ROLLBACK TRANSACTION;
-		-- RAISEERROR to signal an error back to the aplication
-		RAISERROR('Failed to insert into Auth Table.',16, 1);
-		RETURN -1; -- Return a status code indicating failure
+    -- Get the ID of the newly inserted Auth record
+    SET @newAuthId = SCOPE_IDENTITY();
 
-	END
+    -- Check if the Auth insert failed (optional, but good practice)
+    IF @newAuthId IS NULL OR @newAuthId = 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        -- Use RAISERROR to signal an error back to the application
+        RAISERROR('Failed to insert into Auth table.', 16, 1);
+        RETURN -1; -- Return a status code indicating failure
+    END
 
-	INSERT INTO [Users] (
-	authId,
-	firstName,
-	middleName,
-	lastName,
-	contactNumber,
-	address,
-	createdBy,
-	updatedOn,
-	updatedBy,
-	isActive
-	)
-	VALUES (
-	@newAuthId,
-	@firstName,
-	@middleName,
-	@lastName,
-	@contactNumber,
-	@address,
-	@createdBy,
-	@updatedOn,
-	@updatedBy,
-	@isActive
-	);
+    -- 2. Insert into Users Table
+    INSERT INTO [Users] (
+        authId, 
+        firstName, 
+        middleName, 
+        lastName, 
+        contactNumber, 
+        address, 
+        createdBy, 
+        updatedOn, 
+        updatedBy, 
+        isActive
+    ) 
+    VALUES (
+        @newAuthId, -- Use the new ID from the Auth table
+        @firstName, 
+        @middleName, 
+        @lastName, 
+        @contactNumber, 
+        @address, 
+        @createdBy, 
+        @updatedOn, 
+        @updatedBy, 
+        @isActive
+    );
 
-	-- Check for errors after the Users insert
-	IF @@ERROR <> 0
-	BEGIN
-		ROLLBACK TRANSACTION;
-		RETURN -1; -- Return a status code indicating failure
-	END
-
-	-- If both inserts succeeded, commit the transaction
-	COMMIT TRANSACTION;
-
-	-- Return the new AuthId to the application
-	SELECT @newAuthId
-
+    -- Check for errors after the Users insert
+    IF @@ERROR <> 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        RETURN -1; -- Return a status code indicating failure
+    END
+    
+    -- If both inserts succeeded, commit the transaction
+    COMMIT TRANSACTION;
+    
+    -- Return the new AuthId to the application
+    SELECT @newAuthId;
 END
 GO
+
+

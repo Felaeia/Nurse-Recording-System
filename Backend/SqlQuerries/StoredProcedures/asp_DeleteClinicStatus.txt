@@ -1,0 +1,40 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[asp_DeleteClinicStatus]    Script Date: 11/3/2025 5:52:24 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[asp_DeleteClinicStatus]
+    @logId INT,
+    @deletedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Perform a "soft delete"
+    UPDATE [dbo].[ClinicStatus]
+    SET 
+        [isActive] = 0,
+        [deletedOn] = GETDATE(),
+        [DeletedBy] = @deletedBy
+        -- Note: We update updatedOn/By here to track the deletion action
+    WHERE 
+        [logId] = @logId
+        AND [isActive] = 1;
+
+    IF @@ROWCOUNT = 0
+    BEGIN
+        RAISERROR('Clinic Status Log ID %d not found or already deleted.', 16, 1, @logId);
+        RETURN 1; 
+    END
+    
+    RETURN 0;
+END
+GO
+
+

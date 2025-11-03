@@ -1,0 +1,49 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[asp_CreateClinicStatus]    Script Date: 11/3/2025 5:52:05 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[asp_CreateClinicStatus]
+    @status BIT,
+    @nurseId INT,
+    @createdBy NVARCHAR(50),
+    @updatedBy NVARCHAR(50) -- Required because updatedBy is NOT NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Insert a new status log record
+    INSERT INTO [dbo].[ClinicStatus]
+    (
+        [status],
+        [nurseId],
+        [createdOn],
+        [createdBy],
+        [updatedOn],
+        [updatedBy],
+        [isActive]
+        -- deletedOn and DeletedBy are NULLABLE, so we omit them
+    )
+    VALUES
+    (
+        @status,
+        @nurseId,
+        GETDATE(), -- createdOn
+        @createdBy,
+        GETDATE(), -- updatedOn (Initial update is the creation time)
+        @updatedBy,
+        1          -- isActive = true
+    );
+
+    -- Return the ID of the newly created log entry
+    SELECT SCOPE_IDENTITY() AS NewLogId;
+END
+GO
+
+

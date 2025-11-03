@@ -1,7 +1,7 @@
 ﻿USE [NurseRecordingSystem]
 GO
 
-/****** Object:  StoredProcedure [dbo].[asp_DeleteUser]    Script Date: 10/16/2025 4:27:00 PM ******/
+/****** Object:  StoredProcedure [dbo].[asp_DeleteUser]    Script Date: 11/3/2025 5:52:39 PM ******/
 SET ANSI_NULLS ON
 GO
 

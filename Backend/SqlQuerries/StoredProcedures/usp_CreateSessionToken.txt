@@ -1,0 +1,63 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_CreateSessionToken]    Script Date: 11/3/2025 5:58:52 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_CreateSessionToken]
+    @authId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+
+    DECLARE @newToken VARBINARY(64);
+    DECLARE @newExpiresOn DATETIME2(0);
+    
+    SET @newToken = CRYPT_GEN_RANDOM(64); -- Generate a secure 64-byte token
+    SET @newExpiresOn = DATEADD(hour, 24, SYSDATETIME()); -- Set expiry for 24 hours from now
+
+    -- 1. Deactivate any existing active tokens for this user
+    -- This enforces the "one active session at a time" rule
+    UPDATE [dbo].[SessionTokens]
+    SET [isActive] = 0,
+        [expiresOn] = SYSDATETIME()
+    WHERE [authId] = @authId AND [isActive] = 1;
+
+    -- 2. Insert the new active token
+    INSERT INTO [dbo].[SessionTokens] (
+        [token],
+        [authId],
+        [createdOn],
+        [expiresOn],
+        [isActive]
+    )
+    VALUES (
+        @newToken,
+        @authId,
+        SYSDATETIME(), -- This will be overridden by the DEFAULT, but good to be explicit
+        @newExpiresOn,
+        1 -- Mark as active
+    );
+
+    -- 3. Get the new TokenId
+    DECLARE @newTokenId INT = SCOPE_IDENTITY();
+
+    COMMIT TRANSACTION;
+
+    -- 4. Return the new token's details
+    SELECT 
+        @newTokenId AS [tokenId],
+        @newToken AS [token],
+        @authId AS [authId],
+        @newExpiresOn AS [expiresOn],
+        1 AS [isActive];
+END
+GO
+
+

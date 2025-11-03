@@ -1,0 +1,49 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[asp_CreateMedecineStock]    Script Date: 11/3/2025 5:52:12 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[asp_CreateMedecineStock]
+    @medecineName NVARCHAR(MAX),
+    @medecineDescription NVARCHAR(MAX),
+    @numberOfStock INT,
+    @nurseId INT,
+    @createdBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Insert the new medicine record. deletedOn and DeletedBy are naturally NULL here.
+    INSERT INTO [dbo].[MedecineStocks]
+    (
+        [medecineName],
+        [medecineDescription],
+        [numberOfStock],
+        [nurseId],
+        [createdOn],
+        [createdBy],
+        [isActive]
+    )
+    VALUES
+    (
+        @medecineName,
+        @medecineDescription,
+        @numberOfStock,
+        @nurseId,
+        GETDATE(),
+        @createdBy,
+        1 -- isActive = true for creation
+    );
+
+    -- Return the ID of the newly created medicine
+    SELECT SCOPE_IDENTITY() AS NewMedicineId;
+END
+GO
+
+

@@ -1,0 +1,69 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_CreateAppointmentSchedule]    Script Date: 11/3/2025 5:55:01 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- a. nsp_CreateAppointmentSchedule
+-- Creates a new appointment and validates if the user is a 'Nurse'
+CREATE PROCEDURE [dbo].[nsp_CreateAppointmentSchedule]
+    @AppointmentTime DATETIME,
+    @AppointmentDescription NVARCHAR(MAX),
+    @NurseId INT,
+    @CreatedBy NVARCHAR(50),
+    @ResultCode INT OUTPUT -- 0: Success, 1: Not a Nurse, -1: Error
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @ResultCode = 0; -- Default to Success
+
+    BEGIN TRY
+        -- 1. Validate if the user (via NurseId -> AuthId -> Role) is a 'Nurse'
+        IF NOT EXISTS (
+            SELECT 1
+            FROM dbo.Nurses n
+            JOIN dbo.Auth a ON n.authId = a.authId
+            WHERE n.nurseId = @NurseId AND a.role = 'Nurse' AND n.isActive = 1 AND a.isActive = 1
+        )
+        BEGIN
+            SET @ResultCode = 1; -- Not a Nurse
+            RETURN;
+        END
+
+        -- 2. Create the new appointment
+        INSERT INTO [dbo].[AppointmentSchedule] (
+            [appointmentTime],
+            [appointmentDescription],
+            [nurseId],
+            [createdOn],
+            [createdBy],
+            [updatedOn],
+            [updatedBy],
+            [isActive]
+        )
+        VALUES (
+            @AppointmentTime,
+            @AppointmentDescription,
+            @NurseId,
+            SYSDATETIME(),
+            @CreatedBy,
+            SYSDATETIME(), -- Initial update tracking
+            @CreatedBy,
+            1
+        );
+
+    END TRY
+    BEGIN CATCH
+        SET @ResultCode = -1; -- General Error
+        -- Log error details if necessary
+        THROW;
+    END CATCH
+END
+
+GO
+
+

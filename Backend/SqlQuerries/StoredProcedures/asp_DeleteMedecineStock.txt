@@ -1,0 +1,41 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[asp_DeleteMedecineStock]    Script Date: 11/3/2025 5:52:29 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[asp_DeleteMedecineStock]
+    @medicineId INT,
+    @deletedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Perform a "soft delete" by setting isActive to 0 and filling deletion fields.
+    UPDATE [dbo].[MedecineStocks]
+    SET 
+        [isActive] = 0,
+        [deletedOn] = GETDATE(),
+        [DeletedBy] = @deletedBy,
+        [updatedOn] = GETDATE(), 
+        [updatedBy] = @deletedBy
+    WHERE 
+        [medicineId] = @medicineId
+        AND [isActive] = 1;
+
+    IF @@ROWCOUNT = 0
+    BEGIN
+        RAISERROR('Medicine Stock ID %d not found or already deleted.', 16, 1, @medicineId);
+        RETURN 1; 
+    END
+    
+    RETURN 0;
+END
+GO
+
+

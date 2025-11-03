@@ -1,0 +1,38 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[sp_ValidateSessionTokenAndGetRole]    Script Date: 11/3/2025 5:56:09 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[sp_ValidateSessionTokenAndGetRole]
+    -- Input: The token read from the cookie
+    @Token varbinary(64)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- This query will only return a role if ALL conditions are met:
+    -- 1. The token matches.
+    -- 2. The token is active.
+    -- 3. The token has not expired (using GETUTCDATE() is safest).
+    -- 4. The user account it links to is also active.
+    SELECT
+        A.role
+    FROM
+        [dbo].[SessionTokens] AS S
+    JOIN
+        [dbo].[Auth] AS A ON S.authId = A.authId
+    WHERE
+        S.token = @Token
+        AND S.isActive = 1
+        AND S.expiresOn > GETUTCDATE()
+        AND A.isActive = 1;
+END
+GO
+
+
