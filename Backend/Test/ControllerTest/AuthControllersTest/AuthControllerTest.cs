@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
 using NurseRecordingSystem.Controllers.AuthenticationControllers;
@@ -12,6 +14,7 @@ namespace NurseRecordingSystemTest.ControllerTest
         // 1. Add mock for the new service
         private readonly Mock<IUserAuthenticationService> _mockAuthService;
         private readonly Mock<ISessionTokenService> _mockTokenService; // <-- ADDED
+        private readonly Mock<IUserAuthenticationService> _mockAuthService;
         private readonly AuthController _authController;
 
         public AuthControllerTest()
@@ -26,11 +29,14 @@ namespace NurseRecordingSystemTest.ControllerTest
             );
         }
 
+            _authController = new AuthController(_mockAuthService.Object);
+        }
         //successful login test
         [Fact]
         public async Task LoginUser_ValidCredentials_ReturnsOkResult()
         {
             // --- Arrange ---
+
             var loginRequest = new LoginRequestDTO
             {
                 Email = "testuser@gmail.com",
@@ -38,6 +44,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             };
 
             var expectedAuthResponse = new LoginResponseDTO
+            var expectedResponse = new LoginResponseDTO 
             {
                 AuthId = 1,
                 Email = loginRequest.Email,
@@ -78,11 +85,27 @@ namespace NurseRecordingSystemTest.ControllerTest
             Assert.Equal("Login Successful", data.Message);
         }
 
+                Role = 1,
+                IsAuthenticated = true
+            };
+
+            _mockAuthService.Setup(service => service.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ReturnsAsync(expectedResponse);
+
+
+            var result = await _authController.LoginUser(loginRequest) as OkObjectResult;
+
+
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.NotNull(result.Value);
+            Assert.Contains("Login Succesful", result.Value?.ToString());
+        }
         //invalid credentials test
         [Fact]
         public async Task LoginUser_InvalidCredentials_ReturnsUnauthorized()
         {
             // --- Arrange ---
+
             var loginRequest = new LoginRequestDTO
             {
                 Email = "wronguser@gmail.com",
@@ -97,6 +120,13 @@ namespace NurseRecordingSystemTest.ControllerTest
             var result = await _authController.LoginUser(loginRequest) as UnauthorizedObjectResult;
 
             // --- Assert ---
+            _mockAuthService.Setup(iuserauthservice => iuserauthservice.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ReturnsAsync((LoginResponseDTO?)null);
+
+
+
+            var result = await _authController.LoginUser(loginRequest) as UnauthorizedObjectResult;
+
+
             Assert.NotNull(result);
             Assert.Equal(401, result.StatusCode);
             Assert.Equal("Invalid credentials.", result.Value);
@@ -107,6 +137,7 @@ namespace NurseRecordingSystemTest.ControllerTest
         public async Task LoginUser_ExceptionThrown_ReturnsServerError()
         {
             // --- Arrange ---
+
             var loginRequest = new LoginRequestDTO
             {
                 Email = "errormail@gmail.com",
@@ -125,6 +156,17 @@ namespace NurseRecordingSystemTest.ControllerTest
             Assert.Equal(500, result.StatusCode);
             Assert.NotNull(result.Value);
             Assert.Contains("Error in Login: Database connection failed", result.Value?.ToString());
+            _mockAuthService.Setup(s => s.AuthenticateAsync(It.IsAny<LoginRequestDTO>())).ThrowsAsync(new Exception("Testing exception"));
+
+
+            var result = await _authController.LoginUser(loginRequest) as ObjectResult;
+
+
+            Assert.NotNull(result);
+            Assert.Equal(500, result.StatusCode);
+            Assert.NotNull(result.Value);
+            Assert.Contains("Error in Login", result.Value?.ToString());
+            //sdsdfsfds
         }
     }
 }
