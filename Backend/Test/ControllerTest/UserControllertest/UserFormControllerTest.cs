@@ -36,7 +36,10 @@ namespace NurseRecordingSystemTest.ControllerTest
                 issueType = "Medical Issue",
                 issueDescryption = "Description",
                 status = "Active",
-                patientName = "TestName"
+                patientName = "TestName",
+                createdBy = "Nurse1",
+                updatedBy = "Nurse1",
+                DeletedBy = "Nurse1"
             };
             var userId = "123";
             var creator = "Nurse1";
@@ -47,11 +50,11 @@ namespace NurseRecordingSystemTest.ControllerTest
                 Message = "Form created successfully"
             };
 
-            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId))
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _userFormController.CreateForm(request, userId) as ObjectResult;
+            var result = await _userFormController.CreateForm(request, userId, creator) as ObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -72,7 +75,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             _userFormController.ModelState.AddModelError("issueType", "Required");
 
             // Act
-            var result = await _userFormController.CreateForm(request, userId) as BadRequestObjectResult;
+            var result = await _userFormController.CreateForm(request, userId, creator) as BadRequestObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -87,16 +90,19 @@ namespace NurseRecordingSystemTest.ControllerTest
             {
                 issueType = "Medical Issue",
                 status = "Active",
-                patientName = "TestName"
+                patientName = "TestName",
+                createdBy = "Nurse1",
+                updatedBy = "Nurse1",
+                DeletedBy = "Nurse1"
             };
             var userId = "123";
             var creator = "Nurse1";
 
-            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId))
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
                 .ThrowsAsync(new ArgumentNullException("Some parameter is null"));
 
             // Act
-            var result = await _userFormController.CreateForm(request, userId) as BadRequestObjectResult;
+            var result = await _userFormController.CreateForm(request, userId, creator) as BadRequestObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -111,16 +117,19 @@ namespace NurseRecordingSystemTest.ControllerTest
             {
                 issueType = "Medical Issue",
                 status = "Active",
-                patientName = "TestName"
+                patientName = "TestName",
+                createdBy = "Nurse1",
+                updatedBy = "Nurse1",
+                DeletedBy = "Nurse1"
             };
             var userId = "123";
             var creator = "Nurse1";
 
-            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId))
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
                 .ThrowsAsync(new Exception("Database error"));
 
             // Act
-            var result = await _userFormController.CreateForm(request, userId) as ObjectResult;
+            var result = await _userFormController.CreateForm(request, userId, creator) as ObjectResult;
 
             // Assert
             Assert.NotNull(result);
