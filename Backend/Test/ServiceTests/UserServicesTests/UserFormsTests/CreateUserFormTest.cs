@@ -23,10 +23,9 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
             var service = new CreateUserForm(config);
             UserFormRequestDTO request = null!;
             var userId = "123";
-            var creator = "Nurse1";
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateUserFormAsync(request, userId, creator));
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateUserFormAsync(request, userId));
             Assert.Equal("userFormRequest", exception.ParamName);
             Assert.Contains("UserFormRequest Cannot be Null", exception.Message);
         }
@@ -61,17 +60,14 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
                 issueDescryption = "Patient needs assistance",
                 status = "Pending",
                 patientName = "Mags",
-                createdBy = "Nurse1",
-                updatedBy = "Nurse1",
 
             };
             var userId = "123";
-            var creator = "Nurse1";
 
 
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => service.CreateUserFormAsync(request, userId, creator));
+            await Assert.ThrowsAsync<Exception>(() => service.CreateUserFormAsync(request, userId));
         }
     }
 }

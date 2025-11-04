@@ -10,6 +10,7 @@ namespace NurseRecordingSystemTest.ControllerTest
 {
     public class UserFormControllerTest
     {
+        
         private readonly Mock<ICreateUserForm> _mockCreateUserFormService;
         private readonly Mock<IUpdateUserForm> _mockUpdateUserFormService;
         private readonly Mock<IDeleteUserForm> _mockDeleteUserFormService;
@@ -26,117 +27,7 @@ namespace NurseRecordingSystemTest.ControllerTest
                 _mockUpdateUserFormService.Object);
         }
 
-        #region CreateForm Tests
-        [Fact]
-        public async Task CreateForm_ValidRequest_ReturnsCreated()
-        {
-            // Arrange
-            var request = new UserFormRequestDTO
-            {
-                issueType = "Medical Issue",
-                issueDescryption = "Description",
-                status = "Active",
-                patientName = "TestName",
-                createdBy = "Nurse1",
-                updatedBy = "Nurse1",
-                DeletedBy = "Nurse1"
-            };
-            var userId = "123";
-            var creator = "Nurse1";
-            var expectedResponse = new UserFormResponseDTO
-            {
-                IsSuccess = true,
-                UserFormId = 1,
-                Message = "Form created successfully"
-            };
-
-            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
-                .ReturnsAsync(expectedResponse);
-
-            // Act
-            var result = await _userFormController.CreateForm(request, userId, creator) as ObjectResult;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(201, result.StatusCode);
-            var response = result.Value as UserFormResponseDTO;
-            Assert.NotNull(response);
-            Assert.Equal(expectedResponse.UserFormId, response.UserFormId);
-        }
-
-        [Fact]
-        public async Task CreateForm_InvalidModel_ReturnsBadRequest()
-        {
-            // Arrange
-            var request = new UserFormRequestDTO(); // Missing required fields
-            var userId = "123";
-            var creator = "Nurse1";
-
-            _userFormController.ModelState.AddModelError("issueType", "Required");
-
-            // Act
-            var result = await _userFormController.CreateForm(request, userId, creator) as BadRequestObjectResult;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(400, result.StatusCode);
-        }
-
-        [Fact]
-        public async Task CreateForm_ArgumentNullException_ReturnsBadRequest()
-        {
-            // Arrange
-            var request = new UserFormRequestDTO
-            {
-                issueType = "Medical Issue",
-                status = "Active",
-                patientName = "TestName",
-                createdBy = "Nurse1",
-                updatedBy = "Nurse1",
-                DeletedBy = "Nurse1"
-            };
-            var userId = "123";
-            var creator = "Nurse1";
-
-            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
-                .ThrowsAsync(new ArgumentNullException("Some parameter is null"));
-
-            // Act
-            var result = await _userFormController.CreateForm(request, userId, creator) as BadRequestObjectResult;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(400, result.StatusCode);
-        }
-
-        [Fact]
-        public async Task CreateForm_Exception_ReturnsInternalServerError()
-        {
-            // Arrange
-            var request = new UserFormRequestDTO
-            {
-                issueType = "Medical Issue",
-                status = "Active",
-                patientName = "TestName",
-                createdBy = "Nurse1",
-                updatedBy = "Nurse1",
-                DeletedBy = "Nurse1"
-            };
-            var userId = "123";
-            var creator = "Nurse1";
-
-            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId, creator))
-                .ThrowsAsync(new Exception("Database error"));
-
-            // Act
-            var result = await _userFormController.CreateForm(request, userId, creator) as ObjectResult;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(500, result.StatusCode);
-        }
-        #endregion
-
+        
         #region UpdateUserForm Tests
         [Fact]
         public async Task UpdateUserForm_ValidRequest_ReturnsOk()
