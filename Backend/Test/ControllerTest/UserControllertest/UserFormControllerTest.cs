@@ -10,7 +10,6 @@ namespace NurseRecordingSystemTest.ControllerTest
 {
     public class UserFormControllerTest
     {
-        
         private readonly Mock<ICreateUserForm> _mockCreateUserFormService;
         private readonly Mock<IUpdateUserForm> _mockUpdateUserFormService;
         private readonly Mock<IDeleteUserForm> _mockDeleteUserFormService;
@@ -27,7 +26,106 @@ namespace NurseRecordingSystemTest.ControllerTest
                 _mockUpdateUserFormService.Object);
         }
 
-        
+        #region CreateForm Tests
+        [Fact]
+        public async Task CreateForm_ValidRequest_ReturnsCreated()
+        {
+            // Arrange
+            var request = new UserFormRequestDTO
+            {
+                issueType = "Medical Issue",
+                issueDescryption = "Description",
+                status = "Active",
+                patientName = "TestName",
+            };
+            var userId = "123";
+            var expectedResponse = new UserFormResponseDTO
+            {
+                IsSuccess = true,
+                UserFormId = 1,
+                Message = "Form created successfully"
+            };
+
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _userFormController.CreateForm(request, userId) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(201, result.StatusCode);
+            var response = result.Value as UserFormResponseDTO;
+            Assert.NotNull(response);
+            Assert.Equal(expectedResponse.UserFormId, response.UserFormId);
+        }
+
+        [Fact]
+        public async Task CreateForm_InvalidModel_ReturnsBadRequest()
+        {
+            // Arrange
+            var request = new UserFormRequestDTO(); // Missing required fields
+            var userId = "123";
+
+
+            _userFormController.ModelState.AddModelError("issueType", "Required");
+
+            // Act
+            var result = await _userFormController.CreateForm(request, userId) as BadRequestObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateForm_ArgumentNullException_ReturnsBadRequest()
+        {
+            // Arrange
+            var request = new UserFormRequestDTO
+            {
+                issueType = "Medical Issue",
+                status = "Active",
+                patientName = "TestName",
+            };
+            var userId = "123";
+
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId))
+                .ThrowsAsync(new ArgumentNullException("Some parameter is null"));
+
+            // Act
+            var result = await _userFormController.CreateForm(request, userId) as BadRequestObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateForm_Exception_ReturnsInternalServerError()
+        {
+            // Arrange
+            var request = new UserFormRequestDTO
+            {
+                issueType = "Medical Issue",
+                status = "Active",
+                patientName = "TestName",
+            };
+            var userId = "123";
+
+
+            _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId))
+                .ThrowsAsync(new Exception("Database error"));
+
+            // Act
+            var result = await _userFormController.CreateForm(request, userId) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(500, result.StatusCode);
+        }
+        #endregion
+
         #region UpdateUserForm Tests
         [Fact]
         public async Task UpdateUserForm_ValidRequest_ReturnsOk()
