@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
 using NurseRecordingSystem.Controllers.AuthenticationControllers;
@@ -21,7 +22,13 @@ namespace NurseRecordingSystemTest.ControllerTest
             _authController = new AuthController(
                 _mockAuthService.Object,
                 _mockTokenService.Object
-            );
+            )
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext()
+                }
+            };
         }
 
         // Successful login test with new token creation
