@@ -207,60 +207,59 @@ namespace NurseRecordingSystem.Test.ControllerTest.NurseControllersTest
             Assert.Equal(404, result.StatusCode);
         }
 
-        //[Fact]
-        //public async Task DeleteAppointment_ValidRequest_ReturnsOk()
-        //{
-        //    // Arrange
-        //    var request = new DeleteAppointmentScheduleRequestDTO
-        //    {
-        //        DeletedByNurseId = 1
-        //    };
-        //    _mockDeleteService.Setup(service => service.DeleteAppointmentAsync(appointmentId, request)).ReturnsAsync(true);
+        [Fact]
+        public async Task DeleteAppointment_ValidRequest_ReturnsOk()
+        {
+            // Arrange
+            var appointmentId = 1;
+            var request = new DeleteAppointmentScheduleRequestDTO
+            {
+                DeletedByNurseId = 1
+            };
+            _mockDeleteService.Setup(service => service.DeleteAppointmentAsync(appointmentId, request)).ReturnsAsync(true);
 
-        //    // Act
-        //    var result = await _controller.DeleteAppointment(appointmentId, request) as OkObjectResult;
+            // Act
+            var result = await _controller.DeleteAppointment(appointmentId, request) as OkObjectResult;
 
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.Equal(200, result.StatusCode);
-        //    Assert.Contains("Appointment deleted successfully (soft-deleted).", result.Value?.ToString());
-        //}
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.Contains("Appointment deleted successfully (soft-deleted).", result.Value?.ToString());
+        }
 
-        //[Fact]
-        //public async Task DeleteAppointment_InvalidModel_ReturnsBadRequest()
-        //{
-        //    // Arrange
-        //    var appointmentId = 1;
-        //    var request = new DeleteAppointmentScheduleRequestDTO(); // Invalid
-        //    _controller.ModelState.AddModelError("NurseId", "Required");
+        [Fact]
+        public async Task DeleteAppointment_InvalidModel_ReturnsBadRequest()
+        {
+            // Arrange
+            var appointmentId = 1;
+            var request = new DeleteAppointmentScheduleRequestDTO(); // Invalid
+            _controller.ModelState.AddModelError("DeletedByNurseId", "Required");
 
-        //    // Act
-        //    var result = await _controller.DeleteAppointment(appointmentId, request) as BadRequestObjectResult;
+            // Act
+            var result = await _controller.DeleteAppointment(appointmentId, request) as BadRequestObjectResult;
 
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.Equal(400, result.StatusCode);
-        //}
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+        }
 
-        //[Fact]
-        //public async Task DeleteAppointment_NotFound_ReturnsNotFound()
-        //{
-        //    // Arrange
-        //    var appointmentId = 999;
-        //    var request = new DeleteAppointmentScheduleRequestDTO
-        //    {
-        //        AppointmentId = appointmentId,
-        //        NurseId = 1,
-        //        DeletedBy = "Nurse1"
-        //    };
-        //    _mockDeleteService.Setup(service => service.DeleteAppointmentAsync(appointmentId, request)).ThrowsAsync(new KeyNotFoundException("Appointment not found"));
+        [Fact]
+        public async Task DeleteAppointment_NotFound_ReturnsNotFound()
+        {
+            // Arrange
+            var appointmentId = 999;
+            var request = new DeleteAppointmentScheduleRequestDTO
+            {
+                DeletedByNurseId = 1
+            };
+            _mockDeleteService.Setup(service => service.DeleteAppointmentAsync(appointmentId, request)).ThrowsAsync(new KeyNotFoundException("Appointment not found"));
 
-        //    // Act
-        //    var result = await _controller.DeleteAppointment(appointmentId, request) as NotFoundObjectResult;
+            // Act
+            var result = await _controller.DeleteAppointment(appointmentId, request) as NotFoundObjectResult;
 
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.Equal(404, result.StatusCode);
-        //}
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(404, result.StatusCode);
+        }
     }
 }

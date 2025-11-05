@@ -15,16 +15,15 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
     {
         private readonly Mock<IConfiguration> _mockConfig;
         private readonly Mock<IUserRepository> _mockUserRepo;
-        private readonly UserAuthenticationService _service;
+        private UserAuthenticationService _service;
 
         public UserAuthenticationServiceTest()
         {
             _mockConfig = new Mock<IConfiguration>();
-            var mockSection = new Mock<IConfigurationSection>();
-            mockSection.Setup(x => x.Value).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
-            _mockConfig.Setup(x => x.GetSection("ConnectionStrings:DefaultConnection")).Returns(mockSection.Object);
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            _mockConfig.Setup(IConfigurationSection => IConfigurationSection.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
             _mockUserRepo = new Mock<IUserRepository>();
-            _service = new UserAuthenticationService(_mockConfig.Object, _mockUserRepo.Object);
         }
 
         [Fact]
@@ -32,9 +31,9 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
         {
             // Arrange
             var badConfig = new Mock<IConfiguration>();
-            var mockSection = new Mock<IConfigurationSection>();
-            mockSection.Setup(x => x.Value).Returns((string?)null);
-            badConfig.Setup(x => x.GetSection("ConnectionStrings:DefaultConnection")).Returns(mockSection.Object);
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns((string?)null);
+            badConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
             var mockUserRepo = new Mock<IUserRepository>();
 
             // Act & Assert
@@ -50,9 +49,9 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
         {
             // Arrange
             var mockConfig = new Mock<IConfiguration>();
-            var mockSection = new Mock<IConfigurationSection>();
-            mockSection.Setup(x => x.Value).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
-            mockConfig.Setup(x => x.GetSection("ConnectionStrings:DefaultConnection")).Returns(mockSection.Object);
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            mockConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
 
             // Act & Assert
             var ex = Assert.Throws<ArgumentNullException>(() =>
@@ -67,9 +66,9 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
         {
             // Arrange
             var mockConfig = new Mock<IConfiguration>();
-            var mockSection = new Mock<IConfigurationSection>();
-            mockSection.Setup(x => x.Value).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
-            mockConfig.Setup(x => x.GetSection("ConnectionStrings:DefaultConnection")).Returns(mockSection.Object);
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            mockConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
             var mockUserRepo = new Mock<IUserRepository>();
 
             // Act
@@ -84,9 +83,9 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
         {
             // Arrange
             var mockConfig = new Mock<IConfiguration>();
-            var mockSection = new Mock<IConfigurationSection>();
-            mockSection.Setup(x => x.Value).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
-            mockConfig.Setup(x => x.GetSection("ConnectionStrings:DefaultConnection")).Returns(mockSection.Object);
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            mockConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
             var mockUserRepo = new Mock<IUserRepository>();
             var service = new UserAuthenticationService(mockConfig.Object, mockUserRepo.Object);
 
@@ -103,9 +102,9 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
         {
             // Arrange
             var mockConfig = new Mock<IConfiguration>();
-            var mockSection = new Mock<IConfigurationSection>();
-            mockSection.Setup(x => x.Value).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
-            mockConfig.Setup(x => x.GetSection("ConnectionStrings:DefaultConnection")).Returns(mockSection.Object);
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            mockConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
             var mockUserRepo = new Mock<IUserRepository>();
             var service = new UserAuthenticationService(mockConfig.Object, mockUserRepo.Object);
 
@@ -117,8 +116,6 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
             Assert.Contains("LoginResponse cannot be Null", ex.Message);
         }
 
-
-
         [Fact]
         public async Task DetermineRoleAync_ShouldReturnRole_WhenUserExists()
         {
@@ -127,7 +124,9 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
             var expectedRole = 1;
 
             _mockUserRepo.Setup(r => r.GetUserByUsernameAsync("testuser"))
-                .ReturnsAsync(new UserAuthDTO { Role = expectedRole }); // Mock user object
+                .ReturnsAsync(new UserAuthDTO { Role = expectedRole });
+
+            _service = new UserAuthenticationService(_mockConfig.Object, _mockUserRepo.Object);
 
             // Act
             var result = await _service.DetermineRoleAync(response);
@@ -142,8 +141,10 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
             // Arrange
             var response = new LoginResponseDTO { UserName = "nonexistent" };
 
-            _mockUserRepo.Setup(r => r.GetUserByUsernameAsync("nonexistent"))
+            _mockUserRepo.Setup(IUserRepository => IUserRepository.GetUserByUsernameAsync("nonexistent"))
                 .ReturnsAsync((UserAuthDTO?)null);
+
+            _service = new UserAuthenticationService(_mockConfig.Object, _mockUserRepo.Object);
 
             // Act & Assert
             var ex = await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
