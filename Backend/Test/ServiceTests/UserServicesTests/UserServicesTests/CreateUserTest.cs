@@ -115,15 +115,6 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
             Assert.True(true); // Placeholder
         }
 
-        // [Fact]
-        // public async Task CreateUserAsync_NullUser_ShouldThrowArgumentNullException()
-        // {
-        //     // Arrange
-        //     var createUser = new CreateUser(_mockConfiguration.Object);
-
-        //     // Act & Assert
-        //     await Assert.ThrowsAsync<ArgumentNullException>(() => createUser.CreateUserAsync(null));
-        // }
 
         [Fact]
         public async Task CreateUserAsync_ValidInput_ShouldExecuteWithoutException()
