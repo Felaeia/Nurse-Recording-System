@@ -2,126 +2,110 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using NurseRecordingSystem.Class.Services.UserServices.Users;
 using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests
+namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesTests
 {
     public class UpdateUserTest
     {
-        private readonly Mock<IConfiguration> _mockConfiguration;
-        private readonly Mock<IConfigurationSection> _mockConfigurationSection;
+        private readonly Mock<IConfiguration> _mockConfig;
+        private readonly UpdateUser _service;
 
         public UpdateUserTest()
         {
-            _mockConfiguration = new Mock<IConfiguration>();
-            _mockConfigurationSection = new Mock<IConfigurationSection>();
-            _mockConfigurationSection.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns("Server=localhost;Database=TestDB;Trusted_Connection=True;");
-            _mockConfiguration.Setup(IConfiguration => IConfiguration.GetSection("ConnectionStrings")).Returns(_mockConfigurationSection.Object);
+            _mockConfig = new Mock<IConfiguration>();
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            _mockConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
+            _service = new UpdateUser(_mockConfig.Object);
         }
 
         [Fact]
-        public void Constructor_ValidConfiguration_ShouldInitialize()
+        public void Constructor_ShouldThrow_WhenConnectionStringMissing()
         {
             // Arrange
-            var config = _mockConfiguration.Object;
+            var badConfig = new Mock<IConfiguration>();
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns((string?)null);
+            badConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+                new UpdateUser(badConfig.Object)
+            );
+
+            Assert.Contains("Connection string 'DefaultConnection' not found", ex.Message);
+        }
+
+        [Fact]
+        public void Constructor_ShouldSucceed_WhenDependenciesPresent()
+        {
+            // Arrange
+            var mockConfig = new Mock<IConfiguration>();
+            var mockConnectionStringsSection = new Mock<IConfigurationSection>();
+            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            mockConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
 
             // Act
-            var updateUser = new UpdateUser(config);
+            var service = new UpdateUser(mockConfig.Object);
 
             // Assert
-            Assert.NotNull(updateUser);
+            Assert.NotNull(service);
         }
 
         [Fact]
-        public void Constructor_NullConfiguration_ShouldThrowException()
-        {
-            // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => new UpdateUser(null));
-        }
-
-        [Fact]
-        public async Task UpdateUserProfileAsync_ValidInput_ShouldReturnTrue()
+        public async Task UpdateUserProfileAsync_ShouldThrow_WhenRequestNull()
         {
             // Arrange
             var userId = 1;
-            var userRequest = new UpdateUserRequestDTO
-            {
-                Email = "updated@example.com",
-                FirstName = "UpdatedFirst",
-                MiddleName = "UpdatedMiddle",
-                LastName = "UpdatedLast",
-                ContactNumber = "0987654321",
-                Address = "Updated Address"
-            };
-            var updatedBy = "System";
-
-            var updateUser = new UpdateUser(_mockConfiguration.Object);
-
-            Assert.True(true); 
-        }
-
-        [Fact]
-        public async Task UpdateUserProfileAsync_NullUserRequest_ShouldThrowArgumentNullException()
-        {
-            // Arrange
-            var updateUser = new UpdateUser(_mockConfiguration.Object);
-            var userId = 1;
-            var updatedBy = "System";
+            var updatedBy = "testuser";
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => updateUser.UpdateUserProfileAsync(userId, null, updatedBy));
+            var ex = await Assert.ThrowsAsync<ArgumentNullException>(() =>
+                _service.UpdateUserProfileAsync(userId, null!, updatedBy)
+            );
+
+            Assert.Contains("User request cannot be null", ex.Message);
         }
 
         [Fact]
-        public async Task UpdateUserProfileAsync_EmptyUpdatedBy_ShouldThrowArgumentException()
+        public async Task UpdateUserProfileAsync_ShouldThrow_WhenUpdatedByNullOrEmpty()
         {
             // Arrange
-            var updateUser = new UpdateUser(_mockConfiguration.Object);
             var userId = 1;
-            var userRequest = new UpdateUserRequestDTO();
-            var updatedBy = "";
+            var userRequest = new UpdateUserRequestDTO { Email = "test@example.com", FirstName = "Test", LastName = "User" };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => updateUser.UpdateUserProfileAsync(userId, userRequest, updatedBy));
+            // Act & Assert for null
+            var ex1 = await Assert.ThrowsAsync<ArgumentException>(() =>
+                _service.UpdateUserProfileAsync(userId, userRequest, null!)
+            );
+
+            Assert.Contains("Updated by cannot be null or empty", ex1.Message);
+
+            // Act & Assert for empty
+            var ex2 = await Assert.ThrowsAsync<ArgumentException>(() =>
+                _service.UpdateUserProfileAsync(userId, userRequest, "")
+            );
+
+            Assert.Contains("Updated by cannot be null or empty", ex2.Message);
         }
 
         [Fact]
-        public async Task UpdateUserProfileAsync_InvalidUserId_ShouldThrowArgumentException()
+        public async Task UpdateUserProfileAsync_ShouldThrow_WhenUserIdInvalid()
         {
             // Arrange
-            var updateUser = new UpdateUser(_mockConfiguration.Object);
             var userId = 0;
-            var userRequest = new UpdateUserRequestDTO();
-            var updatedBy = "System";
+            var userRequest = new UpdateUserRequestDTO { Email = "test@example.com", FirstName = "Test", LastName = "User" };
+            var updatedBy = "testuser";
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => updateUser.UpdateUserProfileAsync(userId, userRequest, updatedBy));
+            var ex = await Assert.ThrowsAsync<ArgumentException>(() =>
+                _service.UpdateUserProfileAsync(userId, userRequest, updatedBy)
+            );
+
+            Assert.Contains("User ID must be greater than zero", ex.Message);
         }
 
-        [Fact]
-        public async Task UpdateUserProfileAsync_SqlException_ShouldThrowException()
-        {
-            // Arrange
-            var userId = 1;
-            var userRequest = new UpdateUserRequestDTO();
-            var updatedBy = "System";
 
-            var updateUser = new UpdateUser(_mockConfiguration.Object);
-
-            Assert.True(true); // Placeholder
-        }
-
-        [Fact]
-        public async Task UpdateUserProfileAsync_GeneralException_ShouldThrowException()
-        {
-            // Arrange
-            var userId = 1;
-            var userRequest = new UpdateUserRequestDTO();
-            var updatedBy = "System";
-            var updateUser = new UpdateUser(_mockConfiguration.Object);
-            Assert.True(true); 
-        }
     }
 }
