@@ -1,7 +1,4 @@
-using Microsoft.Extensions.Configuration;
-using Moq;
 using NurseRecordingSystem.Class.Services.Authentication;
-using NurseRecordingSystem.Contracts.ServiceContracts.Auth;
 using NurseRecordingSystem.DTO.AuthServiceDTOs;
 using Xunit;
 
@@ -10,63 +7,84 @@ namespace NurseRecordingSystem.Test.ServiceTests.AuthenticationServices
     public class SessionTokenTest
     {
         [Fact]
-        public void Constructor_ShouldThrow_WhenConnectionStringMissing()
+        public void SessionTokenService_ConfigurationNull_ThrowsInvalidOperationException()
         {
             // Arrange
-            var badConfig = new Mock<IConfiguration>();
-            var mockSection = new Mock<IConfigurationSection>();
-            mockSection.Setup(x => x.Value).Returns((string?)null);
-            badConfig.Setup(x => x.GetSection("ConnectionStrings:DefaultConnection")).Returns(mockSection.Object);
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?> { ["ConnectionStrings:DefaultConnection"] = null })
+                .Build();
 
             // Act & Assert
-            var ex = Assert.Throws<InvalidOperationException>(() =>
-                new SessionTokenService(badConfig.Object)
-            );
-
-            Assert.Contains("Connection string 'DefaultConnection' not found", ex.Message);
+            var exception = Assert.Throws<InvalidOperationException>(() => new SessionTokenService(config));
+            Assert.Contains("Connection string 'DefaultConnection' not found.", exception.Message);
         }
 
         [Fact]
-        public void Constructor_ShouldSucceed_WhenConnectionStringPresent()
+        public async Task CreateSessionAsync_InvalidConnection_ThrowsException()
         {
             // Arrange
-            var mockConfig = new Mock<IConfiguration>();
-            var mockSection = new Mock<IConfigurationSection>();
-            mockSection.Setup(x => x.Value).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
-            mockConfig.Setup(x => x.GetSection("ConnectionStrings:DefaultConnection")).Returns(mockSection.Object);
+            var inMemorySettings = new Dictionary<string, string?> {
+                {"ConnectionStrings:DefaultConnection", "Server=(localdb)//MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=1;"}
+            };
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            var service = new SessionTokenService(config);
+            int authId = 1;
 
-            // Act
-            var service = new SessionTokenService(mockConfig.Object);
-
-            // Assert
-            Assert.NotNull(service);
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => service.CreateSessionAsync(authId));
         }
 
-        // unit tests that would mock the database calls
+        [Fact]
+        public async Task RefreshSessionTokenAsync_InvalidConnection_ThrowsException()
+        {
+            // Arrange
+            var inMemorySettings = new Dictionary<string, string?> {
+                {"ConnectionStrings:DefaultConnection", "Server=(localdb)//MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=1;"}
+            };
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            var service = new SessionTokenService(config);
+            int authId = 1;
 
-        // [Fact]
-        // public async Task CreateSessionAsync_ShouldReturnSessionTokenDTO_WhenSuccessful()
-        // {
-        //     // mocking SqlConnection, SqlCommand, etc.
-        //     // or using an in-memory database for integration testing
-        // }
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => service.RefreshSessionTokenAsync(authId));
+        }
 
-        // [Fact]
-        // public async Task RefreshSessionTokenAsync_ShouldReturnUpdatedToken_WhenActiveTokenExists()
-        // {
-        //     // Implementation would mock database calls
-        // }
+        [Fact]
+        public async Task EndSessionAsync_InvalidConnection_ThrowsException()
+        {
+            // Arrange
+            var inMemorySettings = new Dictionary<string, string?> {
+                {"ConnectionStrings:DefaultConnection", "Server=(localdb)//MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=1;"}
+            };
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            var service = new SessionTokenService(config);
+            byte[] tokenBytes = new byte[64];
 
-        // [Fact]
-        // public async Task ValidateTokenAsync_ShouldReturnTrue_WhenValidTokenExists()
-        // {
-        //     // Implementation would mock database calls
-        // }
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => service.EndSessionAsync(tokenBytes));
+        }
 
-        // [Fact]
-        // public async Task EndSessionAsync_ShouldComplete_WithoutException()
-        // {
-        //     // Implementation would mock database calls
-        // }
+        [Fact]
+        public async Task ValidateTokenAsync_InvalidConnection_ThrowsException()
+        {
+            // Arrange
+            var inMemorySettings = new Dictionary<string, string?> {
+                {"ConnectionStrings:DefaultConnection", "Server=(localdb)//MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=1;"}
+            };
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            var service = new SessionTokenService(config);
+            int authId = 1;
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => service.ValidateTokenAsync(authId));
+        }
     }
 }
