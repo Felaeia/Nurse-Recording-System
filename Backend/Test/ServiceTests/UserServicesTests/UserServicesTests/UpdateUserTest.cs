@@ -15,8 +15,8 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesT
         {
             _mockConfig = new Mock<IConfiguration>();
             var mockConnectionStringsSection = new Mock<IConfigurationSection>();
-            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
-            _mockConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
+            mockConnectionStringsSection.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            _mockConfig.Setup(IConfiguration => IConfiguration.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
             _service = new UpdateUser(_mockConfig.Object);
         }
 
@@ -26,8 +26,8 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesT
             // Arrange
             var badConfig = new Mock<IConfiguration>();
             var mockConnectionStringsSection = new Mock<IConfigurationSection>();
-            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns((string?)null);
-            badConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
+            mockConnectionStringsSection.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns((string?)null);
+            badConfig.Setup(IConfiguration => IConfiguration.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
 
             // Act & Assert
             var ex = Assert.Throws<InvalidOperationException>(() =>
@@ -43,8 +43,8 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesT
             // Arrange
             var mockConfig = new Mock<IConfiguration>();
             var mockConnectionStringsSection = new Mock<IConfigurationSection>();
-            mockConnectionStringsSection.Setup(x => x["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
-            mockConfig.Setup(x => x.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
+            mockConnectionStringsSection.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns("Server=test;Database=db;User Id=invalid;Password=invalid;Connection Timeout=1;");
+            mockConfig.Setup(IConfiguration => IConfiguration.GetSection("ConnectionStrings")).Returns(mockConnectionStringsSection.Object);
 
             // Act
             var service = new UpdateUser(mockConfig.Object);
