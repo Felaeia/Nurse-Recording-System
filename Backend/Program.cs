@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
+using NurseRecordingSystem.Authorization;
 using NurseRecordingSystem.Class.Repository;
 using NurseRecordingSystem.Class.Services.AdminServices.AdminAppointmentSchedule;
 using NurseRecordingSystem.Class.Services.Authentication;
@@ -95,20 +98,60 @@ builder.Services.AddScoped<IDeleteAppointmentSchedule, DeleteAppointmentSchedule
 builder.Services.AddScoped<ICreateUsers, CreateUser>();
 builder.Services.AddScoped<IViewUserProfile, ViewUserProfile>();
 builder.Services.AddScoped<IUpdateUser, UpdateUser>();
+
 // Form Services
 builder.Services.AddScoped<ICreateUserForm, CreateUserForm>();
 builder.Services.AddScoped<IUpdateUserForm, UpdateUserForm>();
 builder.Services.AddScoped<IDeleteUserForm, DeleteUserForm>();
 
+#region Policies
+builder.Services.AddHttpContextAccessor();
+
+// 2. Register your custom handler (you already have this)
+builder.Services.AddScoped<IAuthorizationHandler, SessionTokenAuthorizationHandler>();
+
+// 3. Add Authentication and DEFINE THE CHALLENGE BEHAVIOR
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        // This is the key. We are re-programming the "Challenge"
+        // to return 401 Unauthorized instead of redirecting.
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+
+        // We also re-program "Forbid" (when you're logged in
+        // but not the right role) to return 403 Forbidden.
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        };
+    });
+
+// 4. Register Authorization Services (you already have this)
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("MustBeNurse", policy =>
+        policy.Requirements.Add(new RoleRequirement("Nurse")));
+
+    options.AddPolicy("MustBeUser", policy =>
+        policy.Requirements.Add(new RoleRequirement("User")));
+
+    options.AddPolicy("NurseOrUser", policy =>
+        policy.Requirements.Add(new RoleRequirement("Nurse", "User")));
+});
+#endregion
 
 // Controllers
 builder.Services.AddScoped<IAuthController, AuthController>();
-
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 var app = builder.Build();
 
@@ -124,6 +167,7 @@ app.UseDefaultFiles();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DTO\AdminServiceDTOs\AdminPatientRecordDTOs\**" />
+    <Compile Remove="Policies\**" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="DTO\AdminServiceDTOs\AdminPatientRecordDTOs\**" />
+    <Content Remove="Policies\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="DTO\AdminServiceDTOs\AdminPatientRecordDTOs\**" />
+    <EmbeddedResource Remove="Policies\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="DTO\AdminServiceDTOs\AdminPatientRecordDTOs\**" />
+    <None Remove="Policies\**" />
+    <None Remove="wwwroot\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,13 +36,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Class\Policies\" />
-    <Folder Include="DTO\AdminServiceDTOs\AdminPatientRecordDTOs\" />
-    <Folder Include="Policies\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

@@ -19,11 +19,12 @@ namespace NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs
         public string LastName { get; set; } = string.Empty;
 
         [Required]
-        [Phone]
+        [Phone(ErrorMessage = "Invalid phone number format.")]
         public string ContactNumber { get; set; } = string.Empty;
 
         public string? Address { get; set; }
 
+        [Required]
         public int Role { get; set; }
     }
 }

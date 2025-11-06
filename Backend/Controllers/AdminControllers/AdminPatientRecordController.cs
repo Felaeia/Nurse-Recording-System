@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.IAdminServices.IAdminPatientRecords;
 
 namespace NurseRecordingSystem.API.Controllers
@@ -18,6 +19,7 @@ namespace NurseRecordingSystem.API.Controllers
 
         // DELETE: api/AdminPatientRecord/{patientRecordId}
         [HttpDelete("delete/patient_record/{patientRecordId}")]
+        [Authorize(Policy = "MustBeNurse")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

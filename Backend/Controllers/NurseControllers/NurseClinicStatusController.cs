@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseClinicStatus;
 using NurseRecordingSystem.DTO.NurseServiceDTOs.NurseClinicStatusDTOs;
 
@@ -15,6 +16,7 @@ public class NurseClinicStatusController : ControllerBase
     }
 
     [HttpPut("update_clinic_status/{id}")]
+    [Authorize(Policy = "MustBeNurse")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateClinicStatusRequestDTO request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

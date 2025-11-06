@@ -1,0 +1,68 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_UpdateAppointmentSchedule]    Script Date: 11/3/2025 5:55:17 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- d. nsp_UpdateAppointmentSchedule
+-- Updates appointment details and validates if the user is a 'Nurse'
+CREATE PROCEDURE [dbo].[nsp_UpdateAppointmentSchedule]
+    @AppointmentId INT,
+    @AppointmentTime DATETIME,
+    @AppointmentDescription NVARCHAR(MAX),
+    @NurseId INT, -- Nurse ID of the one performing the update
+    @UpdatedBy NVARCHAR(50),
+    @ResultCode INT OUTPUT -- 0: Success, 1: Not a Nurse, 2: Appointment not found, -1: Error
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @ResultCode = 0;
+
+    BEGIN TRY
+        -- 1. Validate if the user (via NurseId -> AuthId -> Role) is a 'Nurse'
+        IF NOT EXISTS (
+            SELECT 1
+            FROM dbo.Nurses n
+            JOIN dbo.Auth a ON n.authId = a.authId
+            WHERE n.nurseId = @NurseId AND a.role = 'Nurse' AND n.isActive = 1 AND a.isActive = 1
+        )
+        BEGIN
+            SET @ResultCode = 1; -- Not a Nurse
+            RETURN;
+        END
+
+        -- 2. Check if the appointment exists and is active
+        IF NOT EXISTS (
+            SELECT 1
+            FROM [dbo].[AppointmentSchedule]
+            WHERE [appointmentId] = @AppointmentId AND [deletedOn] IS NULL AND [isActive] = 1
+        )
+        BEGIN
+            SET @ResultCode = 2; -- Appointment not found
+            RETURN;
+        END
+
+        -- 3. Update the appointment
+        UPDATE [dbo].[AppointmentSchedule]
+        SET
+            [appointmentTime] = @AppointmentTime,
+            [appointmentDescription] = @AppointmentDescription,
+            [updatedOn] = SYSDATETIME(),
+            [updatedBy] = @UpdatedBy
+        WHERE
+            [appointmentId] = @AppointmentId;
+
+    END TRY
+    BEGIN CATCH
+        SET @ResultCode = -1; -- General Error
+        THROW;
+    END CATCH
+END
+
+GO
+
+

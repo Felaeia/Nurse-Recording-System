@@ -1,0 +1,40 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_ValidateSessionToken]    Script Date: 11/3/2025 5:59:53 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_ValidateSessionToken]
+    -- 1. Parameter changed from @token to @authId
+    @authId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- 2. Declare a bit variable to hold the result
+    DECLARE @isValid BIT = 0;
+
+    -- 3. Check if a valid token exists for this authId
+    IF EXISTS (
+        SELECT 1
+        FROM [dbo].[SessionTokens]
+        WHERE 
+            [authId] = @authId
+            AND [isActive] = 1
+    )
+    BEGIN
+        -- 4. If found, set the result to true
+        SET @isValid = 1;
+    END
+
+    -- 5. Return the single boolean result (1 for true, 0 for false)
+    SELECT @isValid;
+END
+GO
+
+

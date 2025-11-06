@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.IAdminServices.IAdminUser;
 
 namespace NurseRecordingSystem.Controllers.AdminControllers
@@ -20,6 +21,7 @@ namespace NurseRecordingSystem.Controllers.AdminControllers
 
         // DELETE: api/AdminUsers/Delete/{userId}
         [HttpDelete("delete/user/{userId}")]
+        [Authorize(Policy = "MustBeNurse")]
         //[ProducesResponseType(StatusCodes.Status204NoContent)] // Success: Action taken, no content to return
         //[ProducesResponseType(StatusCodes.Status400BadRequest)] // Invalid input or missing header
         //[ProducesResponseType(StatusCodes.Status404NotFound)] // User not found (handled by custom service exception)

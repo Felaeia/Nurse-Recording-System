@@ -1,0 +1,43 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_UpdateMedecineStock]    Script Date: 11/3/2025 5:55:25 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[nsp_UpdateMedecineStock]
+    @medicineId INT,
+    @medecineName NVARCHAR(MAX),
+    @medecineDescription NVARCHAR(MAX),
+    @numberOfStock INT,
+    @updatedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE [dbo].[MedecineStocks]
+    SET 
+        [medecineName] = @medecineName,
+        [medecineDescription] = @medecineDescription,
+        [numberOfStock] = @numberOfStock,
+        [updatedOn] = GETDATE(),
+        [updatedBy] = @updatedBy
+    WHERE 
+        [medicineId] = @medicineId
+        AND [isActive] = 1;
+
+    IF @@ROWCOUNT = 0
+    BEGIN
+        RAISERROR('Medicine Stock ID %d not found or is inactive.', 16, 1, @medicineId);
+        RETURN 1; 
+    END
+
+    RETURN 0;
+END
+GO
+
+

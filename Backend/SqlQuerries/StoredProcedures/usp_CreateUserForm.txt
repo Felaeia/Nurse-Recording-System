@@ -1,55 +1,59 @@
 USE [NurseRecordingSystem]
 GO
 
-/****** Object:  StoredProcedure [dbo].[CreateUserForm]    Script Date: 10/7/2025 10:45:02 AM ******/
+/****** Object:  StoredProcedure [dbo].[usp_CreateUserForm]    Script Date: 11/3/2025 5:59:03 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
--- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- =============================================
-CREATE PROCEDURE [dbo].[CreateUserForm]
-	-- Add the parameters for the stored procedure here
+
+CREATE PROCEDURE [dbo].[usp_CreateUserForm]
 	@IssueType NVARCHAR(MAX),
 	@IssueDescryption NVARCHAR(MAX),
 	@Status NVARCHAR(10), 
 	@UserId INT,
 	@PatientName NVARCHAR(MAX),
-	@CreatedBy DATETIME2,
-	@UpdatedBy NVARCHAR(50),
-	@DeletedBy DATETIME2,
+	@CreatorName NVARCHAR(50), 
+	@UpdaterName NVARCHAR(50), 
 	@IsActive BIT
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    -- Insert statements for procedure here
+	DECLARE @CurrentTime DATETIME2(7) = SYSUTCDATETIME();
+
 	INSERT INTO [PatientForms]
-		(issueType, 
-		issueDescryption, 
-		status, userId, 
-		patientName, 
-		createdBy, 
-		updatedBy, 
-		deletedBy, 
-		isActive)
-     VALUES 
-		(@IssueType, 
-		@IssueDescryption, 
-		@Status, 
-		@UserId, 
-		@PatientName, 
-		@CreatedBy, 
-		@UpdatedBy, 
-		@DeletedBy, 
-		@IsActive)
+		(
+            issueType, 
+            issueDescryption, 
+            status, 
+            userId, 
+            patientName, 
+            createdOn, 
+            updatedOn, 
+            createdBy, 
+            updatedBy,  
+            isActive
+        )
+    VALUES 
+		(
+            @IssueType, 
+            @IssueDescryption, 
+            @Status, 
+            @UserId, 
+            @PatientName, 
+            @CurrentTime, -- Creation Time Stamp
+            @CurrentTime, -- Initial Update Time Stamp
+            @CreatorName,
+            @UpdaterName,
+            @IsActive
+        );
+
+    -- This is the new line you need to add.
+    -- It selects the 'formId' that was just created.
+    SELECT SCOPE_IDENTITY() AS NewFormId;
 END
 GO
 

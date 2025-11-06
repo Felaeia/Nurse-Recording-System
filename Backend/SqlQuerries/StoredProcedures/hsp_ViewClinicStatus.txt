@@ -1,0 +1,29 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[hsp_ViewClinicStatus]    Script Date: 11/3/2025 5:52:52 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[hsp_ViewClinicStatus]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        CS.[logId],
+        CS.[status]
+    FROM 
+        [dbo].[ClinicStatus] CS
+    WHERE 
+        CS.[isActive] = 1 -- Only view active status logs
+    ORDER BY
+        CS.[logId] DESC; -- Usually you want the latest log first
+END
+GO
+
+

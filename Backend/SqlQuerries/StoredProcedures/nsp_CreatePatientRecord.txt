@@ -1,7 +1,7 @@
 ﻿USE [NurseRecordingSystem]
 GO
 
-/****** Object:  StoredProcedure [dbo].[nsp_CreatePatientRecord]    Script Date: 10/16/2025 4:28:00 PM ******/
+/****** Object:  StoredProcedure [dbo].[nsp_CreatePatientRecord]    Script Date: 11/3/2025 5:55:08 PM ******/
 SET ANSI_NULLS ON
 GO
 

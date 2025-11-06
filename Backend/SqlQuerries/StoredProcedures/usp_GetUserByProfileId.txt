@@ -1,7 +1,7 @@
 ﻿USE [NurseRecordingSystem]
 GO
 
-/****** Object:  StoredProcedure [dbo].[usp_GetUserProfileById]    Script Date: 10/16/2025 4:33:44 PM ******/
+/****** Object:  StoredProcedure [dbo].[usp_GetUserProfileById]    Script Date: 11/3/2025 5:59:34 PM ******/
 SET ANSI_NULLS ON
 GO
 

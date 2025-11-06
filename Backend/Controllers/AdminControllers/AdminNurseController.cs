@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.NurseCreation;
 using NurseRecordingSystem.Model.DTO.NurseServicesDTOs.NurseCreation;
 using System;
@@ -23,6 +24,7 @@ namespace NurseRecordingSystem.API.Controllers
         /// Creates a new Nurse account (Auth and Profile) with the role 'Nurse'.
         /// </summary>
         [HttpPost("register")]
+        //[Authorize(Policy = "MustBeNurse")]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)] // For existing email
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

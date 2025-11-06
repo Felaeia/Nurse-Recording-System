@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseUsers;
 using NurseRecordingSystem.Model.DTO.UserServiceDTOs.UsersDTOs;
 
@@ -21,6 +22,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // GET: api/NurseUser/all (Retrieves all users)
         // GET: api/NurseUser/all?isActive=true (Retrieves only active users)
         [HttpGet("view/all_users")]
+        [Authorize(Policy = "MustBeNurse")]
         [ProducesResponseType(typeof(List<ViewAllUsersDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         // Accepts an optional query parameter 'isActive' to filter the results

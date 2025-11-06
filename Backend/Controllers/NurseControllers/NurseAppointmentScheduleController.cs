@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices;
 using NurseRecordingSystem.DTO.NurseServiceDTOs.NurseAppointmentScheduleDTOs;
 
@@ -31,6 +32,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // POST: api/AppointmentSchedule
         // Create an appointment (Nurse Only)
         [HttpPost("create_appointment")]
+        [Authorize(Policy = "MustBeNurse")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentScheduleRequestDTO request)
         {
             if (!ModelState.IsValid)
@@ -62,6 +64,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // GET: api/AppointmentSchedule
         // Get list of all active appointments
         [HttpGet("view_appointment_list")]
+        [Authorize(Policy = "MustBeNurse")]
         public async Task<IActionResult> ViewAppointmentScheduleList()
         {
             try
@@ -78,12 +81,13 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
 
         // GET: api/AppointmentSchedule/{id}
         // Get single appointment by ID
-        [HttpGet("view_appointment/{id}")]
-        public async Task<IActionResult> ViewAppointmentSchedule(int id)
+        [HttpGet("view_appointment/{AppointmentScheduleId}")]
+        [Authorize(Policy = "MustBeNurse")]
+        public async Task<IActionResult> ViewAppointmentSchedule(int AppointmentScheduleId)
         {
             try
             {
-                var appointment = await _viewService.ViewAppointmentScheduleAsync(id);
+                var appointment = await _viewService.ViewAppointmentScheduleAsync(AppointmentScheduleId);
                 return Ok(appointment); // 200 OK
             }
             catch (KeyNotFoundException ex)
@@ -99,8 +103,9 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
 
         // PUT: api/AppointmentSchedule
         // Update an appointment (Nurse Only)
-        [HttpPut("update_appointment/{id}")]
-        public async Task<IActionResult> UpdateAppointment(int id, [FromBody] UpdateAppointmentScheduleRequestDTO request)
+        [HttpPut("update_appointment/{AppointmentScheduleId}")]
+        [Authorize(Policy = "MustBeNurse")]
+        public async Task<IActionResult> UpdateAppointment(int AppointmentScheduleId, [FromBody] UpdateAppointmentScheduleRequestDTO request)
         {
             if (!ModelState.IsValid)
             {
@@ -109,7 +114,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
 
             try
             {
-                bool success = await _updateService.UpdateAppointmentAsync(id, request);
+                bool success = await _updateService.UpdateAppointmentAsync(AppointmentScheduleId, request);
                 if (success)
                 {
                     return Ok(new { Message = "Appointment updated successfully." });
@@ -134,8 +139,9 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
         // DELETE: api/AppointmentSchedule
         // Soft delete an appointment (Nurse Only)
         // Using HTTP DELETE with a body is non-standard but common for soft-deletes needing user context.
-        [HttpDelete("delete_appointment/{id}")]
-        public async Task<IActionResult> DeleteAppointment(int id, [FromBody] DeleteAppointmentScheduleRequestDTO request)
+        [HttpDelete("delete_appointment/{AppointmentScheduleId}")]
+        [Authorize(Policy = "MustBeNurse")]
+        public async Task<IActionResult> DeleteAppointment(int AppointmentScheduleId, [FromBody] DeleteAppointmentScheduleRequestDTO request)
         {
             if (!ModelState.IsValid)
             {
@@ -144,7 +150,7 @@ namespace NurseRecordingSystem.Controllers.NurseControllers
 
             try
             {
-                bool success = await _deleteService.DeleteAppointmentAsync(id, request);
+                bool success = await _deleteService.DeleteAppointmentAsync(AppointmentScheduleId, request);
                 if (success)
                 {
                     return Ok(new { Message = "Appointment deleted successfully (soft-deleted)." });

@@ -16,7 +16,7 @@ namespace NurseRecordingSystem.Class.Services.ClinicStatusServices
 
         public async Task<int> CreateAsync(CreateClinicStatusRequestDTO request, string createdBy)
         {
-            const string storedProc = "dbo.asp_CreateClinicStatus"; // Using asp_
+            const string storedProc = "dbo.asp_CreateClinicStatus";
             await using (var connection = new SqlConnection(_connectionString))
             await using (var cmd = new SqlCommand(storedProc, connection))
             {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.IUserForms;
 using NurseRecordingSystem.Contracts.ServiceContracts.IUserServices.UserForms;
 using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
@@ -6,7 +7,7 @@ using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
 namespace NurseRecordingSystem.Controllers.UserControllers
 {
     [ApiController]
-    [Route("api/[controller]")] // e.g., /api/UserForm
+    [Route("api/[controller]")] // e.g., /api/
     public class UserFormController : ControllerBase
     {
         private readonly ICreateUserForm _createUserFormService;
@@ -29,13 +30,13 @@ namespace NurseRecordingSystem.Controllers.UserControllers
         /// <param name="creator">The ID of the nurse/creator (passed via header or claims).</param>
         /// <returns>A 201 Created or 400 Bad Request.</returns>
         [HttpPost("create/user_form")]
+        [Authorize(Policy = "MustBeUser")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateForm(
             [FromBody] UserFormRequestDTO request,
-            [FromHeader(Name = "X-User-ID")] string userId,
-            [FromHeader(Name = "X-Creator-ID")] string creator)
+            [FromHeader(Name = "X-User-ID")] string userId)
         {
             if (!ModelState.IsValid)
             {
@@ -45,7 +46,7 @@ namespace NurseRecordingSystem.Controllers.UserControllers
             try
             {
                 // The controller calls the blueprint's method
-                UserFormResponseDTO response = await _createUserFormService.CreateUserFormAsync(request, userId, creator);
+                UserFormResponseDTO response = await _createUserFormService.CreateUserFormAsync(request, userId);
 
                 // Assuming successful creation, return 201 Created.
                 return StatusCode(StatusCodes.Status201Created, response);
@@ -120,7 +121,7 @@ namespace NurseRecordingSystem.Controllers.UserControllers
         /// </summary>
         /// <param name="formId">The ID of the form to be deleted.</param>
         [HttpDelete("delete/user_form/{formId}")] // Defines the HTTP method and route pattern (e.g., DELETE /api/userform/delete/123)
-        
+        [Authorize(Policy = "MustBeUser")]
         public async Task<IActionResult> DeleteUserForm(
             int formId, 
             [FromHeader(Name = "X-DeletedBy")] string deletedByName)

@@ -1,31 +1,55 @@
+USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[ausp_LoginUserAuth]    Script Date: 11/3/2025 5:52:44 PM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
--- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- =============================================
-CREATE PROCEDURE dbo.LoginUserAuth
-	@email NVARCHAR(100)
+
+
+CREATE PROCEDURE [dbo].[ausp_LoginUserAuth]
+    @email NVARCHAR(100)
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-    -- Insert statements for procedure here
-	SELECT
-		authId,
-		userName,
-		passwordHash,
-		passwordSalt,
-		email,
-		role
-	FROM
-		[Auth]
-	WHERE
-		email = @email;
+    SELECT
+        -- Auth table (aliased as A)
+        A.authId,
+        A.userName,
+        A.passwordHash,
+        A.passwordSalt,
+        A.email,
+        A.role,
+
+        -- Users table (aliased as U)
+        -- These will be NULL if the role is not 'User'
+        U.userId,
+        U.firstName     AS User_firstName,
+        U.middleName    AS User_middleName,
+        U.lastName      AS User_lastName,
+        U.contactNumber AS User_contactNumber,
+        U.address       AS User_address,
+
+        -- Nurses table (aliased as N)
+        -- These will be NULL if the role is not 'Nurse'
+        N.nurseId,
+        N.firstName     AS Nurse_firstName,
+        N.middleName    AS Nurse_middleName,
+        N.lastName      AS Nurse_lastName,
+        N.contactNumber AS Nurse_contactNumber
+    FROM
+        [Auth] AS A
+    LEFT JOIN
+        [Users] AS U ON A.authId = U.authId
+    LEFT JOIN
+        [Nurses] AS N ON A.authId = N.authId
+    WHERE
+        A.email = @email
+        AND A.isActive = 1; -- Important: Only allow active accounts to log in
 END
 GO
+
+

@@ -14,14 +14,5 @@ namespace NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs
         [Required]
         public string patientName { get; set; } = null!;
 
-        [Required]
-        public string createdBy { get; set; } = null!;
-
-        [Required]
-        public string updatedBy { get; set; } = null!;
-
-        [Required]
-        public string DeletedBy { get; set; } = null!;
-
     }
 }

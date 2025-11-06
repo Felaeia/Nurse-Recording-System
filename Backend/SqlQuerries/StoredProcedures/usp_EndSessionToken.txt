@@ -1,0 +1,29 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_EndSessionToken]    Script Date: 11/3/2025 5:59:29 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- We change the parameter from @authId to @Token
+CREATE PROCEDURE [dbo].[usp_EndSessionToken]
+    @Token varbinary(64)  -- <-- CHANGED from @authId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Find the token by its value and force it to expire
+    UPDATE [dbo].[SessionTokens]
+    SET 
+        [expiresOn] = GETUTCDATE() -- Set expiry to now (use GETUTCDATE() for safety)
+    WHERE 
+        [token] = @Token          -- <-- CHANGED from [authId] = @authId
+        AND [isActive] = 1;       -- Ensure we only update an active token
+END
+GO
+
+

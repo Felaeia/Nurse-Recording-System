@@ -1,0 +1,50 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_UpdateSessionToken]    Script Date: 11/3/2025 5:59:38 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_UpdateSessionToken]
+    @authId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @newToken VARBINARY(64);
+    DECLARE @newExpiresOn DATETIME2(0);
+    DECLARE @UpdatedTokenId INT;
+
+    SET @newToken = CRYPT_GEN_RANDOM(64); -- Generate a new secure 64-byte token
+    SET @newExpiresOn = DATEADD(hour, 24, SYSDATETIME()); -- Reset expiry for another 24 hours
+
+    -- 1. Find the current active token and update it
+    UPDATE [dbo].[SessionTokens]
+    SET 
+        [token] = @newToken,
+        [expiresOn] = @newExpiresOn,
+        [isActive] = 1,
+        @UpdatedTokenId = [tokenId] -- Capture the tokenId
+    WHERE 
+        [authId] = @authId 
+
+    -- 2. Check if an update happened and return the new data
+    IF @UpdatedTokenId IS NOT NULL
+    BEGIN
+        SELECT 
+            @UpdatedTokenId AS [tokenId],
+            @newToken AS [token],
+            @authId AS [authId],
+            @newExpiresOn AS [expiresOn],
+            1 AS [isActive];
+    END
+    -- If no row was updated, the SELECT returns nothing, 
+    -- and the service will correctly return null.
+END
+GO
+
+

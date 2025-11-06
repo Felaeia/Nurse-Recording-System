@@ -1,0 +1,35 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_ViewAppointmentSchedule]    Script Date: 11/3/2025 5:55:40 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- c. nsp_ViewAppointmentSchedule
+-- Gets a single appointment schedule by ID
+CREATE PROCEDURE [dbo].[nsp_ViewAppointmentSchedule]
+    @AppointmentId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        [appointmentId],
+        [appointmentTime],
+        [appointmentDescription],
+        [nurseId],
+        [createdOn]
+    FROM
+        [dbo].[AppointmentSchedule]
+    WHERE
+        [appointmentId] = @AppointmentId
+        AND [deletedOn] IS NULL
+        AND [isActive] = 1;
+END
+
+GO
+
+

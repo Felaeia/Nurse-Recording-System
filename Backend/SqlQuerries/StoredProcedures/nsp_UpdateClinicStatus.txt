@@ -1,0 +1,40 @@
+﻿USE [NurseRecordingSystem]
+GO
+
+/****** Object:  StoredProcedure [dbo].[nsp_UpdateClinicStatus]    Script Date: 11/3/2025 5:55:21 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[nsp_UpdateClinicStatus]
+    @logId INT,
+    @status BIT,
+    @updatedBy NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE [dbo].[ClinicStatus]
+    SET 
+        [status] = @status,
+        [updatedOn] = GETDATE(),
+        [updatedBy] = @updatedBy
+    WHERE 
+        [logId] = @logId
+        AND [isActive] = 1;
+
+    IF @@ROWCOUNT = 0
+    BEGIN
+        -- Raise custom error if record is not found or is inactive
+        RAISERROR('Clinic Status Log ID %d not found or is inactive.', 16, 1, @logId);
+        RETURN 1; 
+    END
+
+    RETURN 0;
+END
+GO
+
+

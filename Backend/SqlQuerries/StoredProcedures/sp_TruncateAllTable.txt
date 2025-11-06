@@ -1,9 +1,15 @@
-﻿SET ANSI_NULLS ON
+﻿USE [NurseRecordingSystem]
 GO
+
+/****** Object:  StoredProcedure [dbo].[sp_TruncateAllTables]    Script Date: 11/3/2025 5:56:04 PM ******/
+SET ANSI_NULLS ON
+GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo.sp_TruncateAllTables]
+
+CREATE PROCEDURE [dbo].[sp_TruncateAllTables]
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -60,3 +66,6 @@ BEGIN
         PRINT ERROR_MESSAGE();
     END CATCH
 END
+GO
+
+

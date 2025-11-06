@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NurseRecordingSystem.Contracts.ServiceContracts.INurseServices.INurseMedecineStock;
 using NurseRecordingSystem.DTO.NurseServiceDTOs.NurseMedecineStockDTOs;
 
@@ -19,6 +20,7 @@ public class NurseMedecineStockController : ControllerBase
     }
 
     [HttpPost("create_stock")]
+    [Authorize(Policy = "MustBeNurse")]
     public async Task<IActionResult> CreateStock([FromBody] CreateMedecineStockRequestDTO request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -37,18 +39,19 @@ public class NurseMedecineStockController : ControllerBase
         }
     }
 
-    [HttpDelete("delete_stock/{id}")]
-    public async Task<IActionResult> DeleteStock(int id)
+    [HttpDelete("delete_stock/{medecineStockId}")]
+    [Authorize(Policy = "MustBeNurse")]
+    public async Task<IActionResult> DeleteStock(int medecineStockId)
     {
         var deletedBy = User?.Identity?.Name ?? "AdminUser";
 
         try
         {
-            var success = await _deleteService.DeleteMedecineStockAsync(id, deletedBy);
+            var success = await _deleteService.DeleteMedecineStockAsync(medecineStockId, deletedBy);
 
             if (!success)
             {
-                return NotFound($"Medicine Stock with ID {id} not found or is inactive.");
+                return NotFound($"Medicine Stock with ID {medecineStockId} not found or is inactive.");
             }
 
             return NoContent(); // HTTP 204 No Content for successful deletion
@@ -59,8 +62,9 @@ public class NurseMedecineStockController : ControllerBase
         }
     }
 
-    [HttpPut("update_stock/{id}")]
-    public async Task<IActionResult> UpdateStock(int id, [FromBody] UpdateMedecineStockRequestDTO request)
+    [HttpPut("update_stock/{medecineStockId}")]
+    [Authorize(Policy = "MustBeNurse")]
+    public async Task<IActionResult> UpdateStock(int medecineStockId, [FromBody] UpdateMedecineStockRequestDTO request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -68,11 +72,11 @@ public class NurseMedecineStockController : ControllerBase
 
         try
         {
-            var success = await _updateService.UpdateAsync(id, request, updatedBy);
+            var success = await _updateService.UpdateAsync(medecineStockId, request, updatedBy);
 
             if (!success)
             {
-                return NotFound($"Medicine Stock with ID {id} not found or is inactive.");
+                return NotFound($"Medicine Stock with ID {medecineStockId} not found or is inactive.");
             }
 
             return NoContent(); // HTTP 204 No Content for successful update
