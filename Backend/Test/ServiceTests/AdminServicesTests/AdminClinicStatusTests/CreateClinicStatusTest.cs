@@ -12,7 +12,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.AdminServicesTests.AdminClinicS
         {
             // Arrange
             var mockConnectionStrings = new Mock<IConfigurationSection>();
-            mockConnectionStrings.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns((string)null);
+            mockConnectionStrings.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns((string?)null);
             var mockConfiguration = new Mock<IConfiguration>();
             mockConfiguration.Setup(IConfiguration => IConfiguration.GetSection("ConnectionStrings")).Returns(mockConnectionStrings.Object);
 

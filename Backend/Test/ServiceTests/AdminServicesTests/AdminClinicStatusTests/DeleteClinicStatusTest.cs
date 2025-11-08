@@ -26,7 +26,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.AdminServicesTests.AdminClinicS
         {
             // Arrange
             var mockConnectionStrings = new Mock<IConfigurationSection>();
-            mockConnectionStrings.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns("Server=localhost;Database=TestDB;Trusted_Connection=True;");
+            mockConnectionStrings.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns("Server=localhost;Database=TestDB;Trusted_Connection=True;Connection Timeout=1;");
             var mockConfiguration = new Mock<IConfiguration>();
             mockConfiguration.Setup(IConfiguration => IConfiguration.GetSection("ConnectionStrings")).Returns(mockConnectionStrings.Object);
             var service = new DeleteClinicStatus(mockConfiguration.Object);
@@ -40,7 +40,7 @@ namespace NurseRecordingSystem.Test.ServiceTests.AdminServicesTests.AdminClinicS
         {
             // Arrange
             var mockConnectionStrings = new Mock<IConfigurationSection>();
-            mockConnectionStrings.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns("Server=localhost;Database=TestDB;Trusted_Connection=True;");
+            mockConnectionStrings.Setup(IConfigurationSection => IConfigurationSection["DefaultConnection"]).Returns("Server=localhost;Database=TestDB;Trusted_Connection=True;Connection Timeout=1;");
             var mockConfiguration = new Mock<IConfiguration>();
             mockConfiguration.Setup(IConfiguration => IConfiguration.GetSection("ConnectionStrings")).Returns(mockConnectionStrings.Object);
             var service = new DeleteClinicStatus(mockConfiguration.Object);
