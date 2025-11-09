@@ -1,12 +1,14 @@
-using NurseRecordingSystem.Class.Services.UserServices.UserForms;
-using Xunit;
 
-namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTests
+using Microsoft.Extensions.Configuration;
+using Xunit;
+using NurseRecordingSystem.Class.Services.UserServices.Users;
+
+namespace NurseRecordingSystem.Test.ServiceTests.AdminServicesTests.AdminUsersTest
 {
-    public class DeleteUserFormTest
+    public class DeleteUserTest
     {
         [Fact]
-        public void DeleteUserForm_ConfigurationNull_ThrowsInvalidOperationException()
+        public void DeleteUser_ConfigurationNull_ThrowsInvalidOperationException()
         {
             // Arrange
             var config = new ConfigurationBuilder()
@@ -14,12 +16,12 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
                 .Build();
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => new DeleteUserForm(config));
+            var exception = Assert.Throws<InvalidOperationException>(() => new DeleteUser(config));
             Assert.Contains("Connection string 'DefaultConnection' not found.", exception.Message);
         }
 
         [Fact]
-        public async Task DeleteUserFormAsync_InvalidConnection_ThrowsException()
+        public async Task SoftDeleteUserAsync_InvalidConnection_ThrowsException()
         {
             // Arrange
             var inMemorySettings = new Dictionary<string, string?> {
@@ -28,16 +30,16 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
             var config = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            var service = new DeleteUserForm(config);
-            int formId = 1;
-            string deletedBy = "Nurse1";
+            var service = new DeleteUser(config);
+            int userId = 1;
+            string deletedBy = "Admin1";
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => service.DeleteUserFormAsync(formId, deletedBy));
+            await Assert.ThrowsAsync<Exception>(() => service.SoftDeleteUserAsync(userId, deletedBy));
         }
 
         [Fact]
-        public async Task DeleteUserFormAsync_NullDeletedBy_ThrowsArgumentNullException()
+        public async Task SoftDeleteUserAsync_NullDeletedBy_ThrowsArgumentNullException()
         {
             // Arrange
             var inMemorySettings = new Dictionary<string, string?> {
@@ -46,12 +48,12 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
             var config = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            var service = new DeleteUserForm(config);
-            int formId = 1;
+            var service = new DeleteUser(config);
+            int userId = 1;
             string deletedBy = null;
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => service.DeleteUserFormAsync(formId, deletedBy));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => service.SoftDeleteUserAsync(userId, deletedBy));
         }
     }
 }

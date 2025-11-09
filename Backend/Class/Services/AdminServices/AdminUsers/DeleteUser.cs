@@ -16,6 +16,11 @@ namespace NurseRecordingSystem.Class.Services.UserServices.Users
         // Handles the business logic of deleting user (soft) based on the userId
         public async Task<bool> SoftDeleteUserAsync(int userId, string deletedBy)
         {
+            if (string.IsNullOrEmpty(deletedBy))
+            {
+                throw new ArgumentNullException(nameof(deletedBy));
+            }
+
             // The stored procedure to call
             const string storedProc = "dbo.asp_DeleteUser";
             await using (var connection = new SqlConnection(_connectionString))

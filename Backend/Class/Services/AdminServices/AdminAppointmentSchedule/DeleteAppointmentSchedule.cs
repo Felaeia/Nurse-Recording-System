@@ -5,17 +5,39 @@ using System.Data;
 
 namespace NurseRecordingSystem.Class.Services.AdminServices.AdminAppointmentSchedule
 {
-    public class DeleteAppointmentSchedule : IDeleteAppointmentSchedule
+    public interface IDbExecutor
+    {
+        Task<int> ExecuteAsync(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null);
+    }
+
+    public class DapperDbExecutor : IDbExecutor
     {
         private readonly IDbConnection _dbConnection;
 
-        public DeleteAppointmentSchedule(IDbConnection dbConnection)
+        public DapperDbExecutor(IDbConnection dbConnection)
         {
-            _dbConnection = dbConnection;
+            _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
         }
-        // I was testing dapper hahahahahah T.T 
+
+        public Task<int> ExecuteAsync(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            return _dbConnection.ExecuteAsync(sql, param, transaction, commandTimeout, commandType);
+        }
+    }
+
+    public class DeleteAppointmentSchedule : IDeleteAppointmentSchedule
+    {
+        private readonly IDbExecutor _dbExecutor;
+
+        public DeleteAppointmentSchedule(IDbExecutor dbExecutor)
+        {
+            _dbExecutor = dbExecutor ?? throw new ArgumentNullException(nameof(dbExecutor));
+        }
+        // I was testing dapper hahahahahah T.T
         public async Task<bool> DeleteAppointmentAsync(int appointmentId, DeleteAppointmentScheduleRequestDTO request)
         {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
             var parameters = new DynamicParameters();
             parameters.Add("@AppointmentId", appointmentId);
             parameters.Add("@NurseId", request.DeletedByNurseId, DbType.Int32);
@@ -25,7 +47,7 @@ namespace NurseRecordingSystem.Class.Services.AdminServices.AdminAppointmentSche
             try
             {
                 // Execute the stored procedure
-                await _dbConnection.ExecuteAsync(
+                await _dbExecutor.ExecuteAsync(
                     "nsp_DeleteAppointmentSchedule",
                     parameters,
                     commandType: CommandType.StoredProcedure

@@ -1,13 +1,14 @@
-using NurseRecordingSystem.Class.Services.UserServices.Users;
-using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
+using NurseRecordingSystem.Class.Services.UserServices.UserForms;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using Xunit;
 
-namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesTests
+namespace NurseRecordingSystem.Test.ServiceTests.HelperServicesTests.HelperUserForms
 {
-    public class ViewUserProfileTests
+    public class ViewUserFormTests
     {
         [Fact]
-        public void ViewUserProfile_ConfigurationNull_ThrowsInvalidOperationException()
+        public void ViewUserForm_ConfigurationNull_ThrowsInvalidOperationException()
         {
             // Arrange
             var config = new ConfigurationBuilder()
@@ -15,12 +16,12 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesT
                 .Build();
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => new ViewUserProfile(config));
+            var exception = Assert.Throws<InvalidOperationException>(() => new ViewUserForm(config));
             Assert.Contains("Connection string 'DefaultConnection' not found.", exception.Message);
         }
 
         [Fact]
-        public async Task GetUserProfileAsync_InvalidConnection_ThrowsException()
+        public async Task GetUserFormAsync_InvalidConnection_ThrowsException()
         {
             // Arrange
             var inMemorySettings = new Dictionary<string, string?> {
@@ -29,11 +30,10 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesT
             var config = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            var service = new ViewUserProfile(config);
-            int userId = 1;
+            var service = new ViewUserForm(config);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => service.GetUserProfileAsync(userId));
+            await Assert.ThrowsAsync<Exception>(() => service.GetUserFormAsync(1));
         }
     }
 }
