@@ -132,22 +132,34 @@
           ></textarea>
         </div>
 
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+        <div class="flex justify-between gap-3 pt-4 border-t border-gray-100">
           <button
-            @click="closeModal"
+            v-if="patientRecordStore.isEditMode"
+            @click="handlePrintRecord"
             type="button"
-            class="px-6 py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl transition-all hover:bg-gray-200 hover:shadow-md active:scale-95"
+            class="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95"
           >
-            <i class="fa-solid fa-xmark mr-1"></i>
-            Cancel
+            <i class="fa-solid fa-print mr-1"></i>
+            Print Record
           </button>
-          <button
-            type="submit"
-            class="px-6 py-3 bg-gradient-to-r from-[#2933FF] to-[#FF5451] text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95"
-          >
-            <i class="fa-solid fa-check mr-1"></i>
-            {{ patientRecordStore.isEditMode ? 'Update Record' : 'Add Record' }}
-          </button>
+          
+          <div class="flex gap-3 ml-auto">
+            <button
+              @click="closeModal"
+              type="button"
+              class="px-6 py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl transition-all hover:bg-gray-200 hover:shadow-md active:scale-95"
+            >
+              <i class="fa-solid fa-xmark mr-1"></i>
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-6 py-3 bg-gradient-to-r from-[#2933FF] to-[#FF5451] text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95"
+            >
+              <i class="fa-solid fa-check mr-1"></i>
+              {{ patientRecordStore.isEditMode ? 'Update Record' : 'Add Record' }}
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -155,11 +167,12 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { usePatientRecord } from '@/stores/patientRecord'
 
 const patientRecordStore = usePatientRecord()
 const route = useRoute()
+const router = useRouter()
 
 const emit = defineEmits(['modalClose'])
 
@@ -180,6 +193,22 @@ const submitHandler = async () => {
   if (success) {
     closeModal()
   }
+}
+
+const handlePrintRecord = () => {
+  const patientId = route.params.id
+  const recordId = patientRecordStore.recordForm.id
+  
+  // Navigate to print view with both patient and record IDs
+  router.push({
+    name: 'printview',
+    params: {
+      patientId: patientId,
+      recordId: recordId
+    }
+  })
+  
+  closeModal()
 }
 </script>
 
