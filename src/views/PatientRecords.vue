@@ -20,13 +20,22 @@
               <p class="text-gray-500 text-sm mt-1">Patient Medical Records</p>
             </div>
           </div>
-          <button
-            @click="openAddRecordModal"
-            class="px-6 py-3 bg-gradient-to-r from-[#2933FF] to-[#FF5451] text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
-          >
-            <i class="fa-solid fa-plus"></i>
-            Add New Record
-          </button>
+          <div class="flex gap-3">
+            <button
+              @click="printAllRecords"
+              class="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-print"></i>
+              Print All Records
+            </button>
+            <button
+              @click="openAddRecordModal"
+              class="px-6 py-3 bg-gradient-to-r from-[#2933FF] to-[#FF5451] text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-plus"></i>
+              Add New Record
+            </button>
+          </div>
         </div>
       </div>
 
@@ -86,6 +95,13 @@
                   </div>
                 </div>
                 <div class="flex gap-2">
+                  <button
+                    @click="printSingleRecord(record.id)"
+                    class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center hover:shadow-md transition-all hover:scale-110 active:scale-95"
+                    title="Print Record"
+                  >
+                    <i class="fa-solid fa-print text-xs text-purple-600"></i>
+                  </button>
                   <button
                     @click="handleEdit(record)"
                     class="w-8 h-8 rounded-lg bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center hover:shadow-md transition-all hover:scale-110 active:scale-95"
@@ -208,13 +224,14 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { usePatientRecord } from '@/stores/patientRecord'
 import { usePatientStore } from '@/stores/patientsStore'
 import { computed, ref } from 'vue'
 import RecordsHandler from '@/modals/RecordsHandler.vue'
 
 const route = useRoute()
+const router = useRouter()
 const patientsStore = usePatientStore()
 const patientRecord = usePatientRecord()
 
@@ -253,6 +270,25 @@ const formatDate = (dateString) => {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+  })
+}
+
+const printAllRecords = () => {
+  router.push({
+    name: 'printview',
+    params: {
+      patientId: patientId
+    }
+  })
+}
+
+const printSingleRecord = (recordId) => {
+  router.push({
+    name: 'printview',
+    params: {
+      patientId: patientId,
+      recordId: recordId
+    }
   })
 }
 
