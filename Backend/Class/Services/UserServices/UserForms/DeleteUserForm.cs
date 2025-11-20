@@ -18,6 +18,11 @@ namespace NurseRecordingSystem.Class.Services.UserServices.UserForms
 
         public async Task<bool> DeleteUserFormAsync(int formId, string deletedBy)
         {
+            if (string.IsNullOrWhiteSpace(deletedBy))
+            {
+                throw new ArgumentNullException(nameof(deletedBy), "DeletedBy cannot be null or empty.");
+            }
+
             await using (var connection = new SqlConnection(_connectionString))
             await using (var cmd = new SqlCommand("dbo.usp_DeleteUserForm", connection))
             {

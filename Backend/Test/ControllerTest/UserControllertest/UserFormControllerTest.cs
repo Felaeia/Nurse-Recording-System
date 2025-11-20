@@ -36,10 +36,9 @@ namespace NurseRecordingSystemTest.ControllerTest
                 issueType = "Medical Issue",
                 issueDescryption = "Description",
                 status = "Active",
-                patientName = "TestName"
+                patientName = "TestName",
             };
             var userId = "123";
-            var creator = "Nurse1";
             var expectedResponse = new UserFormResponseDTO
             {
                 IsSuccess = true,
@@ -67,7 +66,7 @@ namespace NurseRecordingSystemTest.ControllerTest
             // Arrange
             var request = new UserFormRequestDTO(); // Missing required fields
             var userId = "123";
-            var creator = "Nurse1";
+
 
             _userFormController.ModelState.AddModelError("issueType", "Required");
 
@@ -87,10 +86,9 @@ namespace NurseRecordingSystemTest.ControllerTest
             {
                 issueType = "Medical Issue",
                 status = "Active",
-                patientName = "TestName"
+                patientName = "TestName",
             };
             var userId = "123";
-            var creator = "Nurse1";
 
             _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId))
                 .ThrowsAsync(new ArgumentNullException("Some parameter is null"));
@@ -111,10 +109,10 @@ namespace NurseRecordingSystemTest.ControllerTest
             {
                 issueType = "Medical Issue",
                 status = "Active",
-                patientName = "TestName"
+                patientName = "TestName",
             };
             var userId = "123";
-            var creator = "Nurse1";
+
 
             _mockCreateUserFormService.Setup(ICreateUserForm => ICreateUserForm.CreateUserFormAsync(request, userId))
                 .ThrowsAsync(new Exception("Database error"));

@@ -103,7 +103,7 @@ builder.Services.AddScoped<IUpdateUser, UpdateUser>();
 builder.Services.AddScoped<ICreateUserForm, CreateUserForm>();
 builder.Services.AddScoped<IUpdateUserForm, UpdateUserForm>();
 builder.Services.AddScoped<IDeleteUserForm, DeleteUserForm>();
-
+builder.Services.AddScoped<IDbExecutor, DapperDbExecutor>();
 #region Policies
 builder.Services.AddHttpContextAccessor();
 

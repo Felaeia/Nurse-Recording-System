@@ -1,12 +1,13 @@
 using NurseRecordingSystem.Class.Services.UserServices.UserForms;
+using NurseRecordingSystem.DTO.UserServiceDTOs.UserFormsDTOs;
 using Xunit;
 
 namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTests
 {
-    public class DeleteUserFormTest
+    public class UpdateUserFormTest
     {
         [Fact]
-        public void DeleteUserForm_ConfigurationNull_ThrowsInvalidOperationException()
+        public void UpdateUserForm_ConfigurationNull_ThrowsInvalidOperationException()
         {
             // Arrange
             var config = new ConfigurationBuilder()
@@ -14,12 +15,12 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
                 .Build();
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => new DeleteUserForm(config));
+            var exception = Assert.Throws<InvalidOperationException>(() => new UpdateUserForm(config));
             Assert.Contains("Connection string 'DefaultConnection' not found.", exception.Message);
         }
 
         [Fact]
-        public async Task DeleteUserFormAsync_InvalidConnection_ThrowsException()
+        public async Task UpdateUserFormAsync_NullRequest_ThrowsArgumentNullException()
         {
             // Arrange
             var inMemorySettings = new Dictionary<string, string?> {
@@ -28,16 +29,17 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
             var config = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            var service = new DeleteUserForm(config);
-            int formId = 1;
-            string deletedBy = "Nurse1";
+            var service = new UpdateUserForm(config);
+            UpdateUserFormRequestDTO request = null;
+            string updater = "TestUser";
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => service.DeleteUserFormAsync(formId, deletedBy));
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => service.UpdateUserFormAsync(request, updater));
+            Assert.Equal("userFormRequest", exception.ParamName);
         }
 
         [Fact]
-        public async Task DeleteUserFormAsync_NullDeletedBy_ThrowsArgumentNullException()
+        public async Task UpdateUserFormAsync_InvalidConnection_ThrowsException()
         {
             // Arrange
             var inMemorySettings = new Dictionary<string, string?> {
@@ -46,12 +48,19 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
             var config = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            var service = new DeleteUserForm(config);
-            int formId = 1;
-            string deletedBy = null;
+            var service = new UpdateUserForm(config);
+            var request = new UpdateUserFormRequestDTO
+            {
+                formId = 1,
+                issueType = "Test Issue",
+                issueDescryption = "Test Description",
+                status = "Open",
+                patientName = "Test Patient"
+            };
+            string updater = "TestUser";
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => service.DeleteUserFormAsync(formId, deletedBy));
+            await Assert.ThrowsAsync<Exception>(() => service.UpdateUserFormAsync(request, updater));
         }
     }
 }

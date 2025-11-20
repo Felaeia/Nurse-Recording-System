@@ -9,7 +9,17 @@ namespace NurseRecordingSystem.Class.Services.NurseServices.PatientRecords
 
         public DeletePatientRecord(IConfiguration configuration)
         {
+            if (configuration == null)
+            {
+                throw new InvalidOperationException("Configuration cannot be null.");
+            }
+
             _connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            if (string.IsNullOrEmpty(_connectionString))
+            {
+                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            }
         }
 
         public async Task<bool> SoftDeletePatientRecordAsync(int patientRecordId)

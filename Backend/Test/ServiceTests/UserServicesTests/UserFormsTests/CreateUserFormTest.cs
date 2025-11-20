@@ -23,7 +23,6 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
             var service = new CreateUserForm(config);
             UserFormRequestDTO request = null!;
             var userId = "123";
-            var creator = "Nurse1";
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateUserFormAsync(request, userId));
@@ -60,11 +59,10 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserFormsTest
                 issueType = "Medical",
                 issueDescryption = "Patient needs assistance",
                 status = "Pending",
-                patientName = "Mags"
+                patientName = "Mags",
 
             };
             var userId = "123";
-            var creator = "Nurse1";
 
 
 

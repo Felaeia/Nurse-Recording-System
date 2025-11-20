@@ -1,13 +1,13 @@
-using NurseRecordingSystem.Class.Services.UserServices.Users;
-using NurseRecordingSystem.DTO.UserServiceDTOs.UsersDTOs;
+using NurseRecordingSystem.Class.Services.ClinicStatusServices;
+using NurseRecordingSystem.DTO.HelperServiceDTOs.HelperClinicStatusDTOs;
 using Xunit;
 
-namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesTests
+namespace NurseRecordingSystem.Test.ServiceTests.HelperServicesTests.helperclinicstatus
 {
-    public class ViewUserProfileTests
+    public class HelperclinicStatusTests
     {
         [Fact]
-        public void ViewUserProfile_ConfigurationNull_ThrowsInvalidOperationException()
+        public void ViewClinicStatus_ConfigurationNull_ThrowsInvalidOperationException()
         {
             // Arrange
             var config = new ConfigurationBuilder()
@@ -15,12 +15,12 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesT
                 .Build();
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => new ViewUserProfile(config));
+            var exception = Assert.Throws<InvalidOperationException>(() => new ViewClinicStatus(config));
             Assert.Contains("Connection string 'DefaultConnection' not found.", exception.Message);
         }
 
         [Fact]
-        public async Task GetUserProfileAsync_InvalidConnection_ThrowsException()
+        public async Task ViewAllAsync_InvalidConnection_ThrowsSqlException()
         {
             // Arrange
             var inMemorySettings = new Dictionary<string, string?> {
@@ -29,11 +29,10 @@ namespace NurseRecordingSystem.Test.ServiceTests.UserServicesTests.UserServicesT
             var config = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            var service = new ViewUserProfile(config);
-            int userId = 1;
+            var service = new ViewClinicStatus(config);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => service.GetUserProfileAsync(userId));
+            await Assert.ThrowsAsync<Microsoft.Data.SqlClient.SqlException>(() => service.ViewAllAsync());
         }
     }
 }
