@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useAuthStore = defineStore('authStore', () => {
-  const nurse = ref([])
+  const storedNurse = localStorage.getItem('nurse')
+  const nurse = ref(storedNurse ? JSON.parse(storedNurse) : null)
 
   const formLogin = ref({
     username: '',
@@ -20,7 +21,7 @@ export const useAuthStore = defineStore('authStore', () => {
 
   const login = async () => {
     try {
-      const response = await fetch('http:/localhost:3000/login', {
+      const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -28,11 +29,14 @@ export const useAuthStore = defineStore('authStore', () => {
         body: JSON.stringify(formLogin.value),
       })
 
-      const data = await response.json()
+      const data = await response.json().catch((e) => {
+        console.error('Failed to parse JSON response:', e)
+        return { success: false, message: 'Received non-JSON response from server.' }
+      })
 
       if (data.success) {
         nurse.value = data.nurse
-        ;(localStorage.setIte, ('nurse', JSON.stringify(nurse.value)))
+        localStorage.setItem('nurse', JSON.stringify(nurse.value))
         console.log(`Logged In as ${data.nurse.username}`)
         resetFormLogin()
         return true
