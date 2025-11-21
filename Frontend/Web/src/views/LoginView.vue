@@ -24,10 +24,10 @@
         </div>
 
         <form @submit.prevent="submitHandler" class="space-y-6">
-          <!-- Username Field -->
+          <!-- email Field -->
           <div class="form-group">
-            <label for="username" class="block text-sm font-semibold text-gray-700 mb-2 text-left">
-              Username:
+            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2 text-left">
+              email:
             </label>
             <div class="relative">
               <div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -35,9 +35,9 @@
               </div>
               <input
                 type="text"
-                id="username"
-                v-model="auth.formLogin.username"
-                placeholder="Enter your username"
+                id="email"
+                v-model="auth.formLogin.email"
+                placeholder="Enter your email"
                 class="w-full pl-12 pr-4 py-3.5 rounded-xl focus:outline-none bg-white text-gray-800 placeholder-gray-400 transition-all duration-300 border-2 border-gray-200 hover:border-gray-300 gradient-border-focus"
                 required
               />

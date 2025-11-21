@@ -6,14 +6,14 @@ export const useAuthStore = defineStore('authStore', () => {
   const nurse = ref(storedNurse ? JSON.parse(storedNurse) : null)
 
   const formLogin = ref({
-    username: '',
+    email: '',
     password: '',
   })
 
   const resetFormLogin = () => {
     formLogin.value = {
-      username: '',
-      password: '',
+      email: "",
+      password: "",
     }
   }
 
@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('authStore', () => {
 
   const login = async () => {
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch('https://localhost:7031/api/Auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,17 +31,27 @@ export const useAuthStore = defineStore('authStore', () => {
 
       const data = await response.json().catch((e) => {
         console.error('Failed to parse JSON response:', e)
-        return { success: false, message: 'Received non-JSON response from server.' }
+        return { message: 'Received non-JSON response from server.' }
       })
 
-      if (data.success) {
-        nurse.value = data.nurse
+      console.log('API Raw Response:', data)
+
+      // FIX: The schema has 'user' and 'token', not 'success' or 'nurse'
+      // We check if data.user exists and if the API says they are authenticated
+      if (data.user && data.user.isAuthenticated) {
+        
+        // Map the API's 'user' object to your app's 'nurse' state
+        nurse.value = data.user
+        
+        // Store the token separately if needed, or just store the whole nurse object
+        // For now, we store the user object as 'nurse' in local storage
         localStorage.setItem('nurse', JSON.stringify(nurse.value))
-        console.log(`Logged In as ${data.nurse.username}`)
+        
+        console.log(`Logged In as ${data.user.email}`)
         resetFormLogin()
         return true
       } else {
-        console.error('Login failed:', data.message)
+        console.error('Login failed:', data.message || 'Unknown error')
         resetFormLogin()
         return false
       }
@@ -57,6 +67,7 @@ export const useAuthStore = defineStore('authStore', () => {
     localStorage.removeItem('nurse')
     console.log(`Logged Out`)
   }
+
   return {
     nurse,
     formLogin,
