@@ -23,49 +23,44 @@ export const useAuthStore = defineStore('authStore', () => {
     try {
       const response = await fetch('https://localhost:7031/api/Auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        credentials: 'include', 
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formLogin.value),
       })
 
-      const data = await response.json().catch((e) => {
-        console.error('Failed to parse JSON response:', e)
-        return { message: 'Received non-JSON response from server.' }
-      })
+      const data = await response.json()
 
-      console.log('API Raw Response:', data)
-
-      // FIX: The schema has 'user' and 'token', not 'success' or 'nurse'
-      // We check if data.user exists and if the API says they are authenticated
       if (data.user && data.user.isAuthenticated) {
-        
-        // Map the API's 'user' object to your app's 'nurse' state
+        // We only save the user INFO. The token is now safely hidden in a cookie.
         nurse.value = data.user
-        
-        // Store the token separately if needed, or just store the whole nurse object
-        // For now, we store the user object as 'nurse' in local storage
         localStorage.setItem('nurse', JSON.stringify(nurse.value))
-        
-        console.log(`Logged In as ${data.user.email}`)
-        resetFormLogin()
         return true
       } else {
-        console.error('Login failed:', data.message || 'Unknown error')
-        resetFormLogin()
+        console.error('Login failed:', data.message)
         return false
       }
     } catch (error) {
-      console.error('Error during login:', error)
-      resetFormLogin()
+      console.error('Error:', error)
       return false
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+    await fetch('https://localhost:7031/api/Auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}) 
+    })
+  } catch (error) {
+    console.error('Logout error', error)
+  } finally {
+    // Always clear client state, even if server errors out
     nurse.value = null
     localStorage.removeItem('nurse')
-    console.log(`Logged Out`)
+    // Optional: Redirect to login
+  }
   }
 
   return {

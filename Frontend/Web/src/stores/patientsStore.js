@@ -7,7 +7,11 @@ export const usePatientStore = defineStore('patientStore', () => {
 
   const fetchPatients = async () => {
     try {
-      const response = await fetch('http://localhost:3000/patients')
+      const response = await fetch('https://localhost:7031/api/NurseUser/view/all_users', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
       if (!response.ok) throw new Error('Failed to fetch patients')
       patients.value = await response.json()
       console.log('Patients fetched successfully')

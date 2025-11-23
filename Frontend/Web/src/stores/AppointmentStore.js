@@ -5,6 +5,8 @@ import { usePatientStore } from './patientsStore'
 export const useAppointmentStore = defineStore('appointmentStore', () => {
   const patientStore = usePatientStore()
   const appointments = ref([])
+  const loading = ref(false)
+  const error = ref(null)
 
   const patientSearchTerm = ref('')
   const selectedPatientId = ref(null)
@@ -123,22 +125,30 @@ export const useAppointmentStore = defineStore('appointmentStore', () => {
   })
 
   const fetchAppointments = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/appointments', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      if (!response.ok) throw new Error('Failed to fetch appointments')
-      const data = await response.json()
-      appointments.value = data
-    } catch (error) {
-      console.error('Error fetching appointments:', error)
-    }
-  }
+  try {
+    const response = await fetch('https://localhost:7031/api/NurseAppointmentSchedule/view_appointment_list', {
+      method: 'GET',
+      credentials: 'include', 
+      headers: {
+        'Content-Type': 'application/json' 
+        // No 'Authorization' header needed anymore!
+      },
+    })
 
-  fetchAppointments()
+    if (response.status === 401) {
+       // If we get a 401, it means the Cookie is missing or expired
+       console.error("Session expired")
+       // Optional: Redirect to login
+    }
+
+    const data = await response.json()
+    appointments.value = data
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+  // fetchAppointments()
 
   const addAppointment = async (appointmentData) => {
     try {
@@ -231,6 +241,8 @@ export const useAppointmentStore = defineStore('appointmentStore', () => {
     }
   }
 
+  
+
   return {
     appointments,
     appointmentsForm,
@@ -239,6 +251,8 @@ export const useAppointmentStore = defineStore('appointmentStore', () => {
     patientSearchTerm,
     filteredPatients,
     isEditMode,
+    loading,
+    error,
     selectPatient,
     fetchAppointments,
     submitAppointment,

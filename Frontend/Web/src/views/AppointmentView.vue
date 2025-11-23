@@ -200,10 +200,15 @@
 import { useAppointmentStore } from '@/stores/AppointmentStore'
 import { usePatientStore } from '@/stores/patientsStore'
 import AppointmentHandler from '@/modals/AppoitmentHandler.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const store = useAppointmentStore()
 const patientStore = usePatientStore()
+
+// Fetch data when the component loads
+onMounted(() => {
+  store.fetchAppointments()
+})
 
 const searchQuery = ref('')
 const showAppointmentModal = ref(false)
@@ -231,13 +236,15 @@ const getPatientName = (patientId) => {
   return 'Unknown Patient'
 }
 
+// Helper to format date: "2025-11-21T15:31..." -> "Nov 21, 2025, 3:31 PM"
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleString('en-US', {
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit'
   })
 }
 
