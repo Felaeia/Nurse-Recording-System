@@ -79,7 +79,7 @@
                   <h2
                     class="text-xl font-bold bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
                   >
-                    {{ appointment.reason }}
+                    {{ appointment.appointmentDescription }}
                   </h2>
                   <p class="text-xs text-gray-400 mt-0.5">
                     {{ appointment.appointmentId || `#${appointment.id}` }}
@@ -117,7 +117,7 @@
                 </span>
                 <div>
                   <h3 class="text-sm font-semibold text-gray-700 mb-1">Patient</h3>
-                  <p class="text-sm text-gray-600">{{ getPatientName(appointment.patientId) }}</p>
+                  <p class="text-sm text-gray-600">{{ appointment.patientName }}</p>
                 </div>
               </div>
 
@@ -131,7 +131,7 @@
                 </span>
                 <div>
                   <h3 class="text-sm font-semibold text-gray-700 mb-1">Date</h3>
-                  <p class="text-sm text-gray-600">{{ formatDate(appointment.date) }}</p>
+                  <p class="text-sm text-gray-600">{{ formatDate(appointment.appointmentTime) }}</p>
                 </div>
               </div>
 
@@ -145,7 +145,7 @@
                 </span>
                 <div>
                   <h3 class="text-sm font-semibold text-gray-700 mb-1">Time</h3>
-                  <p class="text-sm text-gray-600">{{ formatTime(appointment.time) }}</p>
+                  <p class="text-sm text-gray-600">{{ formatTime(appointment.appointmentTime) }}</p>
                 </div>
               </div>
             </div>
@@ -174,7 +174,7 @@
         </div>
         <p class="text-gray-600 mb-6">
           Are you sure you want to delete the appointment for
-          <span class="font-semibold">{{ appointmentToDelete?.reason }}</span
+          <span class="font-semibold">{{ appointmentToDelete?.appointmentDescription }}</span
           >?
         </p>
         <div class="flex justify-end gap-3">
@@ -198,12 +198,10 @@
 
 <script setup>
 import { useAppointmentStore } from '@/stores/AppointmentStore'
-import { usePatientStore } from '@/stores/patientsStore'
 import AppointmentHandler from '@/modals/AppoitmentHandler.vue'
 import { ref, computed, onMounted } from 'vue'
 
 const store = useAppointmentStore()
-const patientStore = usePatientStore()
 
 // Fetch data when the component loads
 onMounted(() => {
@@ -221,40 +219,32 @@ const filteredAppointments = computed(() => {
   const query = searchQuery.value.toLowerCase()
   return store.appointments.filter(
     (appointment) =>
-      appointment.reason?.toLowerCase().includes(query) ||
-      appointment.appointmentId?.toLowerCase().includes(query) ||
-      getPatientName(appointment.patientId).toLowerCase().includes(query) ||
-      appointment.date?.includes(query),
+      appointment.appointmentDescription?.toLowerCase().includes(query) ||
+      appointment.patientName?.toLowerCase().includes(query) ||
+      appointment.appointmentId?.toLowerCase().includes(query),
   )
 })
 
-const getPatientName = (patientId) => {
-  const patient = patientStore.patients.find((p) => p.id === patientId)
-  if (patient) {
-    return `${patient.firstname} ${patient.lastname}`
-  }
-  return 'Unknown Patient'
-}
-
-// Helper to format date: "2025-11-21T15:31..." -> "Nov 21, 2025, 3:31 PM"
-const formatDate = (dateString) => {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleString('en-US', {
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric', 
-    hour: '2-digit', 
-    minute: '2-digit'
+// Helper to extract and format date from ISO string
+const formatDate = (isoString) => {
+  if (!isoString) return ''
+  const date = new Date(isoString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   })
 }
 
-const formatTime = (timeString) => {
-  if (!timeString) return 'N/A'
-  const [hours, minutes] = timeString.split(':')
-  const hour = parseInt(hours)
-  const ampm = hour >= 12 ? 'PM' : 'AM'
-  const displayHour = hour % 12 || 12
-  return `${displayHour}:${minutes} ${ampm}`
+// Helper to extract and format time from ISO string
+const formatTime = (isoString) => {
+  if (!isoString) return ''
+  const date = new Date(isoString)
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
 }
 
 const handleNewAppointment = () => {
@@ -283,7 +273,7 @@ const cancelDelete = () => {
 
 const handleDelete = async () => {
   if (appointmentToDelete.value) {
-    await store.deleteAppointment(appointmentToDelete.value.id)
+    await store.deleteAppointment(appointmentToDelete.value.appointmentId)
     showDeleteModal.value = false
     appointmentToDelete.value = null
   }
