@@ -23,32 +23,34 @@ export const usePatientStore = defineStore('patientStore', () => {
   fetchPatients()
 
   const formPatient = ref({
-    id: null,
-    firstname: '',
-    middlename: '',
-    lastname: '',
+    userId: null,
+    userName: '',
+    email: '',
+    role: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    contactNumber: '',
     address: '',
     password: '',
-    facebook: '',
-    email: '',
-    emergencyContact: ''.toString(),
   })
 
   const resetForm = () => {
     formPatient.value = {
-      id: null,
-      firstname: '',
-      middlename: '',
-      lastname: '',
+      userId: null,
+      userName: '',
+      email: '',
+      role: '',
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      contactNumber: '',
       address: '',
       password: '',
-      facebook: '',
-      email: '',
-      emergencyContact: '',
     }
   }
 
-  const isEditMode = computed(() => !!formPatient.value.id)
+  const isEditMode = computed(() => !!formPatient.value.userId)
 
   const setFormforEdit = (patient) => {
     formPatient.value = { ...patient }
@@ -63,19 +65,28 @@ export const usePatientStore = defineStore('patientStore', () => {
 
   const addPatient = async (newPatient) => {
     try {
-      const response = await fetch('http://localhost:3000/patients', {
+      const payload = {
+        userName: newPatient.firstName + newPatient.lastName,
+        password: newPatient.password,
+        email: newPatient.email,
+        firstName: newPatient.firstName,
+        middleName: newPatient.middleName,
+        address: null,
+        lastName: newPatient.lastName,
+        contactNumber: newPatient.contactNumber,
+      }
+      const response = await fetch('https://localhost:7031/api/CreateUser/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newPatient),
+        body: JSON.stringify(payload),
       })
       if (!response.ok) throw new Error('Failed to add patient')
 
-      const addedPatient = await response.json()
-      patients.value.push(addedPatient)
+      await fetchPatients()
       console.log(
-        `Patient ${addedPatient.firstname} ${addedPatient.middlename} ${addedPatient.lastname} added successfully`,
+        `Patient ${newPatient.firstName} ${newPatient.middleName} ${newPatient.lastName} added successfully`,
       )
       return true
     } catch (error) {
@@ -85,15 +96,16 @@ export const usePatientStore = defineStore('patientStore', () => {
   }
 
   const existingPatientDetails = (newPatient) => {
+    if (isEditMode.value) return true
     const patientExist = patients.value.some(
       (p) =>
-        p.firstname === newPatient.firstname &&
-        p.lastname === newPatient.lastname &&
-        p.middlename === newPatient.middlename,
+        p.firstName === newPatient.firstName &&
+        p.lastName === newPatient.lastName &&
+        p.middleName === newPatient.middleName,
     )
     if (patientExist) {
       console.error(
-        `Patient ${newPatient.firstname} ${newPatient.middlename} ${newPatient.lastname} already exist`,
+        `Patient ${newPatient.firstName} ${newPatient.middleName} ${newPatient.lastName} already exist`,
       )
       return false
     }
@@ -102,6 +114,7 @@ export const usePatientStore = defineStore('patientStore', () => {
 
   const deletePatient = async (id) => {
     try {
+      // TODO: Replace with the correct API endpoint for deleting a patient
       const response = await fetch(`http://localhost:3000/patients/${id}`, {
         method: 'DELETE',
       })
@@ -115,9 +128,11 @@ export const usePatientStore = defineStore('patientStore', () => {
     }
   }
 
-  const editPatient = async (id, updatedPatient) => {
+  const editPatient = async (updatedPatient) => {
     try {
-      const response = await fetch(`http://localhost:3000/patients/${id}`, {
+      // TODO: Replace with the correct API endpoint for updating a patient
+      // and construct the correct payload
+      const response = await fetch(`http://localhost:3000/patients/${updatedPatient.userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -126,14 +141,9 @@ export const usePatientStore = defineStore('patientStore', () => {
       })
       if (!response.ok) throw new Error('Failed to update patient')
 
-      const updatedData = await response.json()
-
-      const index = patients.value.findIndex((patient) => patient.id === id)
-      if (index !== -1) {
-        patients.value[index] = updatedData
-        console.log(`Patient with ID ${id} has been updated`)
-        resetForm()
-      }
+      await fetchPatients()
+      console.log(`Patient with ID ${updatedPatient.userId} has been updated`)
+      resetForm()
     } catch (error) {
       console.error('Error updating patient:', error)
     }
@@ -150,7 +160,7 @@ export const usePatientStore = defineStore('patientStore', () => {
 
     let success
     if (isEditMode.value) {
-      success = await editPatient(formPatient.value.id, formPatient.value)
+      success = await editPatient(formPatient.value)
     } else {
       success = await addPatient(formPatient.value)
     }
@@ -177,10 +187,10 @@ export const usePatientStore = defineStore('patientStore', () => {
   }
 
   const phoneVerification = (newPatient) => {
-    const phoneNumber = String(newPatient.emergencyContact)
-    if (phoneNumber.length !== 11) {
+    const phoneNumber = String(newPatient.contactNumber)
+    if (phoneNumber.length < 10) {
       console.error(
-        `Patient phone number: ${newPatient.emergencyContact} should be 11 characters long`,
+        `Patient phone number: ${newPatient.contactNumber} should be at least 10 characters long`,
       )
       return false
     }
@@ -197,5 +207,8 @@ export const usePatientStore = defineStore('patientStore', () => {
     setFormforEdit,
     submitPatient,
     resetForm,
+    addPatient,
+    editPatient,
   }
 })
+

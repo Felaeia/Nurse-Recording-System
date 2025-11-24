@@ -1,3 +1,4 @@
+
 <template>
   <div class="min-h-screen flex font-poppins bg-gray-50 text-gray-900">
     <div class="sidebar w-96 p-8 bg-white shadow-lg flex flex-col overflow-auto">
@@ -45,8 +46,8 @@
       <div class="content grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         <div
           v-for="patient in store.filteredpatients"
-          :key="patient.id"
-          @click="patientsrecord(patient.id)"
+          :key="patient.userId"
+          @click="patientsrecord(patient.userId)"
           class="cursor-pointer bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all relative overflow-hidden border border-gray-100 hover:border-[#2933FF]/30 flex flex-col"
         >
           <div
@@ -55,12 +56,20 @@
 
           <div class="relative z-10 flex flex-col h-full">
             <div class="mb-4 pb-4 border-b border-gray-100">
-              <h3
-                class="text-lg font-bold bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent leading-tight break-words"
-              >
-                {{ patient.firstname }} {{ patient.middlename ? patient.middlename + ' ' : ''
-                }}{{ patient.lastname }}
-              </h3>
+              <div class="flex items-center gap-3">
+                <span class="w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fa-solid fa-user text-[#2933FF]"></i>
+                </span>
+                <h3
+                  class="text-lg font-bold bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent leading-tight break-words"
+                >
+                  {{ patient.firstName }} {{ patient.middleName ? patient.middleName + ' ' : ''
+                  }}{{ patient.lastName }}
+                </h3>
+              </div>
+              <p class="text-xs text-gray-400 mt-1 ml-8">
+                {{ patient.userName }} (#{{ patient.userId }})
+              </p>
             </div>
 
             <div class="space-y-3 text-gray-600 text-sm mb-5 flex-1">
@@ -68,7 +77,7 @@
                 <span class="w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <i class="fa-solid fa-phone text-[#2933FF]"></i>
                 </span>
-                <span class="break-words leading-relaxed">{{ patient.emergencyContact }}</span>
+                <span class="break-words leading-relaxed">{{ patient.contactNumber }}</span>
               </div>
               <div class="flex items-start gap-3">
                 <span class="w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -86,7 +95,7 @@
                 <i class="fa-solid fa-pen mr-1"></i>Edit
               </button>
               <button
-                @click.stop="handleDelete(patient.id)"
+                @click.stop="handleDelete(patient.userId)"
                 class="px-4 py-2 text-red-600 border border-red-600 rounded-lg text-sm font-semibold hover:bg-red-600 hover:text-white transition-all"
               >
                 <i class="fa-solid fa-trash mr-1"></i>Delete
@@ -96,18 +105,22 @@
         </div>
       </div>
     </div>
+    <EditPatientHandlerModal v-if="showEditModal" @close="showEditModal = false" />
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePatientStore } from '@/stores/patientsStore'
 import { useAuthStore } from '@/stores/authStore'
 import PatientHandler from '@/modals/PatientHandler.vue'
+import EditPatientHandlerModal from '@/modals/EditPatientHandlerModal.vue'
 
 const store = usePatientStore()
 const auth = useAuthStore()
 const router = useRouter()
+const showEditModal = ref(false)
 
 const patientsrecord = (id) => {
   router.push({ name: 'patientrecords', params: { id } })
@@ -119,6 +132,7 @@ const appointments = (id) => {
 
 const handleEdit = (patient) => {
   store.setFormforEdit(patient)
+  showEditModal.value = true
 }
 
 const handleDelete = (id) => {
