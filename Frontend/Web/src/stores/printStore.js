@@ -1,34 +1,34 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { usePatientRecord } from './patientRecord'
+import { useUserFormStore } from './userFormStore'
 import { usePatientStore } from './patientsStore'
 import { useAuthStore } from './authStore'
 
 export const usePrintStore = defineStore('printStore', () => {
-  const patientRecordStore = usePatientRecord()
+  const userFormStore = useUserFormStore()
   const patientStore = usePatientStore()
   const authStore = useAuthStore()
 
   const selectedPatientId = ref(null)
-  const selectedRecordId = ref(null)
+  const selectedFormId = ref(null)
 
   // Get patient details
   const patient = computed(() => {
     if (!selectedPatientId.value) return null
-    return patientStore.patients.find((p) => p.id === selectedPatientId.value)
+    return patientStore.patients.find((p) => p.userId === selectedPatientId.value)
   })
 
-  // Get specific record or all records for patient
-  const records = computed(() => {
+  // Get specific form or all forms for patient
+  const forms = computed(() => {
     if (!selectedPatientId.value) return []
 
-    const allRecords = patientRecordStore.getpatient(selectedPatientId.value)
+    const allForms = userFormStore.forms
 
-    if (selectedRecordId.value) {
-      return allRecords.filter((r) => r.id === selectedRecordId.value)
+    if (selectedFormId.value) {
+      return allForms.filter((f) => f.formId === selectedFormId.value)
     }
 
-    return allRecords
+    return allForms
   })
 
   // Get current nurse information
@@ -47,20 +47,21 @@ export const usePrintStore = defineStore('printStore', () => {
   // Format patient full name
   const patientFullName = computed(() => {
     if (!patient.value) return 'Unknown Patient'
-    const { firstname, middlename, lastname } = patient.value
-    return `${firstname} ${middlename ? middlename + ' ' : ''}${lastname}`
+    const { firstName, middleName, lastName } = patient.value
+    return `${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`
   })
 
   // Set data for printing
-  const setPrintData = (patientId, recordId = null) => {
+  const setPrintData = (patientId, formId = null) => {
     selectedPatientId.value = patientId
-    selectedRecordId.value = recordId
+    selectedFormId.value = formId
+    userFormStore.fetchUserForms(patientId)
   }
 
   // Reset print data
   const resetPrintData = () => {
     selectedPatientId.value = null
-    selectedRecordId.value = null
+    selectedFormId.value = null
   }
 
   // Trigger browser print dialog
@@ -70,9 +71,9 @@ export const usePrintStore = defineStore('printStore', () => {
 
   return {
     selectedPatientId,
-    selectedRecordId,
+    selectedFormId,
     patient,
-    records,
+    forms,
     nurse,
     todaysDate,
     patientFullName,

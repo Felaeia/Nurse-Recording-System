@@ -61,12 +61,12 @@ const PrintContent = defineComponent({
         ]),
         h('h1', { class: 'text-4xl font-bold text-gray-800 mb-2' }, 'ACLC CLINIC'),
         h('p', { class: 'text-gray-600 text-sm' }, 'Healthcare Management System'),
-        h('p', { class: 'text-gray-500 text-xs mt-2' }, 'Professional Medical Records')
+        h('p', { class: 'text-gray-500 text-xs mt-2' }, 'User-Submitted Forms')
       ]),
 
       // Document Title
       h('div', { class: 'mb-8 text-center' }, [
-        h('h2', { class: 'text-2xl font-bold text-gray-800 mb-2' }, 'PATIENT MEDICAL RECORD'),
+        h('h2', { class: 'text-2xl font-bold text-gray-800 mb-2' }, 'USER FORM'),
         h('p', { class: 'text-gray-600' }, `Date Issued: ${printStore.todaysDate}`)
       ]),
 
@@ -80,11 +80,11 @@ const PrintContent = defineComponent({
           ]),
           h('div', [
             h('p', { class: 'text-gray-600 font-semibold mb-1' }, 'Patient ID:'),
-            h('p', { class: 'text-gray-800' }, `#${printStore.patient?.id || 'N/A'}`)
+            h('p', { class: 'text-gray-800' }, `#${printStore.patient?.userId || 'N/A'}`)
           ]),
           h('div', [
             h('p', { class: 'text-gray-600 font-semibold mb-1' }, 'Contact Number:'),
-            h('p', { class: 'text-gray-800' }, printStore.patient?.emergencyContact || 'N/A')
+            h('p', { class: 'text-gray-800' }, printStore.patient?.contactNumber || 'N/A')
           ]),
           h('div', [
             h('p', { class: 'text-gray-600 font-semibold mb-1' }, 'Email Address:'),
@@ -97,53 +97,41 @@ const PrintContent = defineComponent({
         ])
       ]),
 
-      // Medical Records
-      h('div', { class: 'medical-records mb-12' }, [
-        h('h3', { class: 'text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-300' }, 'MEDICAL RECORDS'),
-        ...printStore.records.map((record, index) => 
-          h('div', { 
-            class: 'record-entry mb-6 p-5 border border-gray-200 rounded-lg',
-            key: record.id 
+      // User Forms
+      h('div', { class: 'user-forms mb-12' }, [
+        h('h3', { class: 'text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-300' }, 'USER FORMS'),
+        ...printStore.forms.map((form, index) =>
+          h('div', {
+            class: 'form-entry mb-6 p-5 border border-gray-200 rounded-lg',
+            key: form.formId
           }, [
             h('div', { class: 'flex justify-between items-start mb-4' }, [
               h('div', [
-                h('h4', { class: 'text-lg font-bold text-gray-800' }, `Record #${index + 1}`),
-                h('p', { class: 'text-xs text-gray-500' }, `Record ID: ${record.recordId}`)
+                h('h4', { class: 'text-lg font-bold text-gray-800' }, `Form #${index + 1}`),
+                h('p', { class: 'text-xs text-gray-500' }, `Form ID: ${form.formId}`)
               ]),
-              h('p', { class: 'text-sm text-gray-600' }, formatDate(record.date))
             ]),
-            
-            h('div', { class: 'space-y-3 text-sm' }, [
-              h('div', [
-                h('p', { class: 'font-semibold text-gray-700 mb-1' }, 'Diagnosis:'),
-                h('p', { class: 'text-gray-800' }, record.diagnosis || 'Not Specified')
-              ]),
-              h('div', [
-                h('p', { class: 'font-semibold text-gray-700 mb-1' }, 'Symptoms:'),
-                h('p', { class: 'text-gray-800' }, record.symptom || 'Not Specified')
-              ]),
-              h('div', [
-                h('p', { class: 'font-semibold text-gray-700 mb-1' }, 'Treatment:'),
-                h('p', { class: 'text-gray-800' }, record.treatment || 'Not Specified')
-              ]),
-              record.notes ? h('div', [
-                h('p', { class: 'font-semibold text-gray-700 mb-1' }, 'Additional Notes:'),
-                h('p', { class: 'text-gray-800 italic' }, record.notes)
-              ]) : null
-            ])
+
+            h('div', { class: 'space-y-3 text-sm' },
+              Object.entries(form).map(([key, value]) =>
+                h('div', [
+                  h('p', { class: 'font-semibold text-gray-700 mb-1' }, `${key}:`),
+                  h('p', { class: 'text-gray-800' }, value)
+                ])
+              )
+            )
           ])
         ),
-        printStore.records.length === 0 
-          ? h('p', { class: 'text-center text-gray-500 py-8' }, 'No medical records available for this patient.')
+        printStore.forms.length === 0
+          ? h('p', { class: 'text-center text-gray-500 py-8' }, 'No forms available for this patient.')
           : null
       ]),
 
       // Professional Statement
       h('div', { class: 'statement mb-8 p-5 bg-blue-50 border-l-4 border-blue-600 rounded' }, [
         h('p', { class: 'text-sm text-gray-700 leading-relaxed' }, [
-          'This document certifies that the above medical records are accurate and complete to the best of our knowledge. ',
-          'All information contained herein is confidential and should be handled in accordance with applicable healthcare privacy regulations. ',
-          'This document is generated for official medical and administrative purposes only.'
+          'This document contains user-submitted form data. ',
+          'All information contained herein is confidential and should be handled in accordance with applicable privacy regulations. '
         ])
       ]),
 
@@ -152,7 +140,7 @@ const PrintContent = defineComponent({
         h('div', { class: 'grid grid-cols-2 gap-8' }, [
           h('div', [
             h('p', { class: 'text-sm font-semibold text-gray-700 mb-2' }, 'Prepared By:'),
-            h('p', { class: 'text-gray-800 font-medium mb-1' }, printStore.nurse?.username || 'N/A'),
+            h('p', { class: 'text-gray-800 font-medium mb-1' }, printStore.nurse?.userName || 'N/A'),
             h('p', { class: 'text-xs text-gray-600' }, printStore.nurse?.email || ''),
             h('div', { class: 'mt-4 pt-2 border-t border-gray-400 w-48' }),
             h('p', { class: 'text-xs text-gray-600 mt-1' }, 'Nurse Signature')
@@ -168,27 +156,17 @@ const PrintContent = defineComponent({
       // Footer
       h('div', { class: 'footer text-center mt-12 pt-8 border-t border-gray-200 text-xs text-gray-500' }, [
         h('p', { class: 'mb-1' }, '© 2024 ACLC Clinic. All rights reserved.'),
-        h('p', 'This document is confidential and intended solely for authorized medical personnel.')
+        h('p', 'This document is confidential and intended solely for authorized personnel.')
       ])
     ])
   }
 })
 
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
-
 onMounted(() => {
   const patientId = Number(route.params.patientId)
-  const recordId = route.params.recordId ? Number(route.params.recordId) : null
+  const formId = route.params.recordId ? Number(route.params.recordId) : null
   
-  printStore.setPrintData(patientId, recordId)
+  printStore.setPrintData(patientId, formId)
 })
 
 onUnmounted(() => {

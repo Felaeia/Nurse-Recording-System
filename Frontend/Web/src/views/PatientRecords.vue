@@ -20,13 +20,22 @@
               <p class="text-gray-500 text-sm mt-1">User Forms</p>
             </div>
           </div>
-          <button
-            @click="goBack"
-            class="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
-          >
-            <i class="fa-solid fa-arrow-left"></i>
-            Back to Patient List
-          </button>
+          <div class="flex gap-3">
+            <button
+              @click="printAllForms"
+              class="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-print"></i>
+              Print All Forms
+            </button>
+            <button
+              @click="goBack"
+              class="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-arrow-left"></i>
+              Back to Patient List
+            </button>
+          </div>
         </div>
       </div>
 
@@ -59,6 +68,13 @@
                   Form #{{ form.formId }}
                 </h2>
                 <div class="flex gap-2">
+                  <button
+                    @click="printSingleForm(form.formId)"
+                    class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center hover:shadow-md transition-all hover:scale-110 active:scale-95"
+                    title="Print Form"
+                  >
+                    <i class="fa-solid fa-print text-xs text-purple-600"></i>
+                  </button>
                   <button
                     @click="handleEdit(form)"
                     class="w-8 h-8 rounded-lg bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center hover:shadow-md transition-all hover:scale-110 active:scale-95"
@@ -181,6 +197,25 @@ const handleDelete = async () => {
     showDeleteModal.value = false
     formToDelete.value = null
   }
+}
+
+const printSingleForm = (formId) => {
+  router.push({
+    name: 'print',
+    params: {
+      patientId: userId,
+      recordId: formId,
+    },
+  })
+}
+
+const printAllForms = () => {
+  router.push({
+    name: 'print',
+    params: {
+      patientId: userId,
+    },
+  })
 }
 </script>
 
