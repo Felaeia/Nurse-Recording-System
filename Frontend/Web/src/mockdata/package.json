@@ -1,0 +1,20 @@
+{
+  "name": "json-server-mock-api",
+  "version": "1.0.0",
+  "description": "Mock API for Vue Nurse App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "mock-api": "node server.js",
+    "watch-data-only": "json-server --watch db.json --port 3000"
+  },
+  "keywords": [
+    "json-server",
+    "mock-api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "json-server": "^0.17.4"
+  }
+}

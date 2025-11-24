@@ -9,26 +9,15 @@
   ],
   "patients": [
     {
-      "id": 1,
-      "firstname": "Arcgel",
-      "middlename": "Bataluna",
-      "lastname": "Chavez",
-      "address": "Tugas Gun-ob Lapu Lapu City",
-      "password": "chavezpassword",
-      "facebook": "facebook.com/arcgel",
-      "email": "arcgel@email.com",
-      "emergencyContact": "09112233445"
-    },
-    {
       "id": 2,
       "firstname": "Rajie Mae",
-      "middlename": "",
-      "lastname": "Villa",
+      "middlename": "Ambot",
+      "lastname": "Villas",
       "address": "Ibabao Lapu Lapu City",
       "password": "villapassword",
       "facebook": "",
       "email": "rajie@email.com",
-      "emergencyContact": "09223344556"
+      "emergencyContact": "09334455667"
     },
     {
       "id": 3,
@@ -40,28 +29,44 @@
       "facebook": "",
       "email": "",
       "emergencyContact": "09334455667"
+    },
+    {
+      "id": 4,
+      "firstname": "Hollow",
+      "middlename": "Ghost",
+      "lastname": "Knight",
+      "address": "Hollownest",
+      "password": "123456",
+      "facebook": "",
+      "email": "dummy1@gmail.com",
+      "emergencyContact": "12345678901"
+    },
+    {
+      "id": 5,
+      "firstname": "Arcgel",
+      "middlename": "Bataluna",
+      "lastname": "Chavez",
+      "address": "",
+      "password": "123456",
+      "facebook": "",
+      "email": "dummy3@gmail.com",
+      "emergencyContact": 96042294701
+    },
+    {
+      "id": 6,
+      "firstname": "Michelle",
+      "middlename": "asda",
+      "lastname": "Bulahan",
+      "address": "",
+      "password": "123456",
+      "facebook": "sad",
+      "email": "dummy5@gmail.com",
+      "emergencyContact": 23425678902
     }
   ],
   "patientRecords": [
     {
-      "recordId": "r001",
-      "patientId": "1",
-      "date": "2025-08-01",
-      "diagnosis": "Hypertension",
-      "symptom": "Headaches, dizziness",
-      "treatment": "Medication prescribed",
-      "notes": "Follow-up in 2 weeks"
-    },
-    {
-      "recordId": "r002",
-      "patientId": "1",
-      "date": "2025-08-01",
-      "diagnosis": "Diarhhea",
-      "symptom": "Stomach cramps, dehydration",
-      "treatment": "Medication prescribed",
-      "notes": "Follow-up Tommorow"
-    },
-    {
+      "id": 3,
       "recordId": "r003",
       "patientId": "3",
       "date": "2025-08-01",
@@ -69,6 +74,26 @@
       "symptom": "Cough, sneezing, sore throat",
       "treatment": "Medication prescribed, and lots of rest",
       "notes": "Follow-up in 2 days"
+    },
+    {
+      "patientId": "4",
+      "recordId": "R-001",
+      "date": "2025-10-12",
+      "diagnosis": "Fever",
+      "symptom": "Cold, High Temperature",
+      "treatment": "sleep and paraceramol, anti bacterial",
+      "notes": "Take a lot of rest",
+      "id": 4
+    }
+  ],
+  "appointments": [
+    {
+      "id": 1,
+      "appointmentId": "P-001",
+      "patientId": 5,
+      "date": "2025-10-18",
+      "time": "07:01",
+      "reason": "Trial Edit"
     }
   ]
 }

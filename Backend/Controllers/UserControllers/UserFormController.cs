@@ -30,7 +30,6 @@ namespace NurseRecordingSystem.Controllers.UserControllers
         /// <param name="creator">The ID of the nurse/creator (passed via header or claims).</param>
         /// <returns>A 201 Created or 400 Bad Request.</returns>
         [HttpPost("create/user_form")]
-        [Authorize(Policy = "MustBeUser")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -121,7 +120,6 @@ namespace NurseRecordingSystem.Controllers.UserControllers
         /// </summary>
         /// <param name="formId">The ID of the form to be deleted.</param>
         [HttpDelete("delete/user_form/{formId}")] // Defines the HTTP method and route pattern (e.g., DELETE /api/userform/delete/123)
-        [Authorize(Policy = "MustBeUser")]
         public async Task<IActionResult> DeleteUserForm(
             int formId, 
             [FromHeader(Name = "X-DeletedBy")] string deletedByName)

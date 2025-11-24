@@ -8,6 +8,9 @@ namespace NurseRecordingSystem.DTO.NurseServiceDTOs.NurseAppointmentScheduleDTOs
         [Required]
         public DateTime AppointmentTime { get; set; }
 
+        [Required]
+        public string PatientName { get; set; } = null!;
+
         // New description for the appointment
         [Required]
         public string AppointmentDescription { get; set; } = null!;

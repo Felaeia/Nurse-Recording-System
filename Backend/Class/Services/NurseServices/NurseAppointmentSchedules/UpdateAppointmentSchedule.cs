@@ -19,6 +19,7 @@ namespace NurseRecordingSystem.Class.Services.NurseServices.AppointmentSchedules
             var parameters = new DynamicParameters();
             parameters.Add("@AppointmentId", appointmentId);
             parameters.Add("@AppointmentTime", request.AppointmentTime, DbType.DateTime);
+            parameters.Add("@PatientName", request.PatientName, DbType.String);
             parameters.Add("@AppointmentDescription", request.AppointmentDescription, DbType.String);
             parameters.Add("@NurseId", request.NurseId, DbType.Int32);
             parameters.Add("@UpdatedBy", request.UpdatedBy, DbType.String, size: 50);

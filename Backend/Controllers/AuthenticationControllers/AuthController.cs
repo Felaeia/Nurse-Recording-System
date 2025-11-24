@@ -69,7 +69,7 @@ namespace NurseRecordingSystem.Controllers.AuthenticationControllers
                     {
                         HttpOnly = true,
                         Secure = true,
-                        SameSite = SameSiteMode.Strict,
+                        SameSite = SameSiteMode.None,
                         Expires = tokenResponse.ExpiresOn
                     };
 
@@ -93,7 +93,7 @@ namespace NurseRecordingSystem.Controllers.AuthenticationControllers
                     {
                         HttpOnly = true,
                         Secure = true,
-                        SameSite = SameSiteMode.Strict,
+                        SameSite = SameSiteMode.None,
                         Expires = tokenResponse.ExpiresOn
                     };
 

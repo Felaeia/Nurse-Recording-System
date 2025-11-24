@@ -1,77 +1,110 @@
 <template>
-  <form @submit.prevent="submitHandler">
-    <label for="patientFirstname">Firstname: </label>
+  <form @submit.prevent="submitHandler" class="max-w-md mx-auto p-6 rounded-xl space-y-4">
     <input
-      type="name"
-      v-model="store.formPatient.firstname"
-      id="patientFirstname"
+      type="text"
+      v-model="form.firstname"
+      placeholder="Firstname"
       autocomplete="off"
       required
+      class="w-full px-3 py-2 rounded-[5px] border-2 text-gray-900 transition"
+      style="border-image: linear-gradient(135deg, #2933ff, #ff5451) 1; border-style: solid"
     />
 
-    <label for="patientLastname">Lastname: </label>
     <input
-      type="name"
-      v-model="store.formPatient.lastname"
-      id="patientLastname"
+      type="text"
+      v-model="form.lastname"
+      placeholder="Lastname"
       autocomplete="off"
       required
+      class="w-full px-3 py-2 rounded-[5px] border-2 text-gray-900 transition"
+      style="border-image: linear-gradient(135deg, #2933ff, #ff5451) 1; border-style: solid"
     />
 
-    <label for="patientMiddlename">Middlename: </label>
     <input
-      type="name"
-      v-model="store.formPatient.middlename"
-      id="patientMiddlename"
+      type="text"
+      v-model="form.middlename"
+      placeholder="Middlename"
       autocomplete="off"
       required
+      class="w-full px-3 py-2 rounded-[5px] border-2 text-gray-900 transition"
+      style="border-image: linear-gradient(135deg, #2933ff, #ff5451) 1; border-style: solid"
     />
 
-    <label for="patientPassword">Password: </label>
     <input
       type="password"
-      v-model="store.formPatient.password"
-      id="patientPassword"
+      v-model="form.password"
+      placeholder="Password"
       autocomplete="off"
+      class="w-full px-3 py-2 rounded-[5px] border-2 text-gray-900 transition"
+      style="border-image: linear-gradient(135deg, #2933ff, #ff5451) 1; border-style: solid"
     />
 
-    <label for="patientFacebook">Facebook: </label>
-    <input
-      type="facebook"
-      v-model="store.formPatient.facebook"
-      id="patientFacebook"
-      autocomplete="off"
-    />
-
-    <label for="patientEmail">Email: </label>
     <input
       type="email"
-      v-model="store.formPatient.email"
-      id="patientEmail"
+      v-model="form.email"
+      placeholder="Email"
       autocomplete="off"
       required
+      class="w-full px-3 py-2 rounded-[5px] border-2 text-gray-900 transition"
+      style="border-image: linear-gradient(135deg, #2933ff, #ff5451) 1; border-style: solid"
     />
 
-    <label for="patientEmergencycontact">Emergencycontact: </label>
-    <input
-      type="number"
-      v-model="store.formPatient.emergencyContact"
-      id="patientEmergencycontact"
-      autocomplete="off"
-      required
-    />
+    <vue-tel-input
+      v-model="form.contactNumber"
+      class="w-full px-3 py-2 rounded-[5px] border-2 text-gray-900 transition"
+      style="border-image: linear-gradient(135deg, #2933ff, #ff5451) 1; border-style: solid"
+      :inputOptions="{
+        class: 'w-full !px-0 !py-0 !rounded-none !border-none !text-gray-900 !transition',
+        style: 'border-image: none',
+        placeholder: 'Emergency Contact',
+        type: 'tel',
+        maxlength: 15,
+        required: true
+      }"
+      :auto-default-country="false"
+      auto-mode-dial-code
+      mode="international"
+      validCharactersOnly
+    ></vue-tel-input>
 
-    <button type="submit">{{ store.isEditMode ? 'Update Patient' : 'Add Patient' }}</button>
-    <button v-if="store.isEditMode" @click="store.resetForm">Cancel</button>
+    <div class="flex gap-3 mt-4">
+      <button
+        type="submit"
+        class="flex-1 px-4 py-2 rounded-[5px] border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition"
+      >
+        Add Patient
+      </button>
+    </div>
   </form>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { usePatientStore } from '@/stores/patientsStore'
+import { VueTelInput } from 'vue-tel-input';
 
 const store = usePatientStore()
 
-const submitHandler = () => {
-  store.submitPatient()
+const form = ref({
+  firstname: '',
+  lastname: '',
+  middlename: '',
+  password: '',
+  email: '',
+  contactNumber: '',
+})
+
+const submitHandler = async () => {
+  const success = await store.addPatient(form.value)
+  if (success) {
+    form.value = {
+      firstname: '',
+      lastname: '',
+      middlename: '',
+      password: '',
+      email: '',
+      contactNumber: '',
+    }
+  }
 }
 </script>
