@@ -168,10 +168,26 @@ export const useAppointmentStore = defineStore('appointmentStore', () => {
 
   const deleteAppointment = async (id) => {
     try {
+      const nurseData = JSON.parse(localStorage.getItem('nurse'))
+      const nurseId = nurseData?.nurseDetails?.nurseId
+
+      if (!nurseId) {
+        throw new Error('Nurse details not found. Please log in again.')
+      }
+
+      const payload = {
+        deletedByNurseId: nurseId
+      }
+
       const response = await fetch(`https://localhost:7031/api/NurseAppointmentSchedule/delete_appointment/${id}`, {
         method: 'DELETE',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       })
+      
       if (!response.ok) throw new Error('Failed to delete appointment')
       
       await fetchAppointments()
