@@ -114,12 +114,22 @@ export const usePatientStore = defineStore('patientStore', () => {
 
   const deletePatient = async (id) => {
     try {
-      // TODO: Replace with the correct API endpoint for deleting a patient
-      const response = await fetch(`http://localhost:3000/patients/${id}`, {
+      const nurseData = JSON.parse(localStorage.getItem('nurse'))
+      const nurseId = nurseData?.nurseDetails?.nurseId
+
+      if (!nurseId) {
+        throw new Error('Nurse details not found. Please log in again.')
+      }
+
+      const response = await fetch(`https://localhost:7031/api/AdminUsers/delete/user/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'X-Deleted-By': nurseId,
+        },
       })
       if (!response.ok) throw new Error('Failed to delete patient')
-      patients.value = patients.value.filter((patient) => patient.id !== id)
+      await fetchPatients()
       console.log(`Patient with ID ${id} has been deleted`)
       return true
     } catch (error) {

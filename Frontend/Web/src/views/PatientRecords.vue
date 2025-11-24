@@ -9,52 +9,35 @@
             <div
               class="w-16 h-16 rounded-full bg-gradient-to-r from-[#2933FF] to-[#FF5451] flex items-center justify-center text-white text-2xl font-bold shadow-lg"
             >
-              {{ patient?.firstname?.[0] }}{{ patient?.lastname?.[0] }}
+              {{ patient?.firstName?.[0] }}{{ patient?.lastName?.[0] }}
             </div>
             <div>
               <h2
                 class="text-3xl font-bold bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
               >
-                {{ patient?.firstname }} {{ patient?.lastname }}
+                {{ patient?.firstName }} {{ patient?.lastName }}
               </h2>
-              <p class="text-gray-500 text-sm mt-1">Patient Medical Records</p>
+              <p class="text-gray-500 text-sm mt-1">User Forms</p>
             </div>
           </div>
-          <div class="flex gap-3">
-            <button
-              @click="printAllRecords"
-              class="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
-            >
-              <i class="fa-solid fa-print"></i>
-              Print All Records
-            </button>
-            <button
-              @click="openAddRecordModal"
-              class="px-6 py-3 bg-gradient-to-r from-[#2933FF] to-[#FF5451] text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
-            >
-              <i class="fa-solid fa-plus"></i>
-              Add New Record
-            </button>
-          </div>
+          <button
+            @click="goBack"
+            class="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Patient List
+          </button>
         </div>
       </div>
 
-      <div class="PersonalRecords">
-        <div class="search mb-8 relative">
-          <div class="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
-            <i
-              class="fa-solid fa-magnifying-glass text-xl bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
-            ></i>
-          </div>
-          <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Search records..."
-            class="w-full pl-14 pr-6 py-4 rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2933FF]/50 focus:shadow-xl bg-white text-gray-800 placeholder-gray-400 transition-all duration-300 border border-gray-100"
-          />
+      <div class="user-forms">
+        <div v-if="userFormStore.loading" class="text-center py-12">
+          <p class="text-gray-500 text-lg">Loading...</p>
         </div>
-
-        <div v-if="filteredRecords.length === 0" class="text-center py-12">
+        <div v-else-if="userFormStore.error" class="text-center py-12">
+          <p class="text-red-500 text-lg">{{ userFormStore.error }}</p>
+        </div>
+        <div v-else-if="userFormStore.forms.length === 0" class="text-center py-12">
           <div
             class="w-20 h-20 rounded-full bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center mx-auto mb-4"
           >
@@ -62,117 +45,47 @@
               class="fa-solid fa-folder-open text-3xl bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
             ></i>
           </div>
-          <p class="text-gray-500 text-lg">No records found</p>
+          <p class="text-gray-500 text-lg">No forms found for this user.</p>
         </div>
-
-        <div class="records grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div v-else class="forms-grid grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div
-            v-for="record in filteredRecords"
-            :key="record.id"
+            v-for="form in userFormStore.forms"
+            :key="form.formId"
             class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 border border-gray-100 group relative overflow-hidden"
           >
-            <div
-              class="absolute inset-0 bg-gradient-to-br from-[#2933FF]/5 to-[#FF5451]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            ></div>
-
             <div class="relative z-10">
               <div class="flex items-start justify-between mb-4">
-                <div class="flex items-center gap-2">
-                  <span
-                    class="w-10 h-10 rounded-full bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center"
-                  >
-                    <i
-                      class="fa-solid fa-stethoscope text-sm bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
-                    ></i>
-                  </span>
-                  <div>
-                    <h2
-                      class="text-xl font-bold bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
-                    >
-                      {{ record.diagnosis }}
-                    </h2>
-                    <p class="text-xs text-gray-400 mt-0.5">{{ record.recordId }}</p>
-                  </div>
-                </div>
+                <h2 class="text-xl font-bold bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent">
+                  Form #{{ form.formId }}
+                </h2>
                 <div class="flex gap-2">
                   <button
-                    @click="printSingleRecord(record.id)"
-                    class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center hover:shadow-md transition-all hover:scale-110 active:scale-95"
-                    title="Print Record"
-                  >
-                    <i class="fa-solid fa-print text-xs text-purple-600"></i>
-                  </button>
-                  <button
-                    @click="handleEdit(record)"
+                    @click="handleEdit(form)"
                     class="w-8 h-8 rounded-lg bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center hover:shadow-md transition-all hover:scale-110 active:scale-95"
-                    title="Edit Record"
+                    title="Edit Form"
                   >
                     <i
                       class="fa-solid fa-pen-to-square text-xs bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
                     ></i>
                   </button>
                   <button
-                    @click="confirmDelete(record)"
+                    @click="confirmDelete(form)"
                     class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center hover:shadow-md transition-all hover:scale-110 active:scale-95"
-                    title="Delete Record"
+                    title="Delete Form"
                   >
                     <i class="fa-solid fa-trash text-xs text-red-500"></i>
                   </button>
                 </div>
               </div>
-
               <div class="space-y-3">
-                <div v-if="record.symptom" class="flex items-start gap-2">
-                  <span
-                    class="w-8 h-8 rounded-full bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center flex-shrink-0 mt-1"
-                  >
-                    <i
-                      class="fa-solid fa-user-injured text-xs bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
-                    ></i>
+                <div v-for="(value, key) in form" :key="key" class="flex items-start gap-2">
+                  <span class="w-8 h-8 rounded-full bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fa-solid fa-file-alt text-xs bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"></i>
                   </span>
                   <div>
-                    <h3 class="text-sm font-semibold text-gray-700 mb-1">Symptom</h3>
-                    <p class="text-sm text-gray-600">{{ record.symptom }}</p>
+                    <h3 class="text-sm font-semibold text-gray-700 mb-1">{{ key }}</h3>
+                    <p class="text-sm text-gray-600">{{ value }}</p>
                   </div>
-                </div>
-
-                <div class="flex items-start gap-2">
-                  <span
-                    class="w-8 h-8 rounded-full bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center flex-shrink-0 mt-1"
-                  >
-                    <i
-                      class="fa-solid fa-pills text-xs bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
-                    ></i>
-                  </span>
-                  <div>
-                    <h3 class="text-sm font-semibold text-gray-700 mb-1">Treatment</h3>
-                    <p class="text-sm text-gray-600">{{ record.treatment }}</p>
-                  </div>
-                </div>
-
-                <div v-if="record.notes" class="flex items-start gap-2">
-                  <span
-                    class="w-8 h-8 rounded-full bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center flex-shrink-0 mt-1"
-                  >
-                    <i
-                      class="fa-solid fa-notes-medical text-xs bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
-                    ></i>
-                  </span>
-                  <div>
-                    <h3 class="text-sm font-semibold text-gray-700 mb-1">Notes</h3>
-                    <p class="text-sm text-gray-600">{{ record.notes }}</p>
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
-                  <span
-                    class="w-8 h-8 rounded-full bg-gradient-to-r from-[#2933FF]/10 to-[#FF5451]/10 flex items-center justify-center"
-                  >
-                    <i
-                      class="fa-solid fa-calendar text-xs bg-gradient-to-r from-[#2933FF] to-[#FF5451] bg-clip-text text-transparent"
-                    ></i>
-                  </span>
-                  <p class="text-xs text-gray-500">{{ formatDate(record.date) }}</p>
                 </div>
               </div>
             </div>
@@ -180,11 +93,7 @@
         </div>
       </div>
     </div>
-
-    <!-- Records Handler Modal -->
-    <RecordsHandler v-if="showRecordModal" @modalClose="closeRecordModal" />
-
-    <!-- Delete Confirmation Modal -->
+    <EditUserFormModal v-if="showEditModal" :form="formToEdit" :userId="userId" @close="showEditModal = false" />
     <div
       v-if="showDeleteModal"
       class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 font-poppins"
@@ -195,14 +104,12 @@
             <i class="fa-solid fa-exclamation-triangle text-xl text-red-500"></i>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-gray-800">Delete Record</h3>
+            <h3 class="text-xl font-bold text-gray-800">Delete Form</h3>
             <p class="text-sm text-gray-500">This action cannot be undone</p>
           </div>
         </div>
         <p class="text-gray-600 mb-6">
-          Are you sure you want to delete the record for
-          <span class="font-semibold">{{ recordToDelete?.diagnosis }}</span
-          >?
+          Are you sure you want to delete form #{{ formToDelete?.formId }}?
         </p>
         <div class="flex justify-end gap-3">
           <button
@@ -225,102 +132,54 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { usePatientRecord } from '@/stores/patientRecord'
 import { usePatientStore } from '@/stores/patientsStore'
-import { computed, ref } from 'vue'
-import RecordsHandler from '@/modals/RecordsHandler.vue'
+import { useUserFormStore } from '@/stores/userFormStore'
+import { computed, onMounted, ref } from 'vue'
+import EditUserFormModal from '@/modals/EditUserFormModal.vue'
 
 const route = useRoute()
 const router = useRouter()
 const patientsStore = usePatientStore()
-const patientRecord = usePatientRecord()
+const userFormStore = useUserFormStore()
 
-const patientId = Number(route.params.id)
-const searchQuery = ref('')
-const showRecordModal = ref(false)
+const userId = Number(route.params.id)
+const showEditModal = ref(false)
 const showDeleteModal = ref(false)
-const recordToDelete = ref(null)
+const formToEdit = ref(null)
+const formToDelete = ref(null)
 
 const patient = computed(() => {
-  return patientsStore.patients.find((p) => p.id === patientId)
+  return patientsStore.patients.find((p) => p.userId === userId)
 })
 
-const records = computed(() => {
-  return patientRecord.getpatient(patientId)
+onMounted(() => {
+  userFormStore.fetchUserForms(userId)
 })
 
-const filteredRecords = computed(() => {
-  if (!searchQuery.value) return records.value
-
-  const query = searchQuery.value.toLowerCase()
-  return records.value.filter(
-    (record) =>
-      record.diagnosis?.toLowerCase().includes(query) ||
-      record.symptom?.toLowerCase().includes(query) ||
-      record.treatment?.toLowerCase().includes(query) ||
-      record.notes?.toLowerCase().includes(query) ||
-      record.recordId?.toLowerCase().includes(query),
-  )
-})
-
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+const goBack = () => {
+  router.push({ name: 'home' })
 }
 
-const printAllRecords = () => {
-  router.push({
-    name: 'printview',
-    params: {
-      patientId: patientId
-    }
-  })
+const handleEdit = (form) => {
+  formToEdit.value = form
+  showEditModal.value = true
 }
 
-const printSingleRecord = (recordId) => {
-  router.push({
-    name: 'printview',
-    params: {
-      patientId: patientId,
-      recordId: recordId
-    }
-  })
-}
-
-const openAddRecordModal = () => {
-  patientRecord.resetRecordForm()
-  showRecordModal.value = true
-}
-
-const handleEdit = (record) => {
-  patientRecord.setFormforEdit(record)
-  showRecordModal.value = true
-}
-
-const closeRecordModal = () => {
-  showRecordModal.value = false
-}
-
-const confirmDelete = (record) => {
-  recordToDelete.value = record
+const confirmDelete = (form) => {
+  formToDelete.value = form
   showDeleteModal.value = true
 }
 
 const cancelDelete = () => {
-  recordToDelete.value = null
+  formToDelete.value = null
   showDeleteModal.value = false
 }
 
 const handleDelete = async () => {
-  if (recordToDelete.value) {
-    await patientRecord.deleteRecord(recordToDelete.value.id)
+  if (formToDelete.value) {
+    await userFormStore.deleteUserForm(formToDelete.value.formId, userId)
     showDeleteModal.value = false
-    recordToDelete.value = null
+    formToDelete.value = null
   }
 }
 </script>

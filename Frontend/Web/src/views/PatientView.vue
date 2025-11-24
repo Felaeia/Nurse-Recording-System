@@ -95,7 +95,7 @@
                 <i class="fa-solid fa-pen mr-1"></i>Edit
               </button>
               <button
-                @click.stop="handleDelete(patient.userId)"
+                @click.stop="confirmDelete(patient)"
                 class="px-4 py-2 text-red-600 border border-red-600 rounded-lg text-sm font-semibold hover:bg-red-600 hover:text-white transition-all"
               >
                 <i class="fa-solid fa-trash mr-1"></i>Delete
@@ -106,6 +106,43 @@
       </div>
     </div>
     <EditPatientHandlerModal v-if="showEditModal" @close="showEditModal = false" />
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      v-if="showDeleteModal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 font-poppins"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-gray-100 p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+            <i class="fa-solid fa-exclamation-triangle text-xl text-red-500"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Delete Patient</h3>
+            <p class="text-sm text-gray-500">This action cannot be undone</p>
+          </div>
+        </div>
+        <p class="text-gray-600 mb-6">
+          Are you sure you want to delete patient
+          <span class="font-semibold">{{ patientToDelete?.firstName }} {{ patientToDelete?.lastName }}</span
+          >?
+        </p>
+        <div class="flex justify-end gap-3">
+          <button
+            @click="cancelDelete"
+            class="px-6 py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl transition-all hover:bg-gray-200 hover:shadow-md active:scale-95"
+          >
+            Cancel
+          </button>
+          <button
+            @click="handleDelete"
+            class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:scale-105 active:scale-95"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -121,6 +158,8 @@ const store = usePatientStore()
 const auth = useAuthStore()
 const router = useRouter()
 const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+const patientToDelete = ref(null)
 
 const patientsrecord = (id) => {
   router.push({ name: 'patientrecords', params: { id } })
@@ -135,8 +174,22 @@ const handleEdit = (patient) => {
   showEditModal.value = true
 }
 
-const handleDelete = (id) => {
-  store.deletePatient(id)
+const confirmDelete = (patient) => {
+  patientToDelete.value = patient
+  showDeleteModal.value = true
+}
+
+const cancelDelete = () => {
+  patientToDelete.value = null
+  showDeleteModal.value = false
+}
+
+const handleDelete = async () => {
+  if (patientToDelete.value) {
+    await store.deletePatient(patientToDelete.value.userId)
+    showDeleteModal.value = false
+    patientToDelete.value = null
+  }
 }
 
 const logout = () => {
