@@ -122,7 +122,7 @@
 
         <div class="form-group">
           <label
-            for="reason"
+            for="appointment-description"
             class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2"
           >
             <span
@@ -136,9 +136,9 @@
           </label>
           <input
             type="text"
-            name="reason"
-            id="reason"
-            v-model="store.appointmentsForm.reason"
+            name="appointment-description"
+            id="appointment-description"
+            v-model="store.appointmentsForm.appointmentDescription"
             required
             placeholder="e.g., Annual checkup, Follow-up consultation..."
             class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2933FF]/50 focus:border-transparent transition-all duration-300 text-gray-800 placeholder-gray-400"
