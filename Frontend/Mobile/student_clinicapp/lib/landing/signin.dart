@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/custom_button.dart' as widget_btn;
 import '../widgets/app_background.dart';
 // import '../widgets/gradient_field.dart';
-import 'signup.dart';
 import '../screens/home.dart';
 import '../widgets/app_colors.dart';
 
@@ -29,7 +28,6 @@ class _SignInState extends State<SignIn> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
                   ShaderMask(
                     shaderCallback: (bounds) =>
                         AppColors.primaryGradient.createShader(bounds),
@@ -45,7 +43,6 @@ class _SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Title
                   ShaderMask(
                     shaderCallback: (bounds) =>
                         AppColors.primaryGradient.createShader(bounds),
@@ -61,7 +58,6 @@ class _SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 50),
 
-                  // User ID field
                   Container(
                     decoration: BoxDecoration(
                       gradient: AppColors.primaryGradient,
@@ -87,7 +83,6 @@ class _SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Password field
                   Container(
                     decoration: BoxDecoration(
                       gradient: AppColors.primaryGradient,
@@ -114,7 +109,6 @@ class _SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 50),
 
-                  // Sign In button
                   widget_btn.CustomButton(
                     text: 'SIGN IN',
                     onPressed: () {
@@ -126,37 +120,36 @@ class _SignInState extends State<SignIn> {
 
                   const SizedBox(height: 40),
 
-                  // Footer
-                  Column(
-                    children: [
-                      const Text(
-                        "Don't have an account?",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 76, 76, 81),
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => const SignUp()));
-                        },
-                        child: ShaderMask(
-                          shaderCallback: (bounds) =>
-                              AppColors.primaryGradient.createShader(bounds),
-                          child: const Text(
-                            'Sign Up!',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
+                  // Column(
+                  //   children: [
+                  //     const Text(
+                  //       "Don't have an account?",
+                  //       style: TextStyle(
+                  //         color: Color.fromARGB(255, 76, 76, 81),
+                  //         fontSize: 15,
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //     ),
+                  //     const SizedBox(height: 4),
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         Navigator.push(context,
+                  //             MaterialPageRoute(builder: (_) => const SignUp()));
+                  //       },
+                  //       child: ShaderMask(
+                  //         shaderCallback: (bounds) =>
+                  //             AppColors.primaryGradient.createShader(bounds),
+                  //         child: const Text(
+                  //           'Sign Up!',
+                  //           style: TextStyle(
+                  //               color: Colors.white,
+                  //               fontWeight: FontWeight.bold,
+                  //               fontSize: 15),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // )
                 ],
               ),
             ),
