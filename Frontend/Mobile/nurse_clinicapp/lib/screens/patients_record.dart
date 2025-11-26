@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widgets/app_background.dart';
-import '../widgets/custom_button.dart';
+import 'package:intl/intl.dart';
 import '../widgets/app_colors.dart';
 import '../mock/mock_patient_record_db.dart';
 
@@ -12,67 +11,106 @@ class PatientRecords extends StatefulWidget {
   State<PatientRecords> createState() => _PatientRecordsState();
 }
 
+class PatientRecord {
+  final String recordID;
+  final String date;
+  final String diagnosis;
+  final String symptoms;
+  final String treatment;
+  final String notes;
+
+  PatientRecord({
+    required this.recordID,
+    required this.date,
+    required this.diagnosis,
+    required this.symptoms,
+    required this.treatment,
+    this.notes = '',
+  });
+}
+
 class _PatientRecordsState extends State<PatientRecords> {
   final _formKey = GlobalKey<FormState>();
-
-  final _recordPart1Controller = TextEditingController();
-  final _recordPart2Controller = TextEditingController();
-  final _recordPart3Controller = TextEditingController();
-  final _recordPart4Controller = TextEditingController();
-
-  final _patientPart1Controller = TextEditingController();
-  final _patientPart2Controller = TextEditingController();
-  final _patientPart3Controller = TextEditingController();
-  final _patientPart4Controller = TextEditingController();
-
+  final _recordIDController = TextEditingController();
   final _dateController = TextEditingController();
   final _diagnosisController = TextEditingController();
-  final _symptomsController = TextEditingController();
   final _treatmentController = TextEditingController();
   final _notesController = TextEditingController();
+  final _otherSymptomController = TextEditingController();
 
+  int _lastRecordNumber = 0;
   final _db = MockPatientRecordDb();
+
+  final List<Map<String, dynamic>> _symptoms = [
+    {"name": "Fever", "icon": Icons.thermostat_rounded},
+    {"name": "Cough", "icon": Icons.sick_rounded},
+    {"name": "Dizziness", "icon": Icons.rotate_right_rounded},
+    {"name": "Chest Pain", "icon": Icons.monitor_heart_rounded},
+    {"name": "Fatigue", "icon": Icons.battery_full_rounded},
+    {"name": "Injury", "icon": Icons.healing_rounded},
+    {"name": "Other:", "icon": Icons.edit_note_rounded},
+  ];
+  final List<String> _selectedSymptoms = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _recordIDController.text = _generateRecordID();
+  }
 
   @override
   void dispose() {
-    _recordPart1Controller.dispose();
-    _recordPart2Controller.dispose();
-    _recordPart3Controller.dispose();
-    _recordPart4Controller.dispose();
-    _patientPart1Controller.dispose();
-    _patientPart2Controller.dispose();
-    _patientPart3Controller.dispose();
-    _patientPart4Controller.dispose();
-    _dateController.dispose();
-    _diagnosisController.dispose();
-    _symptomsController.dispose();
-    _treatmentController.dispose();
-    _notesController.dispose();
+    for (final c in [
+      _recordIDController,
+      _dateController,
+      _diagnosisController,
+      _treatmentController,
+      _notesController,
+      _otherSymptomController,
+    ]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
-  String getFormattedRecordID() {
-    return 'R${_recordPart1Controller.text.padRight(2, '_')}-'
-        '${_recordPart2Controller.text.padRight(2, '_')}-'
-        '${_recordPart3Controller.text.padRight(4, '_')}-REC'
-        '${_recordPart4Controller.text.padRight(3, '_')}';
+  String _generateRecordID() {
+    _lastRecordNumber++;
+    return _lastRecordNumber.toString().padLeft(3, '0');
   }
 
-  String getFormattedPatientID() {
-    return 'C${_patientPart1Controller.text.padRight(2, '_')}-'
-        '${_patientPart2Controller.text.padRight(2, '_')}-'
-        '${_patientPart3Controller.text.padRight(4, '_')}-MAN'
-        '${_patientPart4Controller.text.padRight(3, '_')}';
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+      builder: (context, child) => Theme(
+        data: ThemeData.light().copyWith(
+          colorScheme: ColorScheme.light(
+            primary: AppColors.primaryGradient.colors.first,
+          ),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) {
+      _dateController.text = DateFormat('MMMM dd, yyyy').format(picked);
+    }
   }
 
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
+      if (_selectedSymptoms.contains("Other:") &&
+          _otherSymptomController.text.isNotEmpty) {
+        _selectedSymptoms.remove("Other:");
+        _selectedSymptoms.add(_otherSymptomController.text);
+      }
+
       final record = PatientRecord(
-        recordID: getFormattedRecordID(),
-        patientID: getFormattedPatientID(),
+        recordID: 'R${_recordIDController.text}',
         date: _dateController.text,
         diagnosis: _diagnosisController.text,
-        symptoms: _symptomsController.text,
+        symptoms: _selectedSymptoms.join(", "),
         treatment: _treatmentController.text,
         notes: _notesController.text,
       );
@@ -80,58 +118,299 @@ class _PatientRecordsState extends State<PatientRecords> {
       _db.addRecord(record);
       _db.printAllRecords();
 
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Success'),
-          content: const Text('Patient record saved to mock DB!'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-
-      _formKey.currentState?.reset();
-      _recordPart1Controller.clear();
-      _recordPart2Controller.clear();
-      _recordPart3Controller.clear();
-      _recordPart4Controller.clear();
-      _patientPart1Controller.clear();
-      _patientPart2Controller.clear();
-      _patientPart3Controller.clear();
-      _patientPart4Controller.clear();
+      _recordIDController.text = _generateRecordID();
       _dateController.clear();
       _diagnosisController.clear();
-      _symptomsController.clear();
       _treatmentController.clear();
       _notesController.clear();
-      setState(() {});
+      _selectedSymptoms.clear();
+      _otherSymptomController.clear();
+
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: const BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.done_all_rounded,
+                      color: Colors.white, size: 50),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Form Submitted!",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Color.fromARGB(221, 24, 129, 20),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: "Patient ID: ${record.recordID}\n",
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black)),
+                      TextSpan(
+                          text: record.date,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
     }
   }
 
-  Widget _buildIDSegment(TextEditingController controller, int length) {
-    return SizedBox(
-      width: length * 18.0,
-      child: TextFormField(
-        controller: controller,
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(length),
+  Widget _animatedTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon, {
+    TextInputType keyboard = TextInputType.text,
+    bool readOnly = false,
+    bool requiredField = true,
+    int maxLines = 1,
+    VoidCallback? onTap,
+  }) {
+    final focusNode = FocusNode();
+    return StatefulBuilder(
+      builder: (context, setState) {
+        focusNode.addListener(() => setState(() {}));
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          decoration: BoxDecoration(
+            gradient: focusNode.hasFocus
+                ? AppColors.primaryGradient
+                : const LinearGradient(colors: [Colors.white, Colors.white]),
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: focusNode.hasFocus
+                ? [
+                    BoxShadow(
+                      color: AppColors.primaryGradient.colors.first
+                          .withOpacity(0.25),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
+          ),
+          padding: const EdgeInsets.all(1.2),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: TextFormField(
+              controller: controller,
+              focusNode: focusNode,
+              keyboardType: keyboard,
+              readOnly: readOnly,
+              onTap: onTap,
+              maxLines: maxLines,
+              validator: (value) =>
+                  requiredField && (value == null || value.isEmpty)
+                      ? "This field is required"
+                      : null,
+              decoration: InputDecoration(
+                labelText: label,
+                prefixIcon: ShaderMask(
+                  shaderCallback: (bounds) =>
+                      AppColors.primaryGradient.createShader(bounds),
+                  child: Icon(icon, color: Colors.white),
+                ),
+                labelStyle: TextStyle(
+                    color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                border: InputBorder.none,
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRecordIDField() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryGradient.colors.first.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
         ],
-        keyboardType: TextInputType.number,
-        decoration: const InputDecoration(
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8),
-          border: UnderlineInputBorder(),
+      ),
+      child: Row(
+        children: [
+          ShaderMask(
+            shaderCallback: (bounds) =>
+                AppColors.primaryGradient.createShader(bounds),
+            child: const Icon(Icons.badge_rounded, color: Colors.white),
+          ),
+          const SizedBox(width: 12),
+          const Text('R',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+          const SizedBox(width: 6),
+          SizedBox(
+            width: 40,
+            child: TextFormField(
+              controller: _recordIDController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(3),
+              ],
+              textAlign: TextAlign.center,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+              decoration: const InputDecoration(
+                  border: UnderlineInputBorder(), isDense: true),
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Required' : null,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSymptomChip(String symptom, IconData icon, bool isSelected) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          isSelected
+              ? _selectedSymptoms.remove(symptom)
+              : _selectedSymptoms.add(symptom);
+        });
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        width: 120,
+        height: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          gradient: isSelected ? AppColors.primaryGradient : null,
+          color: isSelected ? null : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? Colors.transparent : Colors.grey.shade300,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primaryGradient.colors.first
+                        .withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
+              : null,
         ),
-        style: const TextStyle(fontSize: 18),
-        validator: (value) {
-          if (value == null || value.length != length) return '';
-          return null;
-        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon,
+                color: isSelected
+                    ? Colors.white
+                    : AppColors.primaryGradient.colors.first,
+                size: 20),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                symptom,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? Colors.white : Colors.black87),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required IconData icon,
+    String? subtitle,
+    required List<Widget> children,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryGradient.colors.first.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: Colors.white, size: 24),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w700)),
+                  if (subtitle != null)
+                    Text(subtitle,
+                        style: TextStyle(
+                            fontSize: 14, color: Colors.grey.shade600)),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
       ),
     );
   }
@@ -139,135 +418,90 @@ class _PatientRecordsState extends State<PatientRecords> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AppBackground(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Patient Record Form',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text("Patient Record Form",
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22)),
+        flexibleSpace:
+            Container(decoration: const BoxDecoration(gradient: AppColors.primaryGradient)),
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildRecordIDField(),
+              const SizedBox(height: 16),
+              _animatedTextField(_dateController, "Date", Icons.calendar_today_rounded,
+                  readOnly: true, onTap: _pickDate),
+              const SizedBox(height: 16),
+              _animatedTextField(_diagnosisController, "Diagnosis",
+                  Icons.medical_information_rounded),
+              const SizedBox(height: 16),
+              _buildSection(
+              title: "Symptoms",
+              icon: Icons.medical_services_rounded,
+              subtitle: "Select all that apply",
+              children: [
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _symptoms.map((symptom) {
+                    final isSelected = _selectedSymptoms.contains(symptom["name"]);
+                    return _buildSymptomChip(
+                        symptom["name"], symptom["icon"], isSelected);
+                  }).toList(),
+                ),
+                if (_selectedSymptoms.contains("Other:")) ...[
+                  const SizedBox(height: 6),
+                  _animatedTextField(
+                    _otherSymptomController,
+                    "Please specify...",
+                    Icons.edit_note_rounded,
+                    requiredField: false,
+                    maxLines: 1,
+                  ),
+                ],
+              ],
+            ),
+              const SizedBox(height: 16),
+              _animatedTextField(_treatmentController, "Treatment", Icons.healing_rounded),
+              const SizedBox(height: 16),
+              _animatedTextField(_notesController, "Notes", Icons.note_rounded,
+                  maxLines: 3, requiredField: false),
+              const SizedBox(height: 35),
+              InkWell(
+                onTap: _submitForm,
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryGradient.colors.first.withOpacity(0.5),
+                        offset: const Offset(0, 8),
+                        blurRadius: 20,
                       ),
-                    ),
-                    const SizedBox(height: 25),
-
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Row(
-                        children: [
-                          ShaderMask(
-                            shaderCallback: (bounds) =>
-                                AppColors.primaryGradient.createShader(bounds),
-                            child: const Icon(Icons.badge, color: Colors.white),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text('R', style: TextStyle(fontSize: 18)),
-                          const SizedBox(width: 4),
-                          _buildIDSegment(_recordPart1Controller, 2),
-                          const Text('-', style: TextStyle(fontSize: 18)),
-                          _buildIDSegment(_recordPart2Controller, 2),
-                          const Text('-', style: TextStyle(fontSize: 18)),
-                          _buildIDSegment(_recordPart3Controller, 4),
-                          const Text('-REC', style: TextStyle(fontSize: 18)),
-                          _buildIDSegment(_recordPart4Controller, 3),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Row(
-                        children: [
-                          ShaderMask(
-                            shaderCallback: (bounds) =>
-                                AppColors.primaryGradient.createShader(bounds),
-                            child: const Icon(Icons.badge, color: Colors.white),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text('C', style: TextStyle(fontSize: 18)),
-                          const SizedBox(width: 4),
-                          _buildIDSegment(_patientPart1Controller, 2),
-                          const Text('-', style: TextStyle(fontSize: 18)),
-                          _buildIDSegment(_patientPart2Controller, 2),
-                          const Text('-', style: TextStyle(fontSize: 18)),
-                          _buildIDSegment(_patientPart3Controller, 4),
-                          const Text('-MAN', style: TextStyle(fontSize: 18)),
-                          _buildIDSegment(_patientPart4Controller, 3),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-                    _buildInputField(Icons.calendar_today, 'Date', controller: _dateController, requiredField: true, hintText: 'YYYY-MM-DD'),
-                    _buildInputField(Icons.medical_services, 'Diagnosis', controller: _diagnosisController, requiredField: true),
-                    _buildInputField(Icons.list_alt, 'Symptoms', controller: _symptomsController, requiredField: true),
-                    _buildInputField(Icons.healing, 'Treatment', controller: _treatmentController),
-                    _buildInputField(Icons.note, 'Notes', controller: _notesController, hintText: 'Any additional notes...'),
-
-                    const SizedBox(height: 30),
-                    CustomButton(text: 'Submit', onPressed: _submitForm),
-                  ],
+                    ],
+                  ),
+                  child: const Center(
+                    child: Text("Save Record",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18)),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputField(
-    IconData icon,
-    String label, {
-    TextEditingController? controller,
-    bool obscure = false,
-    bool requiredField = false,
-    String? hintText,
-    List<TextInputFormatter>? inputFormatters,
-    String? Function(String?)? validator,
-    TextInputType? keyboardType,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: TextFormField(
-            controller: controller,
-            obscureText: obscure,
-            inputFormatters: inputFormatters,
-            keyboardType: keyboardType ?? TextInputType.text,
-            validator: validator ?? (requiredField ? (v) => (v == null || v.trim().isEmpty) ? 'Required' : null : null),
-            decoration: InputDecoration(
-              prefixIcon: ShaderMask(
-                shaderCallback: (bounds) => AppColors.primaryGradient.createShader(bounds),
-                child: Icon(icon, color: Colors.white),
-              ),
-              hintText: hintText,
-              labelText: label,
-              border: InputBorder.none,
-            ),
+            ],
           ),
         ),
       ),

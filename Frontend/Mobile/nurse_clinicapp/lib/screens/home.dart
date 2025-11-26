@@ -6,6 +6,86 @@ import '../widgets/app_background.dart';
 class Home extends StatelessWidget {
   const Home({super.key});
 
+  void _showNotifications(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 24),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primaryGradient.colors.first.withOpacity(0.15),
+                  AppColors.primaryGradient.colors.last.withOpacity(0.15),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ShaderMask(
+                  shaderCallback: (bounds) =>
+                      AppColors.primaryGradient.createShader(bounds),
+                  child: const Text(
+                    "Notifications",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildNotification("Stay Hydrated!"),],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static Widget _buildNotification(String text) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.primaryGradient.colors.first.withOpacity(0.3),
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          ShaderMask(
+            shaderCallback: (bounds) =>
+                AppColors.primaryGradient.createShader(bounds),
+            child: const Icon(Icons.notifications_active_rounded,
+                color: Colors.white, size: 22),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,16 +94,18 @@ class Home extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: ListView(
-              children: const [
-                SizedBox(height: 24),
-                _Header(),
-                SizedBox(height: 30),
-                _AlertCard(),
-                SizedBox(height: 20),
-                _SearchAndNotification(),
-                SizedBox(height: 24),
-                _QuickActionsRow(),
-                SizedBox(height: 22),
+              children: [
+                const SizedBox(height: 24),
+                const _Header(),
+                const SizedBox(height: 30),
+                const _AlertCard(),
+                const SizedBox(height: 20),
+                _SearchAndNotification(onNotifyTap: () {
+                  _showNotifications(context);
+                }),
+                const SizedBox(height: 24),
+                const _QuickActionsRow(),
+                const SizedBox(height: 22),
               ],
             ),
           ),
@@ -73,7 +155,8 @@ class _Header extends StatelessWidget {
           padding: EdgeInsets.zero,
           offset: const Offset(0, 40),
           color: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: ShaderMask(
             shaderCallback: (bounds) =>
                 AppColors.primaryGradient.createShader(bounds),
@@ -95,7 +178,7 @@ class _Header extends StatelessWidget {
             if (value == 'account') {
               Navigator.pushNamed(context, '/userinfo');
             } else if (value == 'logout') {
-              Navigator.pushReplacementNamed(context, '/welcome');
+              Navigator.pushReplacementNamed(context, '/signin');
             }
           },
         ),
@@ -153,46 +236,50 @@ class _AlertCard extends StatelessWidget {
 }
 
 class _SearchAndNotification extends StatelessWidget {
-  const _SearchAndNotification();
+  final VoidCallback onNotifyTap;
+  const _SearchAndNotification({required this.onNotifyTap});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-  child: _GradientContainer(
-    colors: const [Color(0xFF6F77FF), Color(0xFFFF7A77)],
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: TextField(
-      decoration: InputDecoration(
-        hintText: 'Search patients',
-        hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-        prefixIcon: const Icon(
-          Icons.search,
-          color: Colors.white, 
-          size: 28,
+          child: _GradientContainer(
+            colors: AppColors.primaryGradient.colors,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search patients',
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                prefixIconConstraints: const BoxConstraints(
+                  minHeight: 40,
+                  minWidth: 40,
+                  maxHeight: 40,
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                border: InputBorder.none,
+              ),
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
         ),
-        prefixIconConstraints: const BoxConstraints(
-          minHeight: 40,
-          minWidth: 40,
-          maxHeight: 40,
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 12),
-        border: InputBorder.none,
-      ),
-      style: const TextStyle(color: Colors.white, fontSize: 16),
-    ),
-  ),
-),
-
         const SizedBox(width: 15),
-        _GradientContainer(
-          colors: const [Color(0xFF6F77FF), Color(0xFFFF7A77)],
-          padding: const EdgeInsets.all(12),
-          child: const Icon(
-            Icons.notifications,
-            size: 26,
-            color: Colors.white,
+        InkWell(
+          onTap: onNotifyTap,
+          borderRadius: BorderRadius.circular(16),
+          child: _GradientContainer(
+            colors: AppColors.primaryGradient.colors,
+            padding: const EdgeInsets.all(12),
+            child: const Icon(
+              Icons.notifications,
+              size: 26,
+              color: Colors.white,
+            ),
           ),
         ),
       ],
@@ -250,15 +337,19 @@ class _SquareActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (title == 'Add Form') {
-          Navigator.pushNamed(context, '/addform');
+        if (title == 'Appointments') {
+          Navigator.pushNamed(context, '/appointments');
         } else if (title == 'Patient Records') {
           Navigator.pushNamed(context, '/patientsrecords');
+        } else if (title == 'Medical Inventory') {
+          Navigator.pushNamed(context, '/medicalinventory');
+        } else if (title == 'Add Form') {
+          Navigator.pushNamed(context, '/addform');
         }
       },
       borderRadius: BorderRadius.circular(16),
       child: _GradientContainer(
-        colors: const [Color(0xFF6F77FF), Color(0xFFFF7A77)],
+        colors: AppColors.primaryGradient.colors,
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
