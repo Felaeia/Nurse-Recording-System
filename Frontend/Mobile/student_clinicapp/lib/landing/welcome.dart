@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:student_clinicapp/widgets/app_background.dart';
-import 'package:student_clinicapp/landing/signin.dart';
+import '../widgets/app_background.dart';
+import 'signin.dart';
 
 const _kGradient = LinearGradient(
   colors: [Color(0xFF2933FF), Color(0xFFFF5451)],

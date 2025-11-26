@@ -1,4 +1,4 @@
-package com.example.student_clinicapp
+package com.example.flutter_temp
 
 import io.flutter.embedding.android.FlutterActivity
 
